@@ -1,2 +1,5 @@
-# TypeScript-PWA-Template
-Type progressive web app (PWA) template
+# Genuff
+
+Generative stuff as a progressive web app (PWA).
+
+
