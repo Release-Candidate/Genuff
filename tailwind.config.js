@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 /* eslint-disable no-undef */
 module.exports = {
     content: ["./src/**/*.ts", "./assets/*.html"],

@@ -1,7 +1,7 @@
 {
     "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-    "name": "Typescript-PWA",
-    "short_name": "Typescript-PWA",
+    "name": "Genuff",
+    "short_name": "Genuff",
     "start_url": "/",
     "id": "/",
     "scope": "/",
@@ -9,17 +9,7 @@
     "theme_color": "#bfab91",
     "background_color": "#bfab91",
     "version": "0.0.0",
-    "description": "Typescript-PWA.",
-    "share_target": {
-        "action": "/",
-        "method": "GET",
-        "enctype": "application/x-www-form-urlencoded",
-        "params": {
-            "title": "title",
-            "text": "text",
-            "url": "url"
-        }
-    },
+    "description": "Generative stuff.",
     "icons": [
         {
             "src": "./icons/icon.svg",

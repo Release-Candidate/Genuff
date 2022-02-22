@@ -13,6 +13,11 @@
 # Force Haskell hs files to LF.
 *.hs text eol=lf
 
+# Force JS and TS files to LF
+*.ts text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+
 # treat these as binary files
 *.png binary
 *.jpg binary

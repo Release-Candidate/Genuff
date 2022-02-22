@@ -77,7 +77,10 @@
         ],
         "dot-notation": "error",
         "eol-last": "error",
-        "eqeqeq": "error",
+        "eqeqeq": [
+            "error",
+            "smart"
+        ],
         "func-call-spacing": "error",
         "func-name-matching": "error",
         "func-names": "off",
@@ -113,7 +116,7 @@
         "implicit-arrow-linebreak": "off",
         "indent": [
             "error",
-            4,
+            2,
             {
                 "SwitchCase": 1
             }
@@ -170,7 +173,7 @@
         "no-duplicate-imports": "error",
         "no-else-return": "off",
         "no-empty-function": "error",
-        "no-eq-null": "error",
+        "no-eq-null": "off",
         "no-eval": "error",
         "no-extend-native": "error",
         "no-extra-bind": "error",

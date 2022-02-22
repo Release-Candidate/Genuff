@@ -90,6 +90,12 @@
 			"task": "bench",
 			"problemMatcher": [],
 			"label": "yarn: bench"
+		},
+		{
+			"type": "yarn",
+			"task": "types",
+			"problemMatcher": [],
+			"label": "yarn: types"
 		}
 	]
 }

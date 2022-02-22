@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2022 Roland Csaszar
 //
-// Project:  ReScript-PWA-Template
+// Project:  Genuff
 // File:     gulpfile.cjs
 // Date:     20.Feb.2022
 //
@@ -14,7 +14,7 @@
 // Directories and files.
 
 // Name of the app.
-const appName = "Typescript-PWA";
+const appName = "Genuff";
 
 // The navigation scope of the PWA, the root path to the service worker.
 const navScopePWA = "/";

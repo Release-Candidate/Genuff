@@ -1,103 +1,98 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2022 Roland Csaszar
 #
-# Project:  notoy-pwa
+# Project:  Genuff
 # File:     build.yml
 # Date:     13.Feb.2022
 #
 # ==============================================================================
 
-
 name: Check
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
 
 jobs:
-  TS-Check:
+    TS-Check:
+        runs-on: ubuntu-latest
 
-    runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [16.x, 17.x]
+                # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
-    strategy:
-      matrix:
-        node-version: [16.x, 17.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        steps:
+            - uses: actions/checkout@v2
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "npm"
+            - run: npm install -g yarn
+            - run: yarn install
+            - run: yarn tscheck 2>&1 | tee  tscheck.txt
 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm install -g yarn
-    - run: yarn install
-    - run: yarn tscheck 2>&1 | tee  tscheck.txt
+            - name: Upload a Build Artifact
+              uses: actions/upload-artifact@v2.2.4
+              if: ${{ always() }}
+              with:
+                  name: "Build report"
+                  if-no-files-found: ignore
+                  path: tscheck.txt
 
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.2.4
-      if: ${{ always() }}
-      with:
-        name: "Build report"
-        if-no-files-found: ignore
-        path: tscheck.txt
+    eslint:
+        runs-on: ubuntu-latest
 
-  eslint:
+        strategy:
+            matrix:
+                node-version: [16.x, 17.x]
+                # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
-    runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "npm"
+            - run: npm install -g yarn
+            - run: yarn install
+            - run: yarn eslint 2>&1 | tee eslint.txt
 
-    strategy:
-      matrix:
-        node-version: [16.x, 17.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+            - name: Upload a Build Artifact
+              uses: actions/upload-artifact@v2.2.4
+              if: ${{ always() }}
+              with:
+                  name: "ESLint report"
+                  if-no-files-found: ignore
+                  path: eslint.txt
 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm install -g yarn
-    - run: yarn install
-    - run: yarn eslint 2>&1 | tee eslint.txt
+    bundle:
+        runs-on: ubuntu-latest
 
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.2.4
-      if: ${{ always() }}
-      with:
-        name: "ESLint report"
-        if-no-files-found: ignore
-        path: eslint.txt
+        strategy:
+            matrix:
+                node-version: [16.x, 17.x]
+                # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
+        steps:
+            - uses: actions/checkout@v2
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "npm"
+            - run: npm install -g yarn
+            - run: yarn install
+            - run: yarn bundle 2>&1 | tee bundle.txt
 
-  bundle:
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x, 17.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm install -g yarn
-    - run: yarn install
-    - run: yarn bundle 2>&1 | tee bundle.txt
-
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.2.4
-      if: ${{ always() }}
-      with:
-        name: "Build report"
-        if-no-files-found: ignore
-        path: bundle.txt
+            - name: Upload a Build Artifact
+              uses: actions/upload-artifact@v2.2.4
+              if: ${{ always() }}
+              with:
+                  name: "Build report"
+                  if-no-files-found: ignore
+                  path: bundle.txt

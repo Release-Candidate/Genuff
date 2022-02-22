@@ -8,7 +8,7 @@
     ],
     "watch-files": [
         "src/**/*.ts",
-        "tests/**/*.ts"
+        "tests/**/*_test.ts"
     ],
     "trace-warnings": true
 }
