@@ -4,6 +4,7 @@
         "module": "commonjs",
         "strict": true,
         "noEmit": false,
+        "preserveConstEnums": true,
         "noImplicitAny": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitOverride": true,
@@ -19,6 +20,8 @@
         "declaration": true,
         "declarationDir": "./types",
         "declarationMap": true,
+        "newLine": "lf",
+        "outDir": "./ts_out",
         "lib": [
             "es2019",
             "es6",

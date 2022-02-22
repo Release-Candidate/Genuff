@@ -23,3 +23,28 @@ function testApp() {
 }
 
 testApp();
+
+const Test = {
+  A: "A",
+  b: "B",
+} as const;
+
+type Values<T> = T[keyof T];
+
+function f(t: Values<typeof Test>) {
+  switch (t) {
+    case Test.b:
+      break;
+
+    case Test.A:
+      break;
+
+    default: {
+      const exhaustiveCheck: never = t;
+      return exhaustiveCheck;
+    }
+  }
+  return t;
+}
+
+f(Test.A);

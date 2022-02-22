@@ -96,6 +96,12 @@
 			"task": "types",
 			"problemMatcher": [],
 			"label": "yarn: types"
+		},
+		{
+			"type": "yarn",
+			"task": "build",
+			"problemMatcher": [],
+			"label": "yarn: build"
 		}
 	]
 }

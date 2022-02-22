@@ -43,6 +43,7 @@
     "testwatch": "mocha -w",
     "coverage": "c8 --all --reporter lcov mocha",
     "bundle": "gulp bundle",
+    "build": "tsc",
     "bundleGitHub": "gulp bundleGitHub",
     "serve": "gulp serve",
     "watch": "gulp watch",
