@@ -89,12 +89,12 @@
             "declaration"
         ],
         "function-paren-newline": [
-            "error",
+            "off",
             "consistent"
         ],
         "generator-star-spacing": "error",
         "grouped-accessor-pairs": "error",
-        "guard-for-in": "error",
+        "guard-for-in": "off",
         "i18next/no-literal-string": [
             "error",
             {
@@ -193,7 +193,40 @@
         "no-loop-func": "error",
         "no-loss-of-precision": "error",
         "no-magic-numbers": "error",
-        "no-mixed-operators": "error",
+        "no-mixed-operators": [
+            "error",
+            {
+                "groups": [
+                    [
+                        "&",
+                        "|",
+                        "^",
+                        "~",
+                        "<<",
+                        ">>",
+                        ">>>"
+                    ],
+                    [
+                        "==",
+                        "!=",
+                        "===",
+                        "!==",
+                        ">",
+                        ">=",
+                        "<",
+                        "<="
+                    ],
+                    [
+                        "&&",
+                        "||"
+                    ],
+                    [
+                        "in",
+                        "instanceof"
+                    ]
+                ]
+            }
+        ],
         "no-multi-assign": "error",
         "no-multi-spaces": "error",
         "no-multi-str": "error",
@@ -236,6 +269,7 @@
         "no-unsafe-optional-chaining": "error",
         "no-unused-expressions": 0,
         "chai-friendly/no-unused-expressions": 2,
+        "no-unused-vars": "off",
         "no-use-before-define": "off",
         "no-useless-backreference": "error",
         "no-useless-call": "error",
@@ -283,7 +317,7 @@
         "semi": "off",
         "semi-spacing": "error",
         "semi-style": "error",
-        "sort-imports": "error",
+        "sort-imports": "off",
         "sort-keys": "off",
         "sort-vars": "error",
         "space-before-blocks": "error",

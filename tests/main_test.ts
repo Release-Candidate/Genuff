@@ -9,9 +9,9 @@
 /*eslint no-magic-numbers: ["error", { "ignore": [46] }]*/
 /* eslint-disable i18next/no-literal-string */
 
-import * as fc from "fast-check";
-import { expect } from "chai";
 import { testApp } from "app";
+import { assert, expect } from "chai";
+import * as fc from "fast-check";
 
 describe("Testing tests!", () => {
   it("First Test", () => {
@@ -30,7 +30,7 @@ describe("Testing tests!", () => {
 
   it("Property testing!", function () {
     fc.assert(
-      fc.property(fc.integer(), (i) => i < 46),
+      fc.property(fc.integer(), (i) => assert.isTrue(i < 46)),
       { verbose: true }
     );
   });
