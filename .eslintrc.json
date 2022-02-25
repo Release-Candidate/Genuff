@@ -44,7 +44,7 @@
         "mocha/no-mocha-arrows": "off",
         "block-scoped-var": "error",
         "block-spacing": "error",
-        "brace-style": "error",
+        "brace-style": "off",
         "camelcase": "error",
         "capitalized-comments": [
             "error",
@@ -130,7 +130,7 @@
             "error",
             "unix"
         ],
-        "lines-around-comment": "error",
+        "lines-around-comment": "off",
         "lines-between-class-members": "error",
         "max-classes-per-file": "error",
         "max-depth": "error",
@@ -172,7 +172,14 @@
         "no-div-regex": "error",
         "no-duplicate-imports": "error",
         "no-else-return": "off",
-        "no-empty-function": "error",
+        "no-empty-function": [
+            "error",
+            {
+                "allow": [
+                    "constructors"
+                ]
+            }
+        ],
         "no-eq-null": "off",
         "no-eval": "error",
         "no-extend-native": "error",
@@ -275,7 +282,7 @@
         "no-useless-call": "error",
         "no-useless-computed-key": "error",
         "no-useless-concat": "error",
-        "no-useless-constructor": "error",
+        "no-useless-constructor": "off",
         "no-useless-rename": "error",
         "no-useless-return": "error",
         "no-var": "error",

@@ -20,3 +20,88 @@ export type OnlyNumbers = {
  * Type constraint for non-empty objects.
  */
 export type NotEmpty<T> = keyof T extends never ? "Object can't be empty" : {};
+
+/**
+ * The identity function.
+ *
+ * Returns the argument given to it.
+ *
+ * @param x - The argument to return.
+ * @returns The argument `x`.
+ */
+export function id<T>(x: T) {
+  return x;
+}
+
+/**
+ * Functor definition without higher kinded types, we just name the type `FT`.
+ *
+ * This is just so we can use `map` with generic functions.
+ */
+export type Functor<S, T, FT> = {
+  map(f: (e: S) => T): FT;
+};
+
+/**
+ * Foldable definition
+ */
+export type Foldable<T> = {
+  reduce<S>(f: (acc: S, e: T) => S, initialValue: S): S;
+};
+
+/**
+ * Show constraint.
+ *
+ * To be able to print the type to the console or similar.
+ */
+export type Show = {
+  show(): string;
+};
+
+/**
+ * String conversion constraint.
+ *
+ * To be able to convert the type to a string. Not necessary the same as `Show`.
+ */
+export type ToString = {
+  toString(): string;
+};
+
+/**
+ * Equality constraint.
+ *
+ *  To be able to test for equality and inequality.
+ */
+export interface Equal {
+  equal(b: this): boolean;
+  notEqual(b: this): boolean;
+}
+
+/**
+ * Ordering constraint.
+ *
+ * To be able to order elements of the type.
+ */
+export interface Ord {
+  lessOrEqual(b: this): boolean;
+  biggerOrEqual(b: this): boolean;
+  lessThan(b: this): boolean;
+  biggerThan(b: this): boolean;
+}
+
+/**
+ * Constraint for a vector field with norm and inner product.
+ */
+export interface VectorField<T> {
+  add(b: T): T;
+  subtract(b: T): T;
+  multScalar(b: T): T;
+  addScalar(b: T): T;
+  cross(b: T): T;
+  dot(b: T): number;
+  normalize(): T;
+  norm(): number;
+  length(): number;
+  numElements(): number;
+  null: T;
+}
