@@ -47,12 +47,13 @@ export type Functor<S, T, FT> = {
  */
 export type Foldable<T> = {
   reduce<S>(f: (acc: S, e: T) => S, initialValue: S): S;
+  toArray(): number[];
 };
 
 /**
  * Show constraint.
  *
- * To be able to print the type to the console or similar.
+ * To be able to print the type to the console, a log file or similar.
  */
 export type Show = {
   show(): string;
@@ -87,6 +88,7 @@ export interface Ord {
   biggerOrEqual(b: this): boolean;
   lessThan(b: this): boolean;
   biggerThan(b: this): boolean;
+  readonly isPartial: boolean;
 }
 
 /**
@@ -95,13 +97,12 @@ export interface Ord {
 export interface VectorField<T> {
   add(b: T): T;
   subtract(b: T): T;
-  multScalar(b: T): T;
-  addScalar(b: T): T;
-  cross(b: T): T;
+  multScalar(t: number): T;
+  addScalar(t: number): T;
   dot(b: T): number;
   normalize(): T;
   norm(): number;
   length(): number;
-  numElements(): number;
-  null: T;
+  dimension(): number;
+  null(): T;
 }

@@ -14,4 +14,4 @@
  * bigger than `Number.EPSILON`, which is the smallest difference between two
  * floating point numbers of type `number`.
  */
-export const EPSILON = 10e-10;
+export const EPSILON = 1e-10;
