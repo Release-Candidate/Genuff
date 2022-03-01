@@ -39,6 +39,13 @@ export function id<T>(x: T) {
  * This is just so we can use `map` with generic functions.
  */
 export type Functor<S, T, FT> = {
+  /**
+   * Iterate through all elements of `this` and apply the function `f` to each
+   * element.
+   *
+   * @param f The function to apply to each element of `this`.
+   * @returns The mapped object.
+   */
   map(f: (e: S) => T): FT;
 };
 
@@ -46,7 +53,22 @@ export type Functor<S, T, FT> = {
  * Foldable definition
  */
 export type Foldable<T> = {
+  /**
+   * Reduce the object to a scalar value.
+   *
+   * @param f The function to apply to each element of `this`.
+   * @param initialValue The starting value of the fold.
+   * @returns The object reduced to a single value.
+   */
   reduce<S>(f: (acc: S, e: T) => S, initialValue: S): S;
+
+  /**
+   * Convert the object to an array.
+   *
+   * E.g. each property of `this` is converted to an element of an array.
+   *
+   * @returns The object converted to an array.
+   */
   toArray(): number[];
 };
 
@@ -56,6 +78,16 @@ export type Foldable<T> = {
  * To be able to print the type to the console, a log file or similar.
  */
 export type Show = {
+  /**
+   * Return a string representation of an object suitable for logging or debug
+   * output.
+   *
+   * May no be the same as `toString`, which is a representation suitable for
+   * serialization.
+   *
+   * @returns A string representation of `this` suitable for debug or log
+   * output.
+   */
   show(): string;
 };
 
@@ -65,6 +97,15 @@ export type Show = {
  * To be able to convert the type to a string. Not necessary the same as `Show`.
  */
 export type ToString = {
+  /**
+   * Return a string representation of the object.
+   *
+   * Usable for serialization.
+   * May not be the same as `show`, which is suitable for printing to a console
+   * or a log file.
+   *
+   * @returns A string representation of `this`.
+   */
   toString(): string;
 };
 
@@ -74,8 +115,29 @@ export type ToString = {
  *  To be able to test for equality and inequality.
  */
 export interface Equal {
-  equal(b: this): boolean;
-  notEqual(b: this): boolean;
+  /**
+   * Compare two objects using an interval to test against instead of exact
+   * equality.
+   *
+   * @param b The object to test against.
+   * @param epsilon The epsilon interval both numbers can be in to be considered
+   *        equal.
+   *
+   * @returns `true` if the objects are almost the same, `false` else.
+   */
+  equal(b: this, epsilon?: number): boolean;
+
+  /**
+   * Compare two objects using an interval to test against instead of exact
+   * equality.
+   *
+   * @param b The object to test against.
+   * @param epsilon The epsilon interval both numbers can be in to be considered
+   *        equal.
+   *
+   * @returns `false` if the objects are almost the same, `true` else.
+   */
+  notEqual(b: this, epsilon?: number): boolean;
 }
 
 /**
@@ -84,11 +146,11 @@ export interface Equal {
  * To be able to order elements of the type.
  */
 export interface Ord {
-  lessOrEqual(b: this): boolean;
-  biggerOrEqual(b: this): boolean;
+  lessOrEqual(b: this, epsilon?: number): boolean;
+  biggerOrEqual(b: this, epsilon?: number): boolean;
   lessThan(b: this): boolean;
   biggerThan(b: this): boolean;
-  readonly isPartial: boolean;
+  isPartial: boolean;
 }
 
 /**
