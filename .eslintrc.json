@@ -141,6 +141,7 @@
         "max-params": "error",
         "max-statements": "error",
         "max-statements-per-line": "error",
+        "mocha/no-setup-in-describe": "off",
         "multiline-comment-style": [
             "error",
             "separate-lines"
