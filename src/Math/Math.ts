@@ -25,7 +25,7 @@ export const EPSILON = 1e-10;
  * Extend JS native `number` with interfaces `VectorField`, `Equal` and `Ord`.
  */
 declare global {
-  interface Number extends Equal, Ord, VectorField<number> {}
+  interface Number extends Equal, Ord, VectorField {}
 }
 
 /**

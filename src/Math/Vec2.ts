@@ -39,7 +39,7 @@ export class Vec2 // eslint-disable-next-line indent
     ToString,
     Equal,
     Ord,
-    VectorField<Vec2>
+    VectorField
 {
   /**
    * Constructs a new 2 dimensional vector.
@@ -130,7 +130,7 @@ export class Vec2 // eslint-disable-next-line indent
    * @param b The vector to subtract.
    * @returns The sum of both vectors
    */
-  subtract(b: Vec2): Vec2 {
+  subtract(b: Vec2) {
     return new Vec2({ x: this.v.x - b.v.x, y: this.v.y - b.v.y });
   }
 

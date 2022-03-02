@@ -125,7 +125,7 @@ export interface Equal {
    *
    * @returns `true` if the objects are almost the same, `false` else.
    */
-  equal(b: this, epsilon?: number): boolean;
+  equal(b: Equal, epsilon?: number): boolean;
 
   /**
    * Compare two objects using an interval to test against instead of exact
@@ -137,7 +137,7 @@ export interface Equal {
    *
    * @returns `false` if the objects are almost the same, `true` else.
    */
-  notEqual(b: this, epsilon?: number): boolean;
+  notEqual(b: Equal, epsilon?: number): boolean;
 }
 
 /**
@@ -146,25 +146,25 @@ export interface Equal {
  * To be able to order elements of the type.
  */
 export interface Ord {
-  lessOrEqual(b: this, epsilon?: number): boolean;
-  biggerOrEqual(b: this, epsilon?: number): boolean;
-  lessThan(b: this): boolean;
-  biggerThan(b: this): boolean;
+  lessOrEqual(b: Ord, epsilon?: number): boolean;
+  biggerOrEqual(b: Ord, epsilon?: number): boolean;
+  lessThan(b: Ord): boolean;
+  biggerThan(b: Ord): boolean;
   isPartial: boolean;
 }
 
 /**
  * Constraint for a vector field with norm and inner product.
  */
-export interface VectorField<T> {
-  add(b: T): T;
-  subtract(b: T): T;
-  multScalar(t: number): T;
-  addScalar(t: number): T;
-  dot(b: T): number;
-  normalize(): T;
+export interface VectorField extends Equal {
+  add(b: VectorField): VectorField;
+  subtract(b: VectorField): VectorField;
+  multScalar(t: number): VectorField;
+  addScalar(t: number): VectorField;
+  dot(b: VectorField): number;
+  normalize(): VectorField;
   norm(): number;
   length(): number;
   dimension(): number;
-  null(): T;
+  null(): VectorField;
 }

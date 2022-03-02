@@ -39,7 +39,7 @@ export class Vec3 // eslint-disable-next-line indent
     ToString,
     Equal,
     Ord,
-    VectorField<Vec3>
+    VectorField
 {
   /**
    * Constructs a new 3 dimensional vector.

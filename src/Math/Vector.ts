@@ -42,7 +42,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
     ToString,
     Equal,
     Ord,
-    VectorField<Vector<T>>,
+    VectorField,
     Functor<number, number, Vector<T>>,
     Foldable<{ value: number; name: string }>
 {

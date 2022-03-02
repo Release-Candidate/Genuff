@@ -39,7 +39,7 @@ export class Vec4 // eslint-disable-next-line indent
     ToString,
     Equal,
     Ord,
-    VectorField<Vec4>
+    VectorField
 {
   /**
    * Constructs a new 4 dimensional vector.
@@ -177,7 +177,7 @@ export class Vec4 // eslint-disable-next-line indent
       x: this.v.x + t,
       y: this.v.y + t,
       z: this.v.z + t,
-      w: this.v.w * t,
+      w: this.v.w + t,
     });
   }
 

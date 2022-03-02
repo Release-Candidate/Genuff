@@ -10,6 +10,7 @@
 /* eslint-disable no-magic-numbers */
 
 import * as fc from "fast-check";
+import { id } from "Generics/Types";
 import { equalityTests } from "../../tests/Generics/EqualGenerics";
 import { ordTests } from "../../tests/Generics/OrdGenerics";
 
@@ -17,6 +18,9 @@ describe("Testing Math/Math", () => {
   /**
    * Tests of the constraint `Equal`.
    */
-  equalityTests("number", fc.double(), (a, eps) => a + eps);
-  ordTests("number", fc.double(), (a, eps) => a + eps);
+  equalityTests("number", fc.double(), id, (a, eps) => a + eps);
+  /**
+   * Tests of the constraint `Ord`.
+   */
+  ordTests("number", fc.double(), id, (a, eps) => a + eps);
 });
