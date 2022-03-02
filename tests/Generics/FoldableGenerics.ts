@@ -12,29 +12,45 @@
 
 import { assert } from "chai";
 import * as fc from "fast-check";
-import { Foldable } from "Generics/Types";
+import { Equal, Foldable } from "Generics/Types";
 
-export function equalityTests<T extends Foldable<T>>(
-  arbType: fc.Arbitrary<T>,
-  addFunc: (a: T, epsilon: number) => T
+export interface FoldableEqual<T> extends Foldable<T>, Equal {}
+
+export function foldableTests<S, E, T extends FoldableEqual<E>>(
+  typeName: string,
+  arbType: fc.Arbitrary<S>,
+  constructor: (v: S) => T
 ) {
-  describe("Testing Foldable constraint", () => {
-    // Tests for `add` ===========================================================
-    describe("Testing reduce", () => {
-      it("Almost the same objects should be equal", () => {
+  describe(`${typeName}: Testing Foldable constraint`, () => {
+    describe(`${typeName}: Testing reduce`, () => {
+      it(`${typeName}: reduce of constant 1 is number of properties`, () => {
         fc.assert(
           fc.property(arbType, (a) => {
-            assert.isTrue(a.equal(addFunc(a, SMALLER_THAN_EPSILON)));
-            assert.isTrue(a.equal(addFunc(a, -SMALLER_THAN_EPSILON)));
+            const v = constructor(a);
+            assert.equal(
+              v.reduce((acc, _) => acc + 1, 0),
+              v.toArray().length
+            );
           }),
           { verbose: true }
         );
       });
-      it("Almost the same objects should not be equal", () => {
+    });
+    describe(`${typeName}: Testing toArray`, () => {
+      it(`${typeName}: length of toArray is the number of properties`, () => {
         fc.assert(
           fc.property(arbType, (a) => {
-            assert.isFalse(a.equal(addFunc(a, BIGGER_THAN_EPSILON)));
-            assert.isFalse(a.equal(addFunc(a, -BIGGER_THAN_EPSILON)));
+            const v = constructor(a);
+            assert.equal(v.toArray().length, Object.keys(a).length);
+          }),
+          { verbose: true }
+        );
+      });
+      it(`${typeName}: toArray is not the empty array`, () => {
+        fc.assert(
+          fc.property(arbType, (a) => {
+            const v = constructor(a);
+            assert.notDeepEqual(v.toArray(), []);
           }),
           { verbose: true }
         );

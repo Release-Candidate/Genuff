@@ -12,29 +12,22 @@
 
 import { assert } from "chai";
 import * as fc from "fast-check";
-import { Functor } from "Generics/Types";
+import { Equal, Functor, id } from "Generics/Types";
 
-export function equalityTests<S, T, FT extends Functor<S, T, FT>>(
+export interface FunctorEqual<S, T, FT> extends Functor<S, T, FT>, Equal {}
+
+export function functorTests<T, FT extends FunctorEqual<number, number, FT>>(
+  typeName: string,
   arbType: fc.Arbitrary<T>,
-  addFunc: (a: T, epsilon: number) => T
+  constructor: (v: T) => FT
 ) {
-  describe("Testing Functor constraint", () => {
-    // Tests for `add` ===========================================================
-    describe("Testing reduce", () => {
-      it("Almost the same objects should be equal", () => {
+  describe(`${typeName}: Testing Functor constraint`, () => {
+    describe(`${typeName}: Testing map`, () => {
+      it(`${typeName}: map of id yields same object`, () => {
         fc.assert(
           fc.property(arbType, (a) => {
-            assert.isTrue(a.equal(addFunc(a, SMALLER_THAN_EPSILON)));
-            assert.isTrue(a.equal(addFunc(a, -SMALLER_THAN_EPSILON)));
-          }),
-          { verbose: true }
-        );
-      });
-      it("Almost the same objects should not be equal", () => {
-        fc.assert(
-          fc.property(arbType, (a) => {
-            assert.isFalse(a.equal(addFunc(a, BIGGER_THAN_EPSILON)));
-            assert.isFalse(a.equal(addFunc(a, -BIGGER_THAN_EPSILON)));
+            const v = constructor(a);
+            assert.isTrue(v.map(id).equal(v));
           }),
           { verbose: true }
         );

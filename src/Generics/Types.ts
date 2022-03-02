@@ -154,17 +154,22 @@ export interface Ord {
 }
 
 /**
- * Constraint for a vector field with norm and inner product.
+ * Constraint for a vector space with norm and inner product.
  */
-export interface VectorField extends Equal, ToString, Show {
-  add(b: VectorField): VectorField;
-  subtract(b: VectorField): VectorField;
-  multScalar(t: number): VectorField;
-  addScalar(t: number): VectorField;
-  dot(b: VectorField): number;
-  normalize(): VectorField;
+export interface VectorSpace extends Equal, ToString, Show {
+  add(b: this): this;
+  subtract(b: this): this;
+  multScalar(t: number): this;
+  addScalar(t: number): this;
+  dot(b: this): number;
+  normalize(): this;
   norm(): number;
   length(): number;
   dimension(): number;
-  null(): VectorField;
+  null(): this;
 }
+
+/**
+ * Constraint for an ordered vector space.
+ */
+export interface OrderedVectorSpace extends VectorSpace, Ord {}

@@ -8,7 +8,7 @@
 // ==============================================================================
 /* eslint-disable no-extend-native */
 
-import { Equal, Ord, VectorField } from "Generics/Types";
+import { Equal, Ord, VectorSpace } from "Generics/Types";
 
 /**
  * Epsilon to use for float comparisons.
@@ -25,7 +25,7 @@ export const EPSILON = 1e-10;
  * Extend JS native `number` with interfaces `VectorField`, `Equal` and `Ord`.
  */
 declare global {
-  interface Number extends Equal, Ord, VectorField {}
+  interface Number extends Equal, Ord, VectorSpace {}
 }
 
 /**

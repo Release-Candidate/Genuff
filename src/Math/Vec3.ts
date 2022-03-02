@@ -15,7 +15,7 @@ import {
   Ord,
   Show,
   ToString,
-  VectorField,
+  VectorSpace,
 } from "Generics/Types";
 import { EPSILON } from "Math/Math";
 
@@ -39,7 +39,7 @@ export class Vec3 // eslint-disable-next-line indent
     ToString,
     Equal,
     Ord,
-    VectorField
+    VectorSpace
 {
   /**
    * Constructs a new 3 dimensional vector.
@@ -84,8 +84,8 @@ export class Vec3 // eslint-disable-next-line indent
    * @param f The function to apply to each element of `this`.
    * @returns The mapped vector.
    */
-  map(f: (e: number) => number): Vec3 {
-    return new Vec3({ x: f(this.v.x), y: f(this.v.y), z: f(this.v.z) });
+  map(f: (e: number) => number): this {
+    return new Vec3({ x: f(this.v.x), y: f(this.v.y), z: f(this.v.z) }) as this;
   }
 
   /**
@@ -121,12 +121,12 @@ export class Vec3 // eslint-disable-next-line indent
    * @param b The vector to add.
    * @returns The sum of both vectors
    */
-  add(b: Vec3): Vec3 {
+  add(b: this): this {
     return new Vec3({
       x: this.v.x + b.v.x,
       y: this.v.y + b.v.y,
       z: this.v.z + b.v.z,
-    });
+    }) as this;
   }
 
   /**
@@ -135,12 +135,12 @@ export class Vec3 // eslint-disable-next-line indent
    * @param b The vector to subtract.
    * @returns The sum of both vectors
    */
-  subtract(b: Vec3): Vec3 {
+  subtract(b: this): this {
     return new Vec3({
       x: this.v.x - b.v.x,
       y: this.v.y - b.v.y,
       z: this.v.z - b.v.z,
-    });
+    }) as this;
   }
 
   /**
@@ -149,8 +149,12 @@ export class Vec3 // eslint-disable-next-line indent
    * @param t The scalar value to multiply the vector with.
    * @returns The vector element wise multiplicated with the given value.
    */
-  multScalar(t: number): Vec3 {
-    return new Vec3({ x: this.v.x * t, y: this.v.y * t, z: this.v.z * t });
+  multScalar(t: number): this {
+    return new Vec3({
+      x: this.v.x * t,
+      y: this.v.y * t,
+      z: this.v.z * t,
+    }) as this;
   }
 
   /**
@@ -159,8 +163,12 @@ export class Vec3 // eslint-disable-next-line indent
    * @param t The scalar value to add to each component of the vector.
    * @returns The vector with the scalar added to it.
    */
-  addScalar(t: number): Vec3 {
-    return new Vec3({ x: this.v.x + t, y: this.v.y + t, z: this.v.z + t });
+  addScalar(t: number): this {
+    return new Vec3({
+      x: this.v.x + t,
+      y: this.v.y + t,
+      z: this.v.z + t,
+    }) as this;
   }
 
   /**
@@ -169,7 +177,7 @@ export class Vec3 // eslint-disable-next-line indent
    * @param b The vector to calculate the dot product with.
    * @returns The dot product (scalar product) of both vectors.
    */
-  dot(b: Vec3): number {
+  dot(b: this): number {
     return this.v.x * b.v.x + this.v.y * b.v.y + this.v.z * b.v.z;
   }
 
@@ -179,11 +187,11 @@ export class Vec3 // eslint-disable-next-line indent
    * @param b The vector to calculate the cross product with.
    * @returns The cross product of both vectors.
    */
-  cross(b: Vec3): Vec3 {
+  cross(b: this): this {
     const x = this.v.y * b.v.z - this.v.z * b.v.y;
     const y = this.v.z * b.v.x - this.v.x * b.v.z;
     const z = this.v.x * b.v.y - this.v.y * b.v.x;
-    return new Vec3({ x, y, z });
+    return new Vec3({ x, y, z }) as this;
   }
 
   /**
@@ -193,14 +201,14 @@ export class Vec3 // eslint-disable-next-line indent
    * @returns The normalized vector. Returns a new vector, does not alter the
    * existing one.
    */
-  normalize(): Vec3 {
+  normalize(): this {
     // eslint-disable-next-line no-magic-numbers
     const fac = 1.0 / this.length();
     return new Vec3({
       x: this.v.x * fac,
       y: this.v.y * fac,
       z: this.v.z * fac,
-    });
+    }) as this;
   }
 
   /**
@@ -248,8 +256,8 @@ export class Vec3 // eslint-disable-next-line indent
    * @returns The null vector, [0, 0, 0].
    */
   // eslint-disable-next-line class-methods-use-this
-  null(): Vec3 {
-    return new Vec3({ x: 0, y: 0, z: 0 });
+  null(): this {
+    return new Vec3({ x: 0, y: 0, z: 0 }) as this;
   }
 
   // Implementation of Types.Equal. ============================================

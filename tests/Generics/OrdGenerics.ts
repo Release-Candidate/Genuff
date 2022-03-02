@@ -314,7 +314,7 @@ export function ordTests<S, T extends Ord>(
                 constructor(a).biggerOrEqual(addFunc(a, 1.0), eps)
               );
               assert.isFalse(
-                constructor(a).biggerOrEqual(addFunc(a, eps + 0.1 * eps), eps)
+                constructor(a).biggerOrEqual(addFunc(a, eps + 0.2 * eps), eps)
               );
             }
           ),

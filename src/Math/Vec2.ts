@@ -13,9 +13,10 @@ import {
   Foldable,
   Functor,
   Ord,
+  OrderedVectorSpace,
   Show,
   ToString,
-  VectorField,
+  VectorSpace,
 } from "Generics/Types";
 import { EPSILON } from "Math/Math";
 
@@ -39,7 +40,8 @@ export class Vec2 // eslint-disable-next-line indent
     ToString,
     Equal,
     Ord,
-    VectorField
+    VectorSpace,
+    OrderedVectorSpace
 {
   /**
    * Constructs a new 2 dimensional vector.
@@ -84,8 +86,8 @@ export class Vec2 // eslint-disable-next-line indent
    * @param f The function to apply to each element of `this`.
    * @returns The mapped vector.
    */
-  map(f: (e: number) => number): Vec2 {
-    return new Vec2({ x: f(this.v.x), y: f(this.v.y) });
+  map(f: (e: number) => number): this {
+    return new Vec2({ x: f(this.v.x), y: f(this.v.y) }) as this;
   }
 
   /**
@@ -120,8 +122,8 @@ export class Vec2 // eslint-disable-next-line indent
    * @param b The vector to add.
    * @returns The sum of both vectors
    */
-  add(b: Vec2): Vec2 {
-    return new Vec2({ x: this.v.x + b.v.x, y: this.v.y + b.v.y });
+  add(b: this): this {
+    return new Vec2({ x: this.v.x + b.v.x, y: this.v.y + b.v.y }) as this;
   }
 
   /**
@@ -130,8 +132,8 @@ export class Vec2 // eslint-disable-next-line indent
    * @param b The vector to subtract.
    * @returns The sum of both vectors
    */
-  subtract(b: Vec2) {
-    return new Vec2({ x: this.v.x - b.v.x, y: this.v.y - b.v.y });
+  subtract(b: this): this {
+    return new Vec2({ x: this.v.x - b.v.x, y: this.v.y - b.v.y }) as this;
   }
 
   /**
@@ -140,8 +142,8 @@ export class Vec2 // eslint-disable-next-line indent
    * @param t The scalar value to multiply the vector with.
    * @returns The vector element wise multiplicated with the given value.
    */
-  multScalar(t: number): Vec2 {
-    return new Vec2({ x: this.v.x * t, y: this.v.y * t });
+  multScalar(t: number): this {
+    return new Vec2({ x: this.v.x * t, y: this.v.y * t }) as this;
   }
 
   /**
@@ -150,8 +152,8 @@ export class Vec2 // eslint-disable-next-line indent
    * @param t The scalar value to add to each component of the vector.
    * @returns The vector with the scalar added to it.
    */
-  addScalar(t: number): Vec2 {
-    return new Vec2({ x: this.v.x + t, y: this.v.y + t });
+  addScalar(t: number): this {
+    return new Vec2({ x: this.v.x + t, y: this.v.y + t }) as this;
   }
 
   /**
@@ -160,7 +162,7 @@ export class Vec2 // eslint-disable-next-line indent
    * @param b The vector to calculate the dot product with.
    * @returns The dot product (scalar product) of both vectors.
    */
-  dot(b: Vec2): number {
+  dot(b: this): number {
     return this.v.x * b.v.x + this.v.y * b.v.y;
   }
 
@@ -171,10 +173,10 @@ export class Vec2 // eslint-disable-next-line indent
    * @returns The normalized vector. Returns a new vector, does not alter the
    * existing one.
    */
-  normalize(): Vec2 {
+  normalize(): this {
     // eslint-disable-next-line no-magic-numbers
     const fac = 1.0 / this.length();
-    return new Vec2({ x: this.v.x * fac, y: this.v.y * fac });
+    return new Vec2({ x: this.v.x * fac, y: this.v.y * fac }) as this;
   }
 
   /**
@@ -218,8 +220,8 @@ export class Vec2 // eslint-disable-next-line indent
    * @returns The null vector, [0, 0].
    */
   // eslint-disable-next-line class-methods-use-this
-  null(): Vec2 {
-    return new Vec2({ x: 0, y: 0 });
+  null(): this {
+    return new Vec2({ x: 0, y: 0 }) as this;
   }
 
   // Implementation of Types.Equal. ============================================
@@ -352,12 +354,12 @@ export class Vec2 // eslint-disable-next-line indent
 /**
  * Unit vector in x direction ([1, 0]).
  */
-export const unitX: Vec2 = new Vec2({ x: 1, y: 0 });
+export const unitX = new Vec2({ x: 1, y: 0 });
 
 /**
  * Unit vector in y direction ([0, 1]).
  */
-export const unitY: Vec2 = new Vec2({ x: 0, y: 1 });
+export const unitY = new Vec2({ x: 0, y: 1 });
 
 /**
  * The dimension of a 2 dimensional vector: 2.

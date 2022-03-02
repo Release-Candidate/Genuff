@@ -15,7 +15,7 @@ import {
   Ord,
   Show,
   ToString,
-  VectorField,
+  VectorSpace,
 } from "Generics/Types";
 import { EPSILON } from "Math/Math";
 
@@ -39,7 +39,7 @@ export class Vec4 // eslint-disable-next-line indent
     ToString,
     Equal,
     Ord,
-    VectorField
+    VectorSpace
 {
   /**
    * Constructs a new 4 dimensional vector.
@@ -84,13 +84,13 @@ export class Vec4 // eslint-disable-next-line indent
    * @param f The function to apply to each element of `this`.
    * @returns The mapped vector.
    */
-  map(f: (e: number) => number): Vec4 {
+  map(f: (e: number) => number): this {
     return new Vec4({
       x: f(this.v.x),
       y: f(this.v.y),
       z: f(this.v.z),
       w: f(this.v.w),
-    });
+    }) as this;
   }
 
   /**
@@ -127,13 +127,13 @@ export class Vec4 // eslint-disable-next-line indent
    * @param b The vector to add.
    * @returns The sum of both vectors
    */
-  add(b: Vec4): Vec4 {
+  add(b: this): this {
     return new Vec4({
       x: this.v.x + b.v.x,
       y: this.v.y + b.v.y,
       z: this.v.z + b.v.z,
       w: this.v.w + b.v.w,
-    });
+    }) as this;
   }
 
   /**
@@ -142,13 +142,13 @@ export class Vec4 // eslint-disable-next-line indent
    * @param b The vector to subtract.
    * @returns The sum of both vectors
    */
-  subtract(b: Vec4): Vec4 {
+  subtract(b: this): this {
     return new Vec4({
       x: this.v.x - b.v.x,
       y: this.v.y - b.v.y,
       z: this.v.z - b.v.z,
       w: this.v.w - b.v.w,
-    });
+    }) as this;
   }
 
   /**
@@ -157,13 +157,13 @@ export class Vec4 // eslint-disable-next-line indent
    * @param t The scalar value to multiply the vector with.
    * @returns The vector element wise multiplicated with the given value.
    */
-  multScalar(t: number): Vec4 {
+  multScalar(t: number): this {
     return new Vec4({
       x: this.v.x * t,
       y: this.v.y * t,
       z: this.v.z * t,
       w: this.v.w * t,
-    });
+    }) as this;
   }
 
   /**
@@ -172,13 +172,13 @@ export class Vec4 // eslint-disable-next-line indent
    * @param t The scalar value to add to each component of the vector.
    * @returns The vector with the scalar added to it.
    */
-  addScalar(t: number): Vec4 {
+  addScalar(t: number): this {
     return new Vec4({
       x: this.v.x + t,
       y: this.v.y + t,
       z: this.v.z + t,
       w: this.v.w + t,
-    });
+    }) as this;
   }
 
   /**
@@ -187,7 +187,7 @@ export class Vec4 // eslint-disable-next-line indent
    * @param b The vector to calculate the dot product with.
    * @returns The dot product (scalar product) of both vectors.
    */
-  dot(b: Vec4): number {
+  dot(b: this): number {
     return (
       this.v.x * b.v.x + this.v.y * b.v.y + this.v.z * b.v.z + this.v.w * b.v.w
     );
@@ -201,11 +201,11 @@ export class Vec4 // eslint-disable-next-line indent
    * @param b The vector to calculate the cross product with.
    * @returns The cross product of both vectors.
    */
-  cross(b: Vec4): Vec4 {
+  cross(b: this): this {
     const x = this.v.y * b.v.z - this.v.z * b.v.y;
     const y = this.v.z * b.v.x - this.v.x * b.v.z;
     const z = this.v.x * b.v.y - this.v.y * b.v.x;
-    return new Vec4({ x, y, z, w: 1 });
+    return new Vec4({ x, y, z, w: 0 }) as this;
   }
 
   /**
@@ -215,7 +215,7 @@ export class Vec4 // eslint-disable-next-line indent
    * @returns The normalized vector. Returns a new vector, does not alter the
    * existing one.
    */
-  normalize(): Vec4 {
+  normalize(): this {
     // eslint-disable-next-line no-magic-numbers
     const fac = 1.0 / this.length();
     return new Vec4({
@@ -223,7 +223,7 @@ export class Vec4 // eslint-disable-next-line indent
       y: this.v.y * fac,
       z: this.v.z * fac,
       w: this.v.w * fac,
-    });
+    }) as this;
   }
 
   /**
@@ -277,8 +277,8 @@ export class Vec4 // eslint-disable-next-line indent
    * @returns The null vector, [0, 0, 0, 0].
    */
   // eslint-disable-next-line class-methods-use-this
-  null(): Vec4 {
-    return new Vec4({ x: 0, y: 0, z: 0, w: 0 });
+  null(): this {
+    return new Vec4({ x: 0, y: 0, z: 0, w: 0 }) as this;
   }
 
   // Implementation of Types.Equal. ============================================

@@ -16,7 +16,7 @@ import {
   Ord,
   Show,
   ToString,
-  VectorField,
+  VectorSpace,
 } from "Generics/Types";
 import { EPSILON } from "Math/Math";
 
@@ -42,7 +42,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
     ToString,
     Equal,
     Ord,
-    VectorField,
+    VectorSpace,
     Functor<number, number, Vector<T>>,
     Foldable<{ value: number; name: string }>
 {
@@ -146,12 +146,12 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @param b The vector to add.
    * @returns The sum of both vectors
    */
-  add(b: Vector<T>) {
+  add(b: this): this {
     let c = {} as T;
     for (const prop in this.v) {
       c[prop] = (this.v[prop] + b.v[prop]) as T[Extract<keyof T, string>];
     }
-    return new Vector(c);
+    return new Vector(c) as this;
   }
 
   /**
@@ -160,12 +160,12 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @param b The vector to subtract.
    * @returns The sum of both vectors
    */
-  subtract(b: Vector<T>) {
+  subtract(b: this): this {
     let c = {} as T;
     for (const prop in this.v) {
       c[prop] = (this.v[prop] - b.v[prop]) as T[Extract<keyof T, string>];
     }
-    return new Vector(c);
+    return new Vector(c) as this;
   }
 
   /**
@@ -174,12 +174,12 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @param t The scalar value to multiply the vector with.
    * @returns The vector element wise multiplicated with the given value.
    */
-  multScalar(t: number): Vector<T> {
+  multScalar(t: number): this {
     let c = {} as T;
     for (const prop in this.v) {
       c[prop] = (this.v[prop] * t) as T[Extract<keyof T, string>];
     }
-    return new Vector(c);
+    return new Vector(c) as this;
   }
 
   /**
@@ -188,12 +188,12 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @param t The scalar value to add to each component of the vector.
    * @returns The vector with the scalar added to it.
    */
-  addScalar(t: number): Vector<T> {
+  addScalar(t: number): this {
     let c = {} as T;
     for (const prop in this.v) {
       c[prop] = (this.v[prop] + t) as T[Extract<keyof T, string>];
     }
-    return new Vector(c);
+    return new Vector(c) as this;
   }
 
   /**
@@ -202,7 +202,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @param b The vector to calculate the dot product with.
    * @returns The dot product (scalar product) of both vectors.
    */
-  dot(b: Vector<T>): number {
+  dot(b: this): number {
     let retVal = 0;
     for (const prop in this.v) {
       retVal += this.v[prop] * b.v[prop];
@@ -217,14 +217,14 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @returns The normalized vector. Returns a new vector, does not alter the
    * existing one.
    */
-  normalize(): Vector<T> {
+  normalize(): this {
     let c = {} as T;
     // eslint-disable-next-line no-magic-numbers
     const fac = 1.0 / this.norm();
     for (const prop in this.v) {
       c[prop] = (this.v[prop] * fac) as T[Extract<keyof T, string>];
     }
-    return new Vector(c);
+    return new Vector(c) as this;
   }
 
   /**
@@ -274,13 +274,13 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    *
    * @returns The null vector, [0, 0, ... , 0].
    */
-  null() {
+  null(): this {
     let c = {} as T;
     for (const prop in this.v) {
       // eslint-disable-next-line no-magic-numbers
       c[prop] = 0 as T[Extract<keyof T, string>];
     }
-    return new Vector(c);
+    return new Vector(c) as this;
   }
 
   // Implementation of `Types.Equal`. ============================================
@@ -298,7 +298,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    *                `Math/Math.EPSILON`, which should work for usual usage.
    * @returns `true`, if the two vectors are equal, `false` else.
    */
-  equal(b: Vector<T>, epsilon: number = EPSILON) {
+  equal(b: this, epsilon: number = EPSILON) {
     let retVal = true;
     for (const prop in this.v) {
       retVal = retVal && Math.abs(this.v[prop] - b.v[prop]) < epsilon;
@@ -319,7 +319,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    *                `Math/Math.EPSILON`, which should work for usual usage.
    * @returns `false`, if the two vectors are equal, `true` else.
    */
-  notEqual(b: Vector<T>, epsilon: number = EPSILON) {
+  notEqual(b: this, epsilon: number = EPSILON) {
     for (const prop in this.v) {
       if (Math.abs(this.v[prop] - b.v[prop]) >= epsilon) {
         return true;
@@ -347,7 +347,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @returns `true` if this vector is less than or equal to b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  lessOrEqual(b: Vector<T>, epsilon: number = EPSILON) {
+  lessOrEqual(b: this, epsilon: number = EPSILON) {
     let retVal = true;
     for (const prop in this.v) {
       const eq = Math.abs(this.v[prop] - b.v[prop]) < epsilon;
@@ -373,7 +373,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @returns `true` if this vector is bigger than or equal to b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  biggerOrEqual(b: Vector<T>, epsilon: number = EPSILON) {
+  biggerOrEqual(b: this, epsilon: number = EPSILON) {
     let retVal = true;
     for (const prop in this.v) {
       const eq = Math.abs(this.v[prop] - b.v[prop]) < epsilon;
@@ -394,7 +394,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @returns `true` if this vector is less than b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  lessThan(b: Vector<T>) {
+  lessThan(b: this) {
     let retVal = true;
     for (const prop in this.v) {
       retVal = retVal && this.v[prop] < b.v[prop];
@@ -414,7 +414,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @returns `true` if this vector is bigger than b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  biggerThan(b: Vector<T>) {
+  biggerThan(b: this) {
     let retVal = true;
     for (const prop in this.v) {
       retVal = retVal && this.v[prop] > b.v[prop];
