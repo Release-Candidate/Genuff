@@ -156,7 +156,7 @@ export interface Ord {
 /**
  * Constraint for a vector field with norm and inner product.
  */
-export interface VectorField extends Equal {
+export interface VectorField extends Equal, ToString, Show {
   add(b: VectorField): VectorField;
   subtract(b: VectorField): VectorField;
   multScalar(t: number): VectorField;

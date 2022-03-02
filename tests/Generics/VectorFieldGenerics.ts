@@ -26,11 +26,45 @@ export function vectorTests<S, T extends VectorField>(
 ) {
   describe(`Testing VectorField constraint for ${typeName}`, () => {
     describe(`${typeName}: Testing add`, () => {
-      it(`Adding ${typeName}s to nullvector`, () => {
+      it(`${typeName}: nullvector is neutral element`, () => {
         fc.assert(
           fc.property(arbType, (a) => {
             const v = constructor(a);
             assert.isTrue(v.add(v.null()).equal(v));
+            // eslint-disable-next-line newline-per-chained-call
+            assert.isTrue(v.null().add(v).equal(v));
+          }),
+          { verbose: true }
+        );
+      });
+      it(`${typeName}: addition is commutative`, () => {
+        fc.assert(
+          fc.property(arbType, arbType, (a, b) => {
+            const v = constructor(a);
+            const w = constructor(b);
+            assert.isTrue(v.add(w).equal(w.add(v)));
+          }),
+          { verbose: true }
+        );
+      });
+      it(`${typeName}: addition is distributive`, () => {
+        fc.assert(
+          fc.property(arbType, arbType, arbType, (a, b, c) => {
+            const v = constructor(a);
+            const w = constructor(b);
+            const u = constructor(c);
+            const temp1 = v.add(w);
+            const temp2 = w.add(u);
+            assert.isTrue(temp1.add(u).equal(v.add(temp2)));
+          }),
+          { verbose: true }
+        );
+      });
+      it(`${typeName}: addition of inverse element is nullvector`, () => {
+        fc.assert(
+          fc.property(arbType, (a) => {
+            const v = constructor(a);
+            assert.isTrue(v.subtract(v).equal(v.null()));
           }),
           { verbose: true }
         );

@@ -448,7 +448,7 @@ export function ordTests<S, T extends Ord>(
             fc.property(
               arbType,
               fc.double({ min: 0.5 }),
-              fc.double({ min: 2 }),
+              fc.double({ min: 2.0, max: 1000 }),
               (a, b, c) => {
                 assert.isTrue(constructor(a).lessOrEqual(addFunc(a, b)));
                 assert.isTrue(addFunc(a, b).lessOrEqual(addFunc(a, c * b)));
@@ -488,7 +488,7 @@ export function ordTests<S, T extends Ord>(
             fc.property(
               arbType,
               fc.double({ min: 0.5 }),
-              fc.double({ min: 2 }),
+              fc.double({ min: 2.0, max: 1000 }),
               (a, b, c) => {
                 assert.isTrue(constructor(a).biggerOrEqual(addFunc(a, -b)));
                 assert.isTrue(addFunc(a, -b).biggerOrEqual(addFunc(a, -c * b)));
@@ -526,7 +526,7 @@ export function ordTests<S, T extends Ord>(
             fc.property(
               arbType,
               fc.double({ min: 0.5 }),
-              fc.double({ min: 2 }),
+              fc.double({ min: 2.0, max: 1000 }),
               (a, b, c) => {
                 assert.isTrue(constructor(a).lessThan(addFunc(a, b)));
                 assert.isTrue(addFunc(a, b).lessThan(addFunc(a, c * b)));
@@ -564,7 +564,7 @@ export function ordTests<S, T extends Ord>(
             fc.property(
               arbType,
               fc.double({ min: 0.5 }),
-              fc.double({ min: 2 }),
+              fc.double({ min: 2.0, max: 1000 }),
               (a, b, c) => {
                 assert.isTrue(constructor(a).biggerThan(addFunc(a, -b)));
                 assert.isTrue(addFunc(a, -b).biggerThan(addFunc(a, -c * b)));
