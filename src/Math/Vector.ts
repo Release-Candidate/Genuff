@@ -8,12 +8,23 @@
 // ==============================================================================
 
 import {
+  dot,
+  eq,
   Equal,
   Foldable,
   Functor,
+  ge,
+  gt,
+  le,
+  lt,
+  minus,
+  multScalar,
+  neq,
   NotEmpty,
   OnlyNumbers,
   Ord,
+  plus,
+  plusScalar,
   Show,
   ToString,
   VectorSpace,
@@ -26,6 +37,8 @@ export type VecN = OnlyNumbers;
 
 /**
  * The class of a general n-dimensional vector.
+ *
+ * Never changes the value of `this`, always returns a new object.
  *
  * Implements the constraints
  *  * Show
@@ -42,9 +55,9 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
     ToString,
     Equal,
     Ord,
-    VectorSpace,
+    VectorSpace<number>,
     Functor<number, number, Vector<T>>,
-    Foldable<{ value: number; name: string }>
+    Foldable<number, { value: number; name: string }>
 {
   /**
    * Constructor.
@@ -53,7 +66,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    *
    * @param v The vector-like object to construct the Vector from.
    */
-  constructor(private v: T) {}
+  constructor(private readonly v: T) {}
 
   /**
    * Return a string representation of the vector.
@@ -146,7 +159,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @param b The vector to add.
    * @returns The sum of both vectors
    */
-  add(b: this): this {
+  [plus](b: this): this {
     let c = {} as T;
     for (const prop in this.v) {
       c[prop] = (this.v[prop] + b.v[prop]) as T[Extract<keyof T, string>];
@@ -160,7 +173,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @param b The vector to subtract.
    * @returns The sum of both vectors
    */
-  subtract(b: this): this {
+  [minus](b: this): this {
     let c = {} as T;
     for (const prop in this.v) {
       c[prop] = (this.v[prop] - b.v[prop]) as T[Extract<keyof T, string>];
@@ -174,7 +187,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @param t The scalar value to multiply the vector with.
    * @returns The vector element wise multiplicated with the given value.
    */
-  multScalar(t: number): this {
+  [multScalar](t: number): this {
     let c = {} as T;
     for (const prop in this.v) {
       c[prop] = (this.v[prop] * t) as T[Extract<keyof T, string>];
@@ -188,7 +201,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @param t The scalar value to add to each component of the vector.
    * @returns The vector with the scalar added to it.
    */
-  addScalar(t: number): this {
+  [plusScalar](t: number): this {
     let c = {} as T;
     for (const prop in this.v) {
       c[prop] = (this.v[prop] + t) as T[Extract<keyof T, string>];
@@ -202,7 +215,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @param b The vector to calculate the dot product with.
    * @returns The dot product (scalar product) of both vectors.
    */
-  dot(b: this): number {
+  [dot](b: this): number {
     let retVal = 0;
     for (const prop in this.v) {
       retVal += this.v[prop] * b.v[prop];
@@ -298,7 +311,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    *                `Math/Math.EPSILON`, which should work for usual usage.
    * @returns `true`, if the two vectors are equal, `false` else.
    */
-  equal(b: this, epsilon: number = EPSILON) {
+  [eq](b: this, epsilon: number = EPSILON) {
     let retVal = true;
     for (const prop in this.v) {
       retVal = retVal && Math.abs(this.v[prop] - b.v[prop]) < epsilon;
@@ -319,7 +332,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    *                `Math/Math.EPSILON`, which should work for usual usage.
    * @returns `false`, if the two vectors are equal, `true` else.
    */
-  notEqual(b: this, epsilon: number = EPSILON) {
+  [neq](b: this, epsilon: number = EPSILON) {
     for (const prop in this.v) {
       if (Math.abs(this.v[prop] - b.v[prop]) >= epsilon) {
         return true;
@@ -335,8 +348,8 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    *
    * Waring: this is just a partial order in the vector field, it is not
    * possible to compare every two vectors. For example there are many vectors
-   * v and w for which `v.lessOrEqual(w) === false` and
-   * `w.lessOrEqual(v) === false` holds.
+   * v and w for which `v[le](w) === false` and
+   * `w[le](v) === false` holds.
    *
    * Do not use `Number.EPSILON` from JS, which is the smallest difference
    * between to consecutive numbers and does not work for comparisons.
@@ -347,11 +360,11 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @returns `true` if this vector is less than or equal to b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  lessOrEqual(b: this, epsilon: number = EPSILON) {
+  [le](b: this, epsilon: number = EPSILON) {
     let retVal = true;
     for (const prop in this.v) {
-      const eq = Math.abs(this.v[prop] - b.v[prop]) < epsilon;
-      retVal = retVal && (this.v[prop] < b.v[prop] || eq);
+      const eql = Math.abs(this.v[prop] - b.v[prop]) < epsilon;
+      retVal = retVal && (this.v[prop] < b.v[prop] || eql);
     }
     return retVal;
   }
@@ -361,8 +374,8 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    *
    * Waring: this is just a partial order in the vector field, it is not
    * possible to compare every two vectors. For example there are many vectors
-   * v and w for which `v.biggerOrEqual(w) === false` and
-   * `w.biggerOrEqual(v) === false` holds.
+   * v and w for which `v[ge](w) === false` and
+   * `w[ge](v) === false` holds.
    *
    * Do not use `Number.EPSILON` from JS, which is the smallest difference
    * between to consecutive numbers and does not work for comparisons.
@@ -373,11 +386,11 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @returns `true` if this vector is bigger than or equal to b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  biggerOrEqual(b: this, epsilon: number = EPSILON) {
+  [ge](b: this, epsilon: number = EPSILON) {
     let retVal = true;
     for (const prop in this.v) {
-      const eq = Math.abs(this.v[prop] - b.v[prop]) < epsilon;
-      retVal = retVal && (this.v[prop] > b.v[prop] || eq);
+      const eql = Math.abs(this.v[prop] - b.v[prop]) < epsilon;
+      retVal = retVal && (this.v[prop] > b.v[prop] || eql);
     }
     return retVal;
   }
@@ -387,14 +400,14 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    *
    * Waring: this is just a partial order in the vector field, it is not
    * possible to compare every two vectors. For example there are many vectors
-   * v and w for which `v.lessThan(w) === false` and
-   * `w.lessThan(v) === false` holds.
+   * v and w for which `v[lt](w) === false` and
+   * `w[lt](v) === false` holds.
    *
    * @param b The vector to compare against.
    * @returns `true` if this vector is less than b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  lessThan(b: this) {
+  [lt](b: this) {
     let retVal = true;
     for (const prop in this.v) {
       retVal = retVal && this.v[prop] < b.v[prop];
@@ -407,14 +420,14 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    *
    * Waring: this is just a partial order in the vector field, it is not
    * possible to compare every two vectors. For example there are many vectors
-   * v and w for which `v.biggerThan(w) === false` and
-   * `w.biggerThan(v) === false` holds.
+   * v and w for which `v[gt](w) === false` and
+   * `w[gt](v) === false` holds.
    *
    * @param b The vector to compare against.
    * @returns `true` if this vector is bigger than b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  biggerThan(b: this) {
+  [gt](b: this) {
     let retVal = true;
     for (const prop in this.v) {
       retVal = retVal && this.v[prop] > b.v[prop];

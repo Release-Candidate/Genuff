@@ -8,7 +8,30 @@
 // ==============================================================================
 /* eslint-disable no-extend-native */
 
-import { Equal, Ord, VectorSpace } from "Generics/Types";
+import Decimal from "decimal.js";
+import {
+  abs,
+  div,
+  dot,
+  eq,
+  Equal,
+  Field,
+  ge,
+  gt,
+  le,
+  lt,
+  minus,
+  mult,
+  multScalar,
+  neq,
+  Ord,
+  plus,
+  plusScalar,
+  Show,
+  sqrt,
+  ToString,
+  VectorSpace,
+} from "Generics/Types";
 
 /**
  * Epsilon to use for float comparisons.
@@ -25,85 +48,89 @@ export const EPSILON = 1e-10;
  * Extend JS native `number` with interfaces `VectorField`, `Equal` and `Ord`.
  */
 declare global {
-  interface Number extends Equal, Ord, VectorSpace {}
+  interface Number
+    extends Equal,
+      Ord,
+      VectorSpace<number>,
+      ToString,
+      Show,
+      Field {}
 }
 
-/**
- * Compare two numbers using a small interval of 'equality'.
- */
-Number.prototype.equal = function (b: number, epsilon = EPSILON) {
+Number.prototype.fromNumber = function (a) {
+  return a;
+};
+
+Number.prototype[eq] = function (b: number, epsilon = EPSILON) {
   // eslint-disable-next-line no-extra-parens
   return Math.abs((this as number) - b) < epsilon;
 };
 
-/**
- * Compare two numbers using a small interval of 'equality'.
- */
-Number.prototype.notEqual = function (b: number, epsilon = EPSILON) {
+Number.prototype[neq] = function (b: number, epsilon = EPSILON) {
   // eslint-disable-next-line no-extra-parens
   return Math.abs((this as number) - b) >= epsilon;
 };
 
-/**
- * Check, if two numbers are 'almost' the same or the first is smaller than the
- * second.
- */
-Number.prototype.lessOrEqual = function (b: number, epsilon = EPSILON) {
+Number.prototype[le] = function (b: number, epsilon = EPSILON) {
   // eslint-disable-next-line no-extra-parens
   return (this as number) < b || Math.abs((this as number) - b) < epsilon;
 };
 
-/**
- * Check, if two numbers are 'almost' the same or the first is bigger than the
- * second.
- */
-Number.prototype.biggerOrEqual = function (b: number, epsilon = EPSILON) {
+Number.prototype[ge] = function (b: number, epsilon = EPSILON) {
   // eslint-disable-next-line no-extra-parens
   return (this as number) > b || Math.abs((this as number) - b) < epsilon;
 };
 
-/**
- * Check, if the first number is smaller than the second.
- */
-Number.prototype.lessThan = function (b: number) {
+Number.prototype[lt] = function (b: number) {
   // eslint-disable-next-line no-extra-parens
   return (this as number) < b;
 };
 
-/**
- * Check, if the first number is bigger than the second.
- */
-Number.prototype.biggerThan = function (b: number) {
+Number.prototype[gt] = function (b: number) {
   // eslint-disable-next-line no-extra-parens
   return (this as number) > b;
 };
 
-/**
- * The ordering is not a partial but a total one.
- */
 Number.prototype.isPartial = false;
 
-Number.prototype.add = function (b: number) {
+Number.prototype[plus] = function (b: number) {
   // eslint-disable-next-line no-extra-parens
   return (this as number) + b;
 };
 
-Number.prototype.subtract = function (b: number) {
+Number.prototype[minus] = function (b: number) {
   // eslint-disable-next-line no-extra-parens
   return (this as number) - b;
 };
 
-Number.prototype.addScalar = function (t: number) {
+Number.prototype[mult] = function (b: number) {
+  // eslint-disable-next-line no-extra-parens
+  return (this as number) * b;
+};
+
+Number.prototype[div] = function (b: number) {
+  // eslint-disable-next-line no-extra-parens
+  return (this as number) / b;
+};
+
+Number.prototype[sqrt] = function () {
+  return Math.sqrt(this as number);
+};
+Number.prototype[abs] = function () {
+  return Math.abs(this as number);
+};
+
+Number.prototype[plusScalar] = function (t: number) {
   // eslint-disable-next-line no-extra-parens
   return (this as number) + t;
 };
 
-Number.prototype.multScalar = function (t: number) {
+Number.prototype[multScalar] = function (t: number) {
   // eslint-disable-next-line no-extra-parens
   return (this as number) * t;
 };
 
-Number.prototype.dot = function (b: number) {
+Number.prototype[dot] = function (b: number) {
   // eslint-disable-next-line no-extra-parens
   return (this as number) * b;
 };
@@ -129,4 +156,66 @@ Number.prototype.dimension = function () {
 Number.prototype.null = function () {
   // eslint-disable-next-line no-magic-numbers
   return 0;
+};
+
+Number.prototype.one = function () {
+  // eslint-disable-next-line no-magic-numbers
+  return 1;
+};
+
+Number.prototype.show = function () {
+  return this.toString();
+};
+
+// Extend Decimal.JS class with own Constraints ================================
+
+declare module "decimal.js" {
+  // eslint-disable-next-line no-shadow
+  interface Decimal extends Equal, ToString, Show, Field {}
+}
+
+Decimal.prototype.fromNumber = function (a) {
+  return new Decimal(a);
+};
+
+Decimal.prototype[plus] = function (b) {
+  return this.add(b);
+};
+
+Decimal.prototype[minus] = function (b) {
+  return this.minus(b);
+};
+
+Decimal.prototype[div] = function (b) {
+  return this.div(b);
+};
+
+Decimal.prototype[mult] = function (b) {
+  return this.mul(b);
+};
+
+Decimal.prototype[sqrt] = function () {
+  return this.sqrt();
+};
+
+Decimal.prototype[abs] = function () {
+  return this.abs();
+};
+
+Decimal.prototype[lt] = function (b) {
+  return this.lt(b);
+};
+
+Decimal.prototype.one = function () {
+  // eslint-disable-next-line no-magic-numbers
+  return new Decimal(1);
+};
+
+Decimal.prototype.null = function () {
+  // eslint-disable-next-line no-magic-numbers
+  return new Decimal(0);
+};
+
+Decimal.prototype.show = function () {
+  return this.toString();
 };

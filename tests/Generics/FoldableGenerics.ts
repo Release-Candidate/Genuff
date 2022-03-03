@@ -14,7 +14,7 @@ import { assert } from "chai";
 import * as fc from "fast-check";
 import { Equal, Foldable } from "Generics/Types";
 
-export interface FoldableEqual<T> extends Foldable<T>, Equal {}
+export interface FoldableEqual<T> extends Foldable<Number, T>, Equal {}
 
 export function foldableTests<S, E, T extends FoldableEqual<E>>(
   typeName: string,

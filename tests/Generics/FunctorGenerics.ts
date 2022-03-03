@@ -12,11 +12,11 @@
 
 import { assert } from "chai";
 import * as fc from "fast-check";
-import { Equal, Functor, id } from "Generics/Types";
+import { eq, Equal, Functor, id } from "Generics/Types";
 
 export interface FunctorEqual<S, T, FT> extends Functor<S, T, FT>, Equal {}
 
-export function functorTests<T, FT extends FunctorEqual<number, number, FT>>(
+export function functorTests<S, T, FT extends FunctorEqual<S, S, FT>>(
   typeName: string,
   arbType: fc.Arbitrary<T>,
   constructor: (v: T) => FT
@@ -27,7 +27,7 @@ export function functorTests<T, FT extends FunctorEqual<number, number, FT>>(
         fc.assert(
           fc.property(arbType, (a) => {
             const v = constructor(a);
-            assert.isTrue(v.map(id).equal(v));
+            assert.isTrue(v.map(id)[eq](v));
           }),
           { verbose: true }
         );

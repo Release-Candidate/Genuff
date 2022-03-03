@@ -9,12 +9,28 @@
 /* eslint-disable i18next/no-literal-string */
 
 import {
+  abs,
+  div,
+  dot,
+  eq,
   Equal,
+  Field,
   Foldable,
   Functor,
+  ge,
+  gt,
+  le,
+  lt,
+  minus,
+  mult,
+  multScalar,
+  neq,
   Ord,
   OrderedVectorSpace,
+  plus,
+  plusScalar,
   Show,
+  sqrt,
   ToString,
   VectorSpace,
 } from "Generics/Types";
@@ -22,6 +38,8 @@ import { EPSILON } from "Math/Math";
 
 /**
  * A class of a 2 dimensional vector.
+ *
+ * Never changes the value of `this`, always returns a new object.
  *
  * Implements the following constraints:
  * * Functor
@@ -32,23 +50,23 @@ import { EPSILON } from "Math/Math";
  * * Ord
  * * VectorField
  */
-export class Vec2 // eslint-disable-next-line indent
+export class Vec2<T extends Field> // eslint-disable-next-line indent
   implements
-    Functor<number, number, Vec2>,
-    Foldable<{ value: number; name: string }>,
+    Functor<T, T, Vec2<T>>,
+    Foldable<T, { value: T; name: string }>,
     Show,
     ToString,
     Equal,
     Ord,
-    VectorSpace,
-    OrderedVectorSpace
+    VectorSpace<T>,
+    OrderedVectorSpace<T>
 {
   /**
    * Constructs a new 2 dimensional vector.
    *
    * @param v The values of the vector to construct.
    */
-  constructor(private v: { x: number; y: number }) {}
+  constructor(private readonly v: { x: T; y: T }) {}
 
   /**
    * Return a string representation of the vector.
@@ -60,7 +78,7 @@ export class Vec2 // eslint-disable-next-line indent
    * @returns A string representation of the vector.
    */
   toString(): string {
-    return `{ x: ${this.v.x}, y: ${this.v.y} }`;
+    return `{ x: ${this.v.x.toString()}, y: ${this.v.y.toString()} }`;
   }
 
   /**
@@ -74,7 +92,7 @@ export class Vec2 // eslint-disable-next-line indent
    * output.
    */
   show(): string {
-    return `[ x: ${this.v.x}, y: ${this.v.y} ]`;
+    return `[ x: ${this.v.x.toString()}, y: ${this.v.y.toString()} ]`;
   }
 
   /**
@@ -86,8 +104,8 @@ export class Vec2 // eslint-disable-next-line indent
    * @param f The function to apply to each element of `this`.
    * @returns The mapped vector.
    */
-  map(f: (e: number) => number): this {
-    return new Vec2({ x: f(this.v.x), y: f(this.v.y) }) as this;
+  map(f: (e: T) => T): this {
+    return new Vec2<T>({ x: f(this.v.x), y: f(this.v.y) }) as this;
   }
 
   /**
@@ -98,7 +116,7 @@ export class Vec2 // eslint-disable-next-line indent
    * @returns The vector reduced to a single value.
    */
   reduce<S>(
-    f: (acc: S, e: { value: number; name: string }) => S,
+    f: (acc: S, e: { value: T; name: string }) => S,
     initialValue: S
   ): S {
     const acc = f(initialValue, { value: this.v.x, name: "x" });
@@ -110,7 +128,7 @@ export class Vec2 // eslint-disable-next-line indent
    *
    * @returns The vector converted to an array.
    */
-  toArray(): number[] {
+  toArray(): T[] {
     return [this.v.x, this.v.y];
   }
 
@@ -122,8 +140,11 @@ export class Vec2 // eslint-disable-next-line indent
    * @param b The vector to add.
    * @returns The sum of both vectors
    */
-  add(b: this): this {
-    return new Vec2({ x: this.v.x + b.v.x, y: this.v.y + b.v.y }) as this;
+  [plus](b: this): this {
+    return new Vec2<T>({
+      x: this.v.x[plus](b.v.x),
+      y: this.v.y[plus](b.v.y),
+    }) as this;
   }
 
   /**
@@ -132,8 +153,11 @@ export class Vec2 // eslint-disable-next-line indent
    * @param b The vector to subtract.
    * @returns The sum of both vectors
    */
-  subtract(b: this): this {
-    return new Vec2({ x: this.v.x - b.v.x, y: this.v.y - b.v.y }) as this;
+  [minus](b: this): this {
+    return new Vec2<T>({
+      x: this.v.x[minus](b.v.x),
+      y: this.v.y[minus](b.v.y),
+    }) as this;
   }
 
   /**
@@ -142,8 +166,8 @@ export class Vec2 // eslint-disable-next-line indent
    * @param t The scalar value to multiply the vector with.
    * @returns The vector element wise multiplicated with the given value.
    */
-  multScalar(t: number): this {
-    return new Vec2({ x: this.v.x * t, y: this.v.y * t }) as this;
+  [multScalar](t: T): this {
+    return new Vec2<T>({ x: this.v.x[mult](t), y: this.v.y[mult](t) }) as this;
   }
 
   /**
@@ -152,8 +176,11 @@ export class Vec2 // eslint-disable-next-line indent
    * @param t The scalar value to add to each component of the vector.
    * @returns The vector with the scalar added to it.
    */
-  addScalar(t: number): this {
-    return new Vec2({ x: this.v.x + t, y: this.v.y + t }) as this;
+  [plusScalar](t: T): this {
+    return new Vec2<T>({
+      x: this.v.x[plus](t),
+      y: this.v.y[plus](t),
+    }) as this;
   }
 
   /**
@@ -162,8 +189,9 @@ export class Vec2 // eslint-disable-next-line indent
    * @param b The vector to calculate the dot product with.
    * @returns The dot product (scalar product) of both vectors.
    */
-  dot(b: this): number {
-    return this.v.x * b.v.x + this.v.y * b.v.y;
+  [dot](b: this): T {
+    // eslint-disable-next-line newline-per-chained-call
+    return this.v.x[mult](b.v.x)[plus](this.v.y[mult](b.v.y));
   }
 
   /**
@@ -174,9 +202,9 @@ export class Vec2 // eslint-disable-next-line indent
    * existing one.
    */
   normalize(): this {
-    // eslint-disable-next-line no-magic-numbers
-    const fac = 1.0 / this.length();
-    return new Vec2({ x: this.v.x * fac, y: this.v.y * fac }) as this;
+    // eslint-disable-next-line newline-per-chained-call
+    const fac = this.v.x.one()[div](this.length());
+    return this[multScalar](fac);
   }
 
   /**
@@ -186,8 +214,9 @@ export class Vec2 // eslint-disable-next-line indent
    *
    * @returns The Euclidean norm of the vector.
    */
-  norm(): number {
-    return Math.sqrt(this.v.x * this.v.x + this.v.y * this.v.y);
+  norm(): T {
+    // eslint-disable-next-line newline-per-chained-call
+    return this.v.x[mult](this.v.x)[plus](this.v.y[mult](this.v.y))[sqrt]();
   }
 
   /**
@@ -199,8 +228,9 @@ export class Vec2 // eslint-disable-next-line indent
    *
    * @returns The length of the vector.
    */
-  length(): number {
-    return Math.sqrt(this.v.x * this.v.x + this.v.y * this.v.y);
+  length(): T {
+    // eslint-disable-next-line newline-per-chained-call
+    return this.v.x[mult](this.v.x)[plus](this.v.y[mult](this.v.y))[sqrt]();
   }
 
   /**
@@ -221,7 +251,8 @@ export class Vec2 // eslint-disable-next-line indent
    */
   // eslint-disable-next-line class-methods-use-this
   null(): this {
-    return new Vec2({ x: 0, y: 0 }) as this;
+    const nullVal = this.v.x.null();
+    return new Vec2<T>({ x: nullVal, y: nullVal }) as this;
   }
 
   // Implementation of Types.Equal. ============================================
@@ -239,9 +270,12 @@ export class Vec2 // eslint-disable-next-line indent
    *                `Math/Math.EPSILON`, which should work for usual usage.
    * @returns `true`, if the two vectors are equal, `false` else.
    */
-  equal(b: this, epsilon: number = EPSILON): boolean {
-    const prop1 = Math.abs(this.v.x - b.v.x) < epsilon;
-    const prop2 = Math.abs(this.v.y - b.v.y) < epsilon;
+  [eq](b: this, epsilon: number = EPSILON): boolean {
+    const eps = this.v.x.fromNumber(epsilon);
+    // eslint-disable-next-line newline-per-chained-call
+    const prop1 = this.v.x[minus](b.v.x)[abs]()[lt](eps);
+    // eslint-disable-next-line newline-per-chained-call
+    const prop2 = this.v.y[minus](b.v.y)[abs]()[lt](eps);
     return prop1 && prop2;
   }
 
@@ -258,9 +292,12 @@ export class Vec2 // eslint-disable-next-line indent
    *                `Math/Math.EPSILON`, which should work for usual usage.
    * @returns `false`, if the two vectors are equal, `true` else.
    */
-  notEqual(b: this, epsilon: number = EPSILON): boolean {
-    const prop1 = Math.abs(this.v.x - b.v.x) < epsilon;
-    const prop2 = Math.abs(this.v.y - b.v.y) < epsilon;
+  [neq](b: this, epsilon: number = EPSILON): boolean {
+    const eps = this.v.x.fromNumber(epsilon);
+    // eslint-disable-next-line newline-per-chained-call
+    const prop1 = this.v.x[minus](b.v.x)[abs]()[lt](eps);
+    // eslint-disable-next-line newline-per-chained-call
+    const prop2 = this.v.y[minus](b.v.y)[abs]()[lt](eps);
     return !prop1 || !prop2;
   }
 
@@ -283,9 +320,10 @@ export class Vec2 // eslint-disable-next-line indent
    * @returns `true` if this vector is less than or equal to b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  lessOrEqual(b: this, epsilon: number = EPSILON): boolean {
-    const prop1 = this.v.x < b.v.x || Math.abs(this.v.x - b.v.x) < epsilon;
-    const prop2 = this.v.y < b.v.y || Math.abs(this.v.y - b.v.y) < epsilon;
+  [le](b: this, epsilon: number = EPSILON): boolean {
+    const eps = this.v.x.fromNumber(epsilon);
+    const prop1 = this.v.x[lt](b.v.x) || this.v.x[minus](b.v.x)[lt](eps);
+    const prop2 = this.v.y[lt](b.v.y) || this.v.y[minus](b.v.y)[lt](eps);
     return prop1 && prop2;
   }
 
@@ -306,9 +344,13 @@ export class Vec2 // eslint-disable-next-line indent
    * @returns `true` if this vector is bigger than or equal to b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  biggerOrEqual(b: this, epsilon: number = EPSILON): boolean {
-    const prop1 = this.v.x > b.v.x || Math.abs(this.v.x - b.v.x) < epsilon;
-    const prop2 = this.v.y > b.v.y || Math.abs(this.v.y - b.v.y) < epsilon;
+  [ge](b: this, epsilon: number = EPSILON): boolean {
+    const eps = this.v.x.fromNumber(epsilon);
+    // eslint-disable-next-line newline-per-chained-call
+    const prop1 = this.v.x[gt](b.v.x) || this.v.x[minus](b.v.x)[abs]()[lt](eps);
+    // eslint-disable-next-line newline-per-chained-call
+    const prop2 = this.v.y[gt](b.v.y) || this.v.y[minus](b.v.y)[abs]()[lt](eps);
+    // eslint-disable-next-line newline-per-chained-call
     return prop1 && prop2;
   }
 
@@ -317,15 +359,15 @@ export class Vec2 // eslint-disable-next-line indent
    *
    * Waring: this is just a partial order in the vector field, it is not
    * possible to compare every two vectors. For example there are many vectors
-   * v and w for which `v.lessThan(w) === false` and
-   * `w.lessThan(v) === false` holds.
+   * v and w for which `v[lt](w) === false` and
+   * `w[lt](v) === false` holds.
    *
    * @param b The vector to compare against.
    * @returns `true` if this vector is less than b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  lessThan(b: this): boolean {
-    return this.v.x < b.v.x && this.v.y < b.v.y;
+  [lt](b: this): boolean {
+    return this.v.x[lt](b.v.x) && this.v.y[lt](b.v.y);
   }
 
   /**
@@ -333,15 +375,15 @@ export class Vec2 // eslint-disable-next-line indent
    *
    * Waring: this is just a partial order in the vector field, it is not
    * possible to compare every two vectors. For example there are many vectors
-   * v and w for which `v.biggerThan(w) === false` and
-   * `w.biggerThan(v) === false` holds.
+   * v and w for which `v[gt](w) === false` and
+   * `w[gt](v) === false` holds.
    *
    * @param b The vector to compare against.
    * @returns `true` if this vector is bigger than b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  biggerThan(b: this): boolean {
-    return this.v.x > b.v.x && this.v.y > b.v.y;
+  [gt](b: this): boolean {
+    return this.v.x[gt](b.v.x) && this.v.y[gt](b.v.y);
   }
 
   /**

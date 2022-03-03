@@ -11,7 +11,17 @@
 /* eslint-disable i18next/no-literal-string */
 
 import { assert } from "chai";
+import Decimal from "decimal.js";
 import * as fc from "fast-check";
+import {
+  cross,
+  dot,
+  eq,
+  id,
+  multScalar,
+  plus,
+  plusScalar,
+} from "Generics/Types";
 import { Vec2 } from "Math/Vec2";
 import { Vec3 } from "Math/Vec3";
 import { Vec4 } from "Math/Vec4";
@@ -22,9 +32,9 @@ import { functorTests } from "../../tests/Generics/FunctorGenerics";
 import { ordTests } from "../../tests/Generics/OrdGenerics";
 import { vectorTests } from "../../tests/Generics/VectorFieldGenerics";
 
-type vec2Arb = { x: number; y: number };
+type Vec2Arb = { x: number; y: number };
 const arbVec2 = fc.record({ x: fc.double(), y: fc.double() });
-type vec3Arb = { x: number; y: number; z: number };
+type Vec3Arb = { x: number; y: number; z: number };
 const arbVec3 = fc.record({ x: fc.double(), y: fc.double(), z: fc.double() });
 type vec4Arb = { x: number; y: number; z: number; w: number };
 const arbVec4 = fc.record({
@@ -33,7 +43,7 @@ const arbVec4 = fc.record({
   z: fc.double(),
   w: fc.double(),
 });
-type vec10Arb = {
+type Vec10Arb = {
   x1: number;
   x2: number;
   x3: number;
@@ -60,25 +70,40 @@ const arbVec10 = fc.record({
 
 describe("Testing Math/Vector", () => {
   describe("Testing Vec2", () => {
-    equalityTests<vec2Arb, Vec2>(
+    equalityTests<Vec2Arb, Vec2<Number>>(
       "Vec2",
       arbVec2,
-      (v) => new Vec2(v),
-      (a, eps) => new Vec2(a).addScalar(eps)
+      (v) => new Vec2<Number>(v),
+      (a, eps) => new Vec2<Number>(a)[plusScalar](eps)
     );
-    ordTests<vec2Arb, Vec2>(
+    ordTests<Vec2Arb, Vec2<Number>>(
       "Vec2",
       arbVec2,
-      (v) => new Vec2(v),
-      (a, eps) => new Vec2(a).addScalar(eps)
+      (v) => new Vec2<Number>(v),
+      (a, eps) => new Vec2<Number>(a)[plusScalar](eps)
     );
-    functorTests<vec2Arb, Vec2>("Vec2", arbVec2, (v) => new Vec2(v));
-    foldableTests<vec2Arb, { value: number; name: string }, Vec2>(
+    functorTests<Number, Vec2Arb, Vec2<Number>>(
       "Vec2",
       arbVec2,
-      (v) => new Vec2(v)
+      (v) => new Vec2<Number>(v)
     );
-    vectorTests<vec2Arb, Vec2>("Vec2", arbVec2, (v) => new Vec2(v));
+    foldableTests<Vec2Arb, { value: Number; name: string }, Vec2<Number>>(
+      "Vec2",
+      arbVec2,
+      (v) => new Vec2<Number>(v)
+    );
+    vectorTests<Vec2Arb, Number, Vec2<Number>>(
+      "Vec2",
+      arbVec2,
+      (v) => new Vec2<Number>(v),
+      id
+    );
+    vectorTests<Vec2Arb, Decimal, Vec2<Decimal>>(
+      "Vec2 Decimal",
+      arbVec2,
+      (v) => new Vec2<Decimal>({ x: new Decimal(v.x), y: new Decimal(v.y) }),
+      (n) => new Decimal(n)
+    );
     describe("Vec2: testing dimension", () => {
       it(`Vec2: dimension is 2`, () => {
         const v = new Vec2({ x: 0, y: 0 });
@@ -91,30 +116,39 @@ describe("Testing Math/Vector", () => {
         const v = new Vec2({ x: 1, y: 0 });
         const w = new Vec2({ x: 0, y: 1 });
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(v.dot(w), 0);
+        assert.equal(v[dot](w), 0);
       });
     });
   });
   describe("Testing Vec3", () => {
-    equalityTests<vec3Arb, Vec3>(
+    equalityTests<Vec3Arb, Vec3<Number>>(
       "Vec3",
       arbVec3,
-      (v) => new Vec3(v),
-      (a, eps) => new Vec3(a).addScalar(eps)
+      (v) => new Vec3<Number>(v),
+      (a, eps) => new Vec3<Number>(a)[plusScalar](eps)
     );
-    ordTests<vec3Arb, Vec3>(
+    ordTests<Vec3Arb, Vec3<Number>>(
       "Vec3",
       arbVec3,
-      (v) => new Vec3(v),
-      (a, eps) => new Vec3(a).addScalar(eps)
+      (v) => new Vec3<Number>(v),
+      (a, eps) => new Vec3<Number>(a)[plusScalar](eps)
     );
-    functorTests<vec3Arb, Vec3>("Vec3", arbVec3, (v) => new Vec3(v));
-    foldableTests<vec3Arb, { value: number; name: string }, Vec3>(
+    functorTests<Number, Vec3Arb, Vec3<Number>>(
       "Vec3",
       arbVec3,
-      (v) => new Vec3(v)
+      (v) => new Vec3<Number>(v)
     );
-    vectorTests<vec3Arb, Vec3>("Vec3", arbVec3, (v) => new Vec3(v));
+    foldableTests<Vec3Arb, { value: Number; name: string }, Vec3<Number>>(
+      "Vec3",
+      arbVec3,
+      (v) => new Vec3<Number>(v)
+    );
+    vectorTests<Vec3Arb, Number, Vec3<Number>>(
+      "Vec3",
+      arbVec3,
+      (v) => new Vec3<Number>(v),
+      id
+    );
     describe("Vec3: testing dimension", () => {
       it(`Vec3: dimension is 3`, () => {
         const v = new Vec3({ x: 0, y: 0, z: 0 });
@@ -128,11 +162,11 @@ describe("Testing Math/Vector", () => {
         const w = new Vec3({ x: 0, y: 1, z: 0 });
         const u = new Vec3({ x: 0, y: 0, z: 1 });
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(v.dot(w), 0);
+        assert.equal(v[dot](w), 0);
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(v.dot(u), 0);
+        assert.equal(v[dot](u), 0);
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(u.dot(w), 0);
+        assert.equal(u[dot](w), 0);
       });
     });
     describe("Vec3: testing cross (product)", () => {
@@ -141,17 +175,17 @@ describe("Testing Math/Vector", () => {
         const w = new Vec3({ x: 0, y: 1, z: 0 });
         const u = new Vec3({ x: 0, y: 0, z: 1 });
         // eslint-disable-next-line no-magic-numbers
-        assert.isTrue(v.cross(w).equal(u));
+        assert.isTrue(v[cross](w)[eq](u));
         // eslint-disable-next-line no-magic-numbers
-        assert.isTrue(u.cross(v).equal(w));
+        assert.isTrue(u[cross](v)[eq](w));
         // eslint-disable-next-line no-magic-numbers
-        assert.isTrue(w.cross(u).equal(v));
+        assert.isTrue(w[cross](u)[eq](v));
       });
       it("Vec4: cross product of vector with itself is null vector", () => {
         fc.assert(
           fc.property(arbVec3, (a) => {
             const v = new Vec3(a);
-            assert.isTrue(v.cross(v).equal(v.null()));
+            assert.isTrue(v[cross](v)[eq](v.null()));
           }),
           { verbose: true }
         );
@@ -162,7 +196,7 @@ describe("Testing Math/Vector", () => {
             const v = new Vec3(a);
             const w = new Vec3(b);
             // eslint-disable-next-line no-magic-numbers
-            assert.isTrue(v.cross(w).equal(w.cross(v.multScalar(-1))));
+            assert.isTrue(v[cross](w)[eq](w[cross](v[multScalar](-1))));
           }),
           { verbose: true }
         );
@@ -174,7 +208,7 @@ describe("Testing Math/Vector", () => {
             const w = new Vec3(b);
             assert.isTrue(
               // eslint-disable-next-line newline-per-chained-call
-              v.multScalar(t).cross(w).equal(v.cross(w).multScalar(t))
+              v[multScalar](t)[cross](w)[eq](v[cross](w)[multScalar](t))
             );
           }),
           { verbose: true }
@@ -186,7 +220,9 @@ describe("Testing Math/Vector", () => {
             const v = new Vec3(a);
             const w = new Vec3(b);
             const u = new Vec3(c);
-            assert.isTrue(v.cross(w.add(u)).equal(v.cross(w).add(v.cross(u))));
+            assert.isTrue(
+              v[cross](w[plus](u))[eq](v[cross](w)[plus](v[cross](u)))
+            );
           }),
           { verbose: true }
         );
@@ -197,11 +233,11 @@ describe("Testing Math/Vector", () => {
             const v = new Vec3(a);
             const w = new Vec3(b);
             const u = new Vec3(c);
-            const p1 = v.cross(w.cross(u));
-            const p2 = w.cross(u.cross(v));
-            const p3 = u.cross(v.cross(w));
+            const p1 = v[cross](w[cross](u));
+            const p2 = w[cross](u[cross](v));
+            const p3 = u[cross](v[cross](w));
             // eslint-disable-next-line newline-per-chained-call
-            assert.isTrue(p1.add(p2).add(p3).equal(v.null()));
+            assert.isTrue(p1[plus](p2)[plus](p3)[eq](v.null()));
           }),
           { verbose: true }
         );
@@ -209,25 +245,34 @@ describe("Testing Math/Vector", () => {
     });
   });
   describe("Testing Vec4", () => {
-    equalityTests<vec4Arb, Vec4>(
+    equalityTests<vec4Arb, Vec4<Number>>(
       "Vec4",
       arbVec4,
-      (v) => new Vec4(v),
-      (a, eps) => new Vec4(a).addScalar(eps)
+      (v) => new Vec4<Number>(v),
+      (a, eps) => new Vec4<Number>(a)[plusScalar](eps)
     );
-    ordTests<vec4Arb, Vec4>(
+    ordTests<vec4Arb, Vec4<Number>>(
       "Vec4",
       arbVec4,
-      (v) => new Vec4(v),
-      (a, eps) => new Vec4(a).addScalar(eps)
+      (v) => new Vec4<Number>(v),
+      (a, eps) => new Vec4<Number>(a)[plusScalar](eps)
     );
-    functorTests<vec4Arb, Vec4>("Vec4", arbVec4, (v) => new Vec4(v));
-    foldableTests<vec4Arb, { value: number; name: string }, Vec4>(
+    functorTests<Number, vec4Arb, Vec4<Number>>(
       "Vec4",
       arbVec4,
-      (v) => new Vec4(v)
+      (v) => new Vec4<Number>(v)
     );
-    vectorTests<vec4Arb, Vec4>("Vec4", arbVec4, (v) => new Vec4(v));
+    foldableTests<vec4Arb, { value: Number; name: string }, Vec4<Number>>(
+      "Vec4",
+      arbVec4,
+      (v) => new Vec4<Number>(v)
+    );
+    vectorTests<vec4Arb, Number, Vec4<Number>>(
+      "Vec4",
+      arbVec4,
+      (v) => new Vec4<Number>(v),
+      id
+    );
     describe("Vec4: testing dimension", () => {
       it(`Vec4: dimension is 4`, () => {
         const v = new Vec4({ x: 0, y: 0, z: 0, w: 0 });
@@ -242,17 +287,17 @@ describe("Testing Math/Vector", () => {
         const u = new Vec4({ x: 0, y: 0, z: 1, w: 0 });
         const x = new Vec4({ x: 0, y: 0, z: 0, w: 1 });
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(v.dot(w), 0);
+        assert.equal(v[dot](w), 0);
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(v.dot(u), 0);
+        assert.equal(v[dot](u), 0);
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(u.dot(w), 0);
+        assert.equal(u[dot](w), 0);
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(v.dot(x), 0);
+        assert.equal(v[dot](x), 0);
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(w.dot(x), 0);
+        assert.equal(w[dot](x), 0);
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(u.dot(x), 0);
+        assert.equal(u[dot](x), 0);
       });
     });
     describe("Vec4: testing cross (product)", () => {
@@ -261,17 +306,17 @@ describe("Testing Math/Vector", () => {
         const w = new Vec4({ x: 0, y: 1, z: 0, w: 0 });
         const u = new Vec4({ x: 0, y: 0, z: 1, w: 0 });
         // eslint-disable-next-line no-magic-numbers
-        assert.isTrue(v.cross(w).equal(u));
+        assert.isTrue(v[cross](w)[eq](u));
         // eslint-disable-next-line no-magic-numbers
-        assert.isTrue(u.cross(v).equal(w));
+        assert.isTrue(u[cross](v)[eq](w));
         // eslint-disable-next-line no-magic-numbers
-        assert.isTrue(w.cross(u).equal(v));
+        assert.isTrue(w[cross](u)[eq](v));
       });
       it("Vec4: cross product of vector with itself is null vector", () => {
         fc.assert(
           fc.property(arbVec4, (a) => {
             const v = new Vec4(a);
-            assert.isTrue(v.cross(v).equal(v.null()));
+            assert.isTrue(v[cross](v)[eq](v.null()));
           }),
           { verbose: true }
         );
@@ -282,7 +327,7 @@ describe("Testing Math/Vector", () => {
             const v = new Vec4(a);
             const w = new Vec4(b);
             // eslint-disable-next-line no-magic-numbers
-            assert.isTrue(v.cross(w).equal(w.cross(v.multScalar(-1))));
+            assert.isTrue(v[cross](w)[eq](w[cross](v[multScalar](-1))));
           }),
           { verbose: true }
         );
@@ -294,7 +339,7 @@ describe("Testing Math/Vector", () => {
             const w = new Vec4(b);
             assert.isTrue(
               // eslint-disable-next-line newline-per-chained-call
-              v.multScalar(t).cross(w).equal(v.cross(w).multScalar(t))
+              v[multScalar](t)[cross](w)[eq](v[cross](w)[multScalar](t))
             );
           }),
           { verbose: true }
@@ -306,7 +351,9 @@ describe("Testing Math/Vector", () => {
             const v = new Vec4(a);
             const w = new Vec4(b);
             const u = new Vec4(c);
-            assert.isTrue(v.cross(w.add(u)).equal(v.cross(w).add(v.cross(u))));
+            assert.isTrue(
+              v[cross](w[plus](u))[eq](v[cross](w)[plus](v[cross](u)))
+            );
           }),
           { verbose: true }
         );
@@ -317,11 +364,11 @@ describe("Testing Math/Vector", () => {
             const v = new Vec4(a);
             const w = new Vec4(b);
             const u = new Vec4(c);
-            const p1 = v.cross(w.cross(u));
-            const p2 = w.cross(u.cross(v));
-            const p3 = u.cross(v.cross(w));
+            const p1 = v[cross](w[cross](u));
+            const p2 = w[cross](u[cross](v));
+            const p3 = u[cross](v[cross](w));
             // eslint-disable-next-line newline-per-chained-call
-            assert.isTrue(p1.add(p2).add(p3).equal(v.null()));
+            assert.isTrue(p1[plus](p2)[plus](p3)[eq](v.null()));
           }),
           { verbose: true }
         );
@@ -329,32 +376,33 @@ describe("Testing Math/Vector", () => {
     });
   });
   describe("Testing Vector, with 10 components", () => {
-    equalityTests<vec10Arb, Vector<vec10Arb>>(
+    equalityTests<Vec10Arb, Vector<Vec10Arb>>(
       "Vector, 10",
       arbVec10,
       (v) => new Vector(v),
-      (a, eps) => new Vector(a).addScalar(eps)
+      (a, eps) => new Vector(a)[plusScalar](eps)
     );
-    ordTests<vec10Arb, Vector<vec10Arb>>(
+    ordTests<Vec10Arb, Vector<Vec10Arb>>(
       "Vector, 10",
       arbVec10,
       (v) => new Vector(v),
-      (a, eps) => new Vector(a).addScalar(eps)
+      (a, eps) => new Vector(a)[plusScalar](eps)
     );
-    functorTests<vec10Arb, Vector<vec10Arb>>(
+    functorTests<Number, Vec10Arb, Vector<Vec10Arb>>(
       "Vector, 10",
       arbVec10,
       (v) => new Vector(v)
     );
-    foldableTests<vec10Arb, { value: number; name: string }, Vector<vec10Arb>>(
+    foldableTests<Vec10Arb, { value: number; name: string }, Vector<Vec10Arb>>(
       "Vector, 10",
       arbVec10,
       (v) => new Vector(v)
     );
-    vectorTests<vec10Arb, Vector<vec10Arb>>(
+    vectorTests<Vec10Arb, Number, Vector<Vec10Arb>>(
       "Vector, 10",
       arbVec10,
-      (v) => new Vector(v)
+      (v) => new Vector(v),
+      id
     );
     describe("Vec10: testing dimension", () => {
       it(`Vec10: dimension is 10`, () => {
@@ -425,17 +473,17 @@ describe("Testing Math/Vector", () => {
           x10: 1,
         });
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(v.dot(w), 0);
+        assert.equal(v[dot](w), 0);
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(v.dot(u), 0);
+        assert.equal(v[dot](u), 0);
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(u.dot(w), 0);
+        assert.equal(u[dot](w), 0);
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(v.dot(x), 0);
+        assert.equal(v[dot](x), 0);
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(w.dot(x), 0);
+        assert.equal(w[dot](x), 0);
         // eslint-disable-next-line no-magic-numbers
-        assert.equal(u.dot(x), 0);
+        assert.equal(u[dot](x), 0);
       });
     });
   });
