@@ -419,6 +419,12 @@ export interface Field extends Equal, ToString, Show, Ord {
    */
   fromNumber(a: number): this;
   /**
+   * Convert `this` to a number.
+   *
+   * @returns `this` converted to a number.
+   */
+  toNumber(): number;
+  /**
    * Addition.
    *
    * @param b The element to add.

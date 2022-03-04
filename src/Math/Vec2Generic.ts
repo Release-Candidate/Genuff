@@ -35,6 +35,8 @@ import {
 } from "Generics/Types";
 import { EPSILON } from "Math/Math";
 
+export type Vec2RecordGen<T extends Field> = { x: T; y: T };
+
 /**
  * A class of a 2 dimensional vector.
  *
@@ -65,7 +67,7 @@ export class Vec2Generic<T extends Field> // eslint-disable-next-line indent
    *
    * @param v The values of the vector to construct.
    */
-  constructor(private readonly v: { x: T; y: T }) {}
+  constructor(private readonly v: Vec2RecordGen<T>) {}
 
   /**
    * Return a string representation of the vector.

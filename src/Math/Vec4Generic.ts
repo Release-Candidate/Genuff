@@ -35,6 +35,8 @@ import {
 } from "Generics/Types";
 import { EPSILON } from "Math/Math";
 
+export type Vec4RecordGen<T extends Field> = { x: T; y: T; z: T; w: T };
+
 /**
  * A class of a 4 dimensional vector.
  *
@@ -64,7 +66,7 @@ export class Vec4Generic<T extends Field> // eslint-disable-next-line indent
    *
    * @param v The values of the vector to construct.
    */
-  constructor(private readonly v: { x: T; y: T; z: T; w: T }) {}
+  constructor(private readonly v: Vec4RecordGen<T>) {}
 
   /**
    * Return a string representation of the vector.

@@ -32,6 +32,8 @@ import {
 } from "Generics/Types";
 import { EPSILON } from "Math/Math";
 
+export type Vec3Record = { x: number; y: number; z: number };
+
 /**
  * A class of a 3 dimensional vector.
  *
@@ -60,7 +62,7 @@ export class Vec3 // eslint-disable-next-line indent
    *
    * @param v The values of the vector to construct.
    */
-  constructor(private v: { x: number; y: number; z: number }) {}
+  constructor(private v: Vec3Record) {}
 
   /**
    * Return a string representation of the vector.

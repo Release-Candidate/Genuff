@@ -34,7 +34,7 @@ import { EPSILON } from "Math/Math";
 
 export type VecArg<T> = OnlyNumbers & NotEmpty<T>;
 
-export type VecN = OnlyNumbers;
+export type VecRecord = OnlyNumbers;
 
 /**
  * The class of a general n-dimensional vector.

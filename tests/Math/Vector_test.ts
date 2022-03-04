@@ -22,9 +22,9 @@ import {
   plusScalar,
 } from "Generics/Types";
 import { EPSILON } from "Math/Math";
-import { Vec2 } from "Math/Vec2";
-import { Vec3 } from "Math/Vec3";
-import { Vec4 } from "Math/Vec4";
+import { Vec2, Vec2Record } from "Math/Vec2";
+import { Vec3, Vec3Record } from "Math/Vec3";
+import { Vec4, Vec4Record } from "Math/Vec4";
 import { Vector } from "Math/Vector";
 import { equalityTests } from "../../tests/Generics/EqualGenerics";
 import { foldableTests } from "../../tests/Generics/FoldableGenerics";
@@ -32,11 +32,8 @@ import { functorTests } from "../../tests/Generics/FunctorGenerics";
 import { ordTests } from "../../tests/Generics/OrdGenerics";
 import { vectorTests } from "../../tests/Generics/VectorSpaceGenerics";
 
-type vec2Arb = { x: number; y: number };
 const arbVec2 = fc.record({ x: fc.double(), y: fc.double() });
-type vec3Arb = { x: number; y: number; z: number };
 const arbVec3 = fc.record({ x: fc.double(), y: fc.double(), z: fc.double() });
-type vec4Arb = { x: number; y: number; z: number; w: number };
 const arbVec4 = fc.record({
   x: fc.double(),
   y: fc.double(),
@@ -70,27 +67,32 @@ const arbVec10 = fc.record({
 
 describe("Testing Math/Vector", () => {
   describe("Testing Vec2", () => {
-    equalityTests<vec2Arb, Vec2>(
+    equalityTests<Vec2Record, Vec2>(
       "Vec2",
       arbVec2,
       (v) => new Vec2(v),
       (a, eps) => new Vec2(a)[plusScalar](eps),
       EPSILON
     );
-    ordTests<vec2Arb, Vec2>(
+    ordTests<Vec2Record, Vec2>(
       "Vec2",
       arbVec2,
       (v) => new Vec2(v),
       (a, eps) => new Vec2(a)[plusScalar](eps),
       EPSILON
     );
-    functorTests<number, vec2Arb, Vec2>("Vec2", arbVec2, (v) => new Vec2(v));
-    foldableTests<Number, vec2Arb, { value: number; name: string }, Vec2>(
+    functorTests<number, Vec2Record, Vec2>("Vec2", arbVec2, (v) => new Vec2(v));
+    foldableTests<Number, Vec2Record, { value: number; name: string }, Vec2>(
       "Vec2",
       arbVec2,
       (v) => new Vec2(v)
     );
-    vectorTests<vec2Arb, Number, Vec2>("Vec2", arbVec2, (v) => new Vec2(v), id);
+    vectorTests<Vec2Record, Number, Vec2>(
+      "Vec2",
+      arbVec2,
+      (v) => new Vec2(v),
+      id
+    );
     describe("Vec2: testing dimension", () => {
       it(`Vec2: dimension is 2`, () => {
         const v = new Vec2({ x: 0, y: 0 });
@@ -108,27 +110,32 @@ describe("Testing Math/Vector", () => {
     });
   });
   describe("Testing Vec3", () => {
-    equalityTests<vec3Arb, Vec3>(
+    equalityTests<Vec3Record, Vec3>(
       "Vec3",
       arbVec3,
       (v) => new Vec3(v),
       (a, eps) => new Vec3(a)[plusScalar](eps),
       EPSILON
     );
-    ordTests<vec3Arb, Vec3>(
+    ordTests<Vec3Record, Vec3>(
       "Vec3",
       arbVec3,
       (v) => new Vec3(v),
       (a, eps) => new Vec3(a)[plusScalar](eps),
       EPSILON
     );
-    functorTests<number, vec3Arb, Vec3>("Vec3", arbVec3, (v) => new Vec3(v));
-    foldableTests<Number, vec3Arb, { value: number; name: string }, Vec3>(
+    functorTests<number, Vec3Record, Vec3>("Vec3", arbVec3, (v) => new Vec3(v));
+    foldableTests<Number, Vec3Record, { value: number; name: string }, Vec3>(
       "Vec3",
       arbVec3,
       (v) => new Vec3(v)
     );
-    vectorTests<vec3Arb, Number, Vec3>("Vec3", arbVec3, (v) => new Vec3(v), id);
+    vectorTests<Vec3Record, Number, Vec3>(
+      "Vec3",
+      arbVec3,
+      (v) => new Vec3(v),
+      id
+    );
     describe("Vec3: testing dimension", () => {
       it(`Vec3: dimension is 3`, () => {
         const v = new Vec3({ x: 0, y: 0, z: 0 });
@@ -225,27 +232,32 @@ describe("Testing Math/Vector", () => {
     });
   });
   describe("Testing Vec4", () => {
-    equalityTests<vec4Arb, Vec4>(
+    equalityTests<Vec4Record, Vec4>(
       "Vec4",
       arbVec4,
       (v) => new Vec4(v),
       (a, eps) => new Vec4(a)[plusScalar](eps),
       EPSILON
     );
-    ordTests<vec4Arb, Vec4>(
+    ordTests<Vec4Record, Vec4>(
       "Vec4",
       arbVec4,
       (v) => new Vec4(v),
       (a, eps) => new Vec4(a)[plusScalar](eps),
       EPSILON
     );
-    functorTests<number, vec4Arb, Vec4>("Vec4", arbVec4, (v) => new Vec4(v));
-    foldableTests<Number, vec4Arb, { value: number; name: string }, Vec4>(
+    functorTests<number, Vec4Record, Vec4>("Vec4", arbVec4, (v) => new Vec4(v));
+    foldableTests<Number, Vec4Record, { value: number; name: string }, Vec4>(
       "Vec4",
       arbVec4,
       (v) => new Vec4(v)
     );
-    vectorTests<vec4Arb, Number, Vec4>("Vec4", arbVec4, (v) => new Vec4(v), id);
+    vectorTests<Vec4Record, Number, Vec4>(
+      "Vec4",
+      arbVec4,
+      (v) => new Vec4(v),
+      id
+    );
     describe("Vec4: testing dimension", () => {
       it(`Vec4: dimension is 4`, () => {
         const v = new Vec4({ x: 0, y: 0, z: 0, w: 0 });

@@ -36,7 +36,7 @@ import { EPSILON } from "Math/Math";
 
 export type VecArgGeneric<S extends Field, T> = Record<string, S> & NotEmpty<T>;
 
-export type VecNGeneric<T> = Record<string, T>;
+export type VecRecordGen<T extends Field> = Record<string, T>;
 
 /**
  * The class of a general n-dimensional vector.

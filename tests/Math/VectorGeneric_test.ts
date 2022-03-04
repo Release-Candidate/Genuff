@@ -24,8 +24,11 @@ import {
   plusScalar,
 } from "Generics/Types";
 import { EPSILON } from "Math/Math";
+import { Vec2Record } from "Math/Vec2";
 import { Vec2Generic } from "Math/Vec2Generic";
+import { Vec3Record } from "Math/Vec3";
 import { Vec3Generic } from "Math/Vec3Generic";
+import { Vec4Record } from "Math/Vec4";
 import { Vec4Generic } from "Math/Vec4Generic";
 import { VectorGeneric } from "Math/VectorGeneric";
 import { equalityTests } from "../../tests/Generics/EqualGenerics";
@@ -34,28 +37,25 @@ import { functorTests } from "../../tests/Generics/FunctorGenerics";
 import { ordTests } from "../../tests/Generics/OrdGenerics";
 import { vectorTests } from "../../tests/Generics/VectorSpaceGenerics";
 
-type Vec2Arb = { x: number; y: number };
 const arbVec2 = fc.record({ x: fc.double(), y: fc.double() });
-function vec2Decimal(v: Vec2Arb) {
+function vec2Decimal(v: Vec2Record) {
   return new Vec2Generic<Decimal>({ x: new Decimal(v.x), y: new Decimal(v.y) });
 }
-type Vec3Arb = { x: number; y: number; z: number };
 const arbVec3 = fc.record({ x: fc.double(), y: fc.double(), z: fc.double() });
-function vec3Decimal(v: Vec3Arb) {
+function vec3Decimal(v: Vec3Record) {
   return new Vec3Generic<Decimal>({
     x: new Decimal(v.x),
     y: new Decimal(v.y),
     z: new Decimal(v.z),
   });
 }
-type Vec4Arb = { x: number; y: number; z: number; w: number };
 const arbVec4 = fc.record({
   x: fc.double(),
   y: fc.double(),
   z: fc.double(),
   w: fc.double(),
 });
-function vec4Decimal(v: Vec4Arb) {
+function vec4Decimal(v: Vec4Record) {
   return new Vec4Generic<Decimal>({
     x: new Decimal(v.x),
     y: new Decimal(v.y),
@@ -121,32 +121,32 @@ function vec10Decimal(v: Vec10Arb) {
 describe("Testing Math/VectorGeneric", () => {
   describe("Testing generic number vectors", () => {
     describe("Testing Vec2Generic", () => {
-      equalityTests<Vec2Arb, Vec2Generic<Number>>(
+      equalityTests<Vec2Record, Vec2Generic<Number>>(
         "Vec2Generic",
         arbVec2,
         (v) => new Vec2Generic<Number>(v),
         (a, eps) => new Vec2Generic<Number>(a)[plusScalar](eps),
         EPSILON
       );
-      ordTests<Vec2Arb, Vec2Generic<Number>>(
+      ordTests<Vec2Record, Vec2Generic<Number>>(
         "Vec2Generic",
         arbVec2,
         (v) => new Vec2Generic<Number>(v),
         (a, eps) => new Vec2Generic<Number>(a)[plusScalar](eps),
         EPSILON
       );
-      functorTests<Number, Vec2Arb, Vec2Generic<Number>>(
+      functorTests<Number, Vec2Record, Vec2Generic<Number>>(
         "Vec2Generic",
         arbVec2,
         (v) => new Vec2Generic<Number>(v)
       );
       foldableTests<
         Number,
-        Vec2Arb,
+        Vec2Record,
         { value: Number; name: string },
         Vec2Generic<Number>
       >("Vec2Generic", arbVec2, (v) => new Vec2Generic<Number>(v));
-      vectorTests<Vec2Arb, Number, Vec2Generic<Number>>(
+      vectorTests<Vec2Record, Number, Vec2Generic<Number>>(
         "Vec2Generic",
         arbVec2,
         (v) => new Vec2Generic<Number>(v),
@@ -169,32 +169,32 @@ describe("Testing Math/VectorGeneric", () => {
       });
     });
     describe("Testing Vec3Generic", () => {
-      equalityTests<Vec3Arb, Vec3Generic<Number>>(
+      equalityTests<Vec3Record, Vec3Generic<Number>>(
         "Vec3Generic",
         arbVec3,
         (v) => new Vec3Generic<Number>(v),
         (a, eps) => new Vec3Generic<Number>(a)[plusScalar](eps),
         EPSILON
       );
-      ordTests<Vec3Arb, Vec3Generic<Number>>(
+      ordTests<Vec3Record, Vec3Generic<Number>>(
         "Vec3Generic",
         arbVec3,
         (v) => new Vec3Generic<Number>(v),
         (a, eps) => new Vec3Generic<Number>(a)[plusScalar](eps),
         EPSILON
       );
-      functorTests<Number, Vec3Arb, Vec3Generic<Number>>(
+      functorTests<Number, Vec3Record, Vec3Generic<Number>>(
         "Vec3Generic",
         arbVec3,
         (v) => new Vec3Generic<Number>(v)
       );
       foldableTests<
         Number,
-        Vec3Arb,
+        Vec3Record,
         { value: Number; name: string },
         Vec3Generic<Number>
       >("Vec3Generic", arbVec3, (v) => new Vec3Generic<Number>(v));
-      vectorTests<Vec3Arb, Number, Vec3Generic<Number>>(
+      vectorTests<Vec3Record, Number, Vec3Generic<Number>>(
         "Vec3",
         arbVec3,
         (v) => new Vec3Generic<Number>(v),
@@ -295,32 +295,32 @@ describe("Testing Math/VectorGeneric", () => {
       });
     });
     describe("Testing Vec4Generic", () => {
-      equalityTests<Vec4Arb, Vec4Generic<Number>>(
+      equalityTests<Vec4Record, Vec4Generic<Number>>(
         "Vec4Generic",
         arbVec4,
         (v) => new Vec4Generic<Number>(v),
         (a, eps) => new Vec4Generic<Number>(a)[plusScalar](eps),
         EPSILON
       );
-      ordTests<Vec4Arb, Vec4Generic<Number>>(
+      ordTests<Vec4Record, Vec4Generic<Number>>(
         "Vec4Generic",
         arbVec4,
         (v) => new Vec4Generic<Number>(v),
         (a, eps) => new Vec4Generic<Number>(a)[plusScalar](eps),
         EPSILON
       );
-      functorTests<Number, Vec4Arb, Vec4Generic<Number>>(
+      functorTests<Number, Vec4Record, Vec4Generic<Number>>(
         "Vec4Generic",
         arbVec4,
         (v) => new Vec4Generic<Number>(v)
       );
       foldableTests<
         Number,
-        Vec4Arb,
+        Vec4Record,
         { value: Number; name: string },
         Vec4Generic<Number>
       >("Vec4Generic", arbVec4, (v) => new Vec4Generic<Number>(v));
-      vectorTests<Vec4Arb, Number, Vec4Generic<Number>>(
+      vectorTests<Vec4Record, Number, Vec4Generic<Number>>(
         "Vec4Generic",
         arbVec4,
         (v) => new Vec4Generic<Number>(v),
@@ -571,32 +571,32 @@ describe("Testing Math/VectorGeneric", () => {
   });
   describe("Testing generic Decimal vectors", () => {
     describe("Testing Decimal Vec2Generic", () => {
-      equalityTests<Vec2Arb, Vec2Generic<Decimal>>(
+      equalityTests<Vec2Record, Vec2Generic<Decimal>>(
         "Decimal Vec2Generic",
         arbVec2,
         (v) => vec2Decimal(v),
         (a, eps) => vec2Decimal(a)[plusScalar](new Decimal(eps)),
         EPSILON
       );
-      ordTests<Vec2Arb, Vec2Generic<Decimal>>(
+      ordTests<Vec2Record, Vec2Generic<Decimal>>(
         "Decimal Vec2Generic",
         arbVec2,
         (v) => vec2Decimal(v),
         (a, eps) => vec2Decimal(a)[plusScalar](new Decimal(eps)),
         EPSILON
       );
-      functorTests<Decimal, Vec2Arb, Vec2Generic<Decimal>>(
+      functorTests<Decimal, Vec2Record, Vec2Generic<Decimal>>(
         "Decimal Vec2Generic",
         arbVec2,
         (v) => vec2Decimal(v)
       );
       foldableTests<
         Decimal,
-        Vec2Arb,
+        Vec2Record,
         { value: Decimal; name: string },
         Vec2Generic<Decimal>
       >("Decimal Vec2Generic", arbVec2, (v) => vec2Decimal(v));
-      vectorTests<Vec2Arb, Decimal, Vec2Generic<Decimal>>(
+      vectorTests<Vec2Record, Decimal, Vec2Generic<Decimal>>(
         "Decimal Vec2Generic",
         arbVec2,
         (v) => vec2Decimal(v),
@@ -620,7 +620,7 @@ describe("Testing Math/VectorGeneric", () => {
       });
     });
     describe("Testing Decimal Vec3Generic", () => {
-      equalityTests<Vec3Arb, Vec3Generic<Decimal>>(
+      equalityTests<Vec3Record, Vec3Generic<Decimal>>(
         "Decimal Vec3Generic",
         arbVec3,
         (v) => vec3Decimal(v),
@@ -628,7 +628,7 @@ describe("Testing Math/VectorGeneric", () => {
         // eslint-disable-next-line no-magic-numbers
         0
       );
-      ordTests<Vec3Arb, Vec3Generic<Decimal>>(
+      ordTests<Vec3Record, Vec3Generic<Decimal>>(
         "Decimal Vec3Generic",
         arbVec3,
         (v) => vec3Decimal(v),
@@ -636,18 +636,18 @@ describe("Testing Math/VectorGeneric", () => {
         // eslint-disable-next-line no-magic-numbers
         0
       );
-      functorTests<Decimal, Vec3Arb, Vec3Generic<Decimal>>(
+      functorTests<Decimal, Vec3Record, Vec3Generic<Decimal>>(
         "Decimal Vec3Generic",
         arbVec3,
         (v) => vec3Decimal(v)
       );
       foldableTests<
         Decimal,
-        Vec3Arb,
+        Vec3Record,
         { value: Decimal; name: string },
         Vec3Generic<Decimal>
       >("Decimal Vec3Generic", arbVec3, (v) => vec3Decimal(v));
-      vectorTests<Vec3Arb, Decimal, Vec3Generic<Decimal>>(
+      vectorTests<Vec3Record, Decimal, Vec3Generic<Decimal>>(
         "Decimal Vec3Generic",
         arbVec3,
         (v) => vec3Decimal(v),
@@ -752,32 +752,32 @@ describe("Testing Math/VectorGeneric", () => {
       });
     });
     describe("Testing Decimal Vec4Generic", () => {
-      equalityTests<Vec4Arb, Vec4Generic<Decimal>>(
+      equalityTests<Vec4Record, Vec4Generic<Decimal>>(
         "Decimal Vec4Generic",
         arbVec4,
         (v) => vec4Decimal(v),
         (a, eps) => vec4Decimal(a)[plusScalar](new Decimal(eps)),
         EPSILON
       );
-      ordTests<Vec4Arb, Vec4Generic<Decimal>>(
+      ordTests<Vec4Record, Vec4Generic<Decimal>>(
         "Decimal Vec4Generic",
         arbVec4,
         (v) => vec4Decimal(v),
         (a, eps) => vec4Decimal(a)[plusScalar](new Decimal(eps)),
         EPSILON
       );
-      functorTests<Decimal, Vec4Arb, Vec4Generic<Decimal>>(
+      functorTests<Decimal, Vec4Record, Vec4Generic<Decimal>>(
         "Decimal Vec4Generic",
         arbVec4,
         (v) => vec4Decimal(v)
       );
       foldableTests<
         Decimal,
-        Vec4Arb,
+        Vec4Record,
         { value: Decimal; name: string },
         Vec4Generic<Decimal>
       >("Decimal Vec4Generic", arbVec4, (v) => vec4Decimal(v));
-      vectorTests<Vec4Arb, Decimal, Vec4Generic<Decimal>>(
+      vectorTests<Vec4Record, Decimal, Vec4Generic<Decimal>>(
         "Decimal Vec4Generic",
         arbVec4,
         (v) => vec4Decimal(v),

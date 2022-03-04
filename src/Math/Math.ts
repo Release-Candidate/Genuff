@@ -47,8 +47,7 @@ export const EPSILON = 1e-10;
 // Extend JS number by own constraints =========================================
 
 /**
- * Extend JS native `number` with interfaces `Field`, `VectorSpace`, `Equal`
- * and `Ord`.
+ * Extend JS native `number` with own interfaces.
  */
 declare global {
   interface Number
@@ -62,6 +61,10 @@ declare global {
 
 Number.prototype.fromNumber = function (a) {
   return a;
+};
+
+Number.prototype.toNumber = function () {
+  return this as number;
 };
 
 Number.prototype[eq] = function (b: number, epsilon = EPSILON) {
@@ -172,9 +175,12 @@ Number.prototype.show = function () {
 
 // Extend Decimal.JS class with own Constraints ================================
 
+/**
+ * Extend Decimal.JS with own interfaces.
+ */
 declare module "decimal.js" {
   // eslint-disable-next-line no-shadow
-  interface Decimal extends Equal, ToString, Show, Field {}
+  interface Decimal extends Equal, ToString, Show, Field, Ord {}
 }
 
 Decimal.prototype.fromNumber = function (a) {
