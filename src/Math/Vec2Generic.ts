@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2022 Roland Csaszar
 //
-// Project:  GenuffY
-// File:     LinAlg.ts
-// Date:     24.Feb.2022
+// Project:  Genuff
+// File:     Vec2Generic.ts
+// Date:     04.Mar.2022
 //
 // ==============================================================================
+/* eslint-disable i18next/no-literal-string */
 
 import {
   div,
@@ -23,9 +24,8 @@ import {
   mult,
   multScalar,
   neq,
-  NotEmpty,
-  OnlyNumbers,
   Ord,
+  OrderedVectorSpace,
   plus,
   plusScalar,
   Show,
@@ -35,46 +35,37 @@ import {
 } from "Generics/Types";
 import { EPSILON } from "Math/Math";
 
-export type VecArg<S extends Field, T> = Record<string, S> & NotEmpty<T>;
-
-export type VecN = OnlyNumbers;
-
 /**
- * The class of a general n-dimensional vector.
+ * A class of a 2 dimensional vector.
  *
  * Never changes the value of `this`, always returns a new object.
  *
- * Implements the constraints
- *  * Show
- *  * ToString
- *  * Equal
- *  * Ord
- *  * VectorField
- *  * Functor
- *  * Foldable
+ * Implements the following constraints:
+ * * Functor
+ * * Foldable
+ * * Show
+ * * ToString
+ * * Equal
+ * * Ord
+ * * VectorSpace
  */
-export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-next-line indent
+export class Vec2Generic<T extends Field> // eslint-disable-next-line indent
   implements
+    Functor<T, T, Vec2Generic<T>>,
+    Foldable<T, { value: T; name: string }>,
     Show,
     ToString,
     Equal,
     Ord,
-    VectorSpace<S>,
-    Functor<S, S, Vector<S, T>>,
-    Foldable<S, { value: S; name: string }>
+    VectorSpace<T>,
+    OrderedVectorSpace<T>
 {
   /**
-   * Constructor.
+   * Constructs a new 2 dimensional vector.
    *
-   * Takes a non-empty object with only number properties as argument.
-   *
-   * @param v The vector-like object to construct the Vector from.
+   * @param v The values of the vector to construct.
    */
-  constructor(
-    private readonly v: T,
-    private readonly oneF: S,
-    private readonly nullF: S
-  ) {}
+  constructor(private readonly v: { x: T; y: T }) {}
 
   /**
    * Return a string representation of the vector.
@@ -85,13 +76,8 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    *
    * @returns A string representation of the vector.
    */
-  toString() {
-    return (
-      this.reduce(
-        (acc, { value, name }) => acc + `${name}: ${value.toString()}, `,
-        "{ "
-      ) + "}"
-    );
+  toString(): string {
+    return `{ x: ${this.v.x.toString()}, y: ${this.v.y.toString()} }`;
   }
 
   /**
@@ -105,7 +91,7 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    * output.
    */
   show(): string {
-    return this.toString();
+    return `[ x: ${this.v.x.toString()}, y: ${this.v.y.toString()} ]`;
   }
 
   /**
@@ -117,12 +103,8 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    * @param f The function to apply to each element of `this`.
    * @returns The mapped vector.
    */
-  map(f: (e: S) => S) {
-    let c = {} as T;
-    for (const prop in this.v) {
-      c[prop] = f(this.v[prop]) as T[Extract<keyof T, string>];
-    }
-    return new Vector<S, T>(c, this.oneF, this.nullF);
+  map(f: (e: T) => T): this {
+    return new Vec2Generic<T>({ x: f(this.v.x), y: f(this.v.y) }) as this;
   }
 
   /**
@@ -132,31 +114,24 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    * @param initialValue The starting value of the fold.
    * @returns The vector reduced to a single value.
    */
-  reduce<U>(f: (acc: U, e: { value: S; name: string }) => U, initialValue: U) {
-    let retVal = initialValue;
-    for (const prop in this.v) {
-      retVal = f(retVal, { value: this.v[prop], name: prop });
-    }
-    return retVal;
+  reduce<S>(
+    f: (acc: S, e: { value: T; name: string }) => S,
+    initialValue: S
+  ): S {
+    const acc = f(initialValue, { value: this.v.x, name: "x" });
+    return f(acc, { value: this.v.y, name: "y" });
   }
 
   /**
    * Convert the vector to an array.
    *
-   * The elements in the array have the same order as the string properties in
-   * the vector.
-   *
    * @returns The vector converted to an array.
    */
-  toArray(): S[] {
-    let c = [];
-    for (const prop in this.v) {
-      c.push(this.v[prop]);
-    }
-    return c;
+  toArray(): T[] {
+    return [this.v.x, this.v.y];
   }
 
-  // Implementation of `Types.VectorField` =====================================
+  // Implementation of Types.VectorSpace. ======================================
 
   /**
    * Add a vector to this vector.
@@ -165,11 +140,10 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    * @returns The sum of both vectors
    */
   [plus](b: this): this {
-    let c = {} as T;
-    for (const prop in this.v) {
-      c[prop] = this.v[prop][plus](b.v[prop]) as T[Extract<keyof T, string>];
-    }
-    return new Vector(c, this.oneF, this.nullF) as this;
+    return new Vec2Generic<T>({
+      x: this.v.x[plus](b.v.x),
+      y: this.v.y[plus](b.v.y),
+    }) as this;
   }
 
   /**
@@ -179,11 +153,10 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    * @returns The sum of both vectors
    */
   [minus](b: this): this {
-    let c = {} as T;
-    for (const prop in this.v) {
-      c[prop] = this.v[prop][minus](b.v[prop]) as T[Extract<keyof T, string>];
-    }
-    return new Vector(c, this.oneF, this.nullF) as this;
+    return new Vec2Generic<T>({
+      x: this.v.x[minus](b.v.x),
+      y: this.v.y[minus](b.v.y),
+    }) as this;
   }
 
   /**
@@ -192,12 +165,11 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    * @param t The scalar value to multiply the vector with.
    * @returns The vector element wise multiplicated with the given value.
    */
-  [multScalar](t: T[Extract<keyof T, string>]): this {
-    let c = {} as T;
-    for (const prop in this.v) {
-      c[prop] = this.v[prop][mult](t) as T[Extract<keyof T, string>];
-    }
-    return new Vector(c, this.oneF, this.nullF) as this;
+  [multScalar](t: T): this {
+    return new Vec2Generic<T>({
+      x: this.v.x[mult](t),
+      y: this.v.y[mult](t),
+    }) as this;
   }
 
   /**
@@ -206,12 +178,11 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    * @param t The scalar value to add to each component of the vector.
    * @returns The vector with the scalar added to it.
    */
-  [plusScalar](t: T[Extract<keyof T, string>]): this {
-    let c = {} as T;
-    for (const prop in this.v) {
-      c[prop] = this.v[prop][plus](t) as T[Extract<keyof T, string>];
-    }
-    return new Vector(c, this.oneF, this.nullF) as this;
+  [plusScalar](t: T): this {
+    return new Vec2Generic<T>({
+      x: this.v.x[plus](t),
+      y: this.v.y[plus](t),
+    }) as this;
   }
 
   /**
@@ -220,12 +191,8 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    * @param b The vector to calculate the dot product with.
    * @returns The dot product (scalar product) of both vectors.
    */
-  [dot](b: this): S {
-    let retVal = this.nullF;
-    for (const prop in this.v) {
-      retVal = retVal[plus](this.v[prop][mult](b.v[prop]));
-    }
-    return retVal;
+  [dot](b: this): T {
+    return this.v.x[mult](b.v.x)[plus](this.v.y[mult](b.v.y));
   }
 
   /**
@@ -236,9 +203,7 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    * existing one.
    */
   normalize(): this {
-    let c = {} as T;
-    // eslint-disable-next-line no-magic-numbers
-    const fac = this.oneF[div](this.norm()) as T[Extract<keyof T, string>];
+    const fac = this.v.x.one()[div](this.length());
     return this[multScalar](fac);
   }
 
@@ -249,12 +214,8 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    *
    * @returns The Euclidean norm of the vector.
    */
-  norm(): S {
-    let retVal = this.nullF;
-    for (const prop in this.v) {
-      retVal = retVal[plus](this.v[prop][mult](this.v[prop]));
-    }
-    return retVal[sqrt]();
+  norm(): T {
+    return this.v.x[mult](this.v.x)[plus](this.v.y[mult](this.v.y))[sqrt]();
   }
 
   /**
@@ -266,39 +227,33 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    *
    * @returns The length of the vector.
    */
-  length(): S {
-    let retVal = this.nullF;
-    for (const prop in this.v) {
-      retVal = retVal[plus](this.v[prop][mult](this.v[prop]));
-    }
-    return retVal[sqrt]();
+  length(): T {
+    return this.v.x[mult](this.v.x)[plus](this.v.y[mult](this.v.y))[sqrt]();
   }
 
   /**
-   * Return the dimension of the vector, the number of its components.
+   * The dimension of a two dimensional vector: 2
    *
-   * @returns The dimension of the vector, the number of its components.
+   * @returns 2, the dimension of a 2 dimensional vector.
    */
+  // eslint-disable-next-line class-methods-use-this
   dimension(): number {
-    return Object.keys(this.v).length;
+    // eslint-disable-next-line no-magic-numbers
+    return 2;
   }
 
   /**
-   * Return the null vector, every component of this vector is 0:
-   * [0, 0, ... , 0].
+   * Return the null vector, [0, 0].
    *
-   * @returns The null vector, [0, 0, ... , 0].
+   * @returns The null vector, [0, 0].
    */
+  // eslint-disable-next-line class-methods-use-this
   null(): this {
-    let c = {} as T;
-    for (const prop in this.v) {
-      // eslint-disable-next-line no-magic-numbers
-      c[prop] = this.nullF as T[Extract<keyof T, string>];
-    }
-    return new Vector<S, T>(c, this.oneF, this.nullF) as this;
+    const nullVal = this.v.x.null();
+    return new Vec2Generic<T>({ x: nullVal, y: nullVal }) as this;
   }
 
-  // Implementation of `Types.Equal`. ============================================
+  // Implementation of Types.Equal. ============================================
 
   /**
    * Compare the two vectors for equality.
@@ -313,12 +268,10 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    *                `Math/Math.EPSILON`, which should work for usual usage.
    * @returns `true`, if the two vectors are equal, `false` else.
    */
-  [eq](b: this, epsilon: number = EPSILON) {
-    let retVal = true;
-    for (const prop in this.v) {
-      retVal = retVal && this.v[prop][eq](b.v[prop], epsilon);
-    }
-    return retVal;
+  [eq](b: this, epsilon: number = EPSILON): boolean {
+    const prop1 = this.v.x[eq](b.v.x, epsilon);
+    const prop2 = this.v.y[eq](b.v.y, epsilon);
+    return prop1 && prop2;
   }
 
   /**
@@ -334,24 +287,21 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    *                `Math/Math.EPSILON`, which should work for usual usage.
    * @returns `false`, if the two vectors are equal, `true` else.
    */
-  [neq](b: this, epsilon: number = EPSILON) {
-    for (const prop in this.v) {
-      if (this.v[prop][neq](b.v[prop], epsilon)) {
-        return true;
-      }
-    }
-    return false;
+  [neq](b: this, epsilon: number = EPSILON): boolean {
+    const prop1 = this.v.x[eq](b.v.x, epsilon);
+    const prop2 = this.v.y[eq](b.v.y, epsilon);
+    return !prop1 || !prop2;
   }
 
-  // Implementation of `Types.Ord` ===============================================
+  // Implementation of Types.Ord. ==============================================
 
   /**
    * Compare two vectors, if `this <= b`.
    *
    * Waring: this is just a partial order in the vector field, it is not
    * possible to compare every two vectors. For example there are many vectors
-   * v and w for which `v[le](w) === false` and
-   * `w[le](v) === false` holds.
+   * v and w for which `v.lessOrEqual(w) === false` and
+   * `w.lessOrEqual(v) === false` holds.
    *
    * Do not use `Number.EPSILON` from JS, which is the smallest difference
    * between to consecutive numbers and does not work for comparisons.
@@ -362,12 +312,10 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    * @returns `true` if this vector is less than or equal to b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  [le](b: this, epsilon: number = EPSILON) {
-    let retVal = true;
-    for (const prop in this.v) {
-      retVal = retVal && this.v[prop][le](b.v[prop], epsilon);
-    }
-    return retVal;
+  [le](b: this, epsilon: number = EPSILON): boolean {
+    const prop1 = this.v.x[le](b.v.x, epsilon);
+    const prop2 = this.v.y[le](b.v.y, epsilon);
+    return prop1 && prop2;
   }
 
   /**
@@ -375,8 +323,8 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    *
    * Waring: this is just a partial order in the vector field, it is not
    * possible to compare every two vectors. For example there are many vectors
-   * v and w for which `v[ge](w) === false` and
-   * `w[ge](v) === false` holds.
+   * v and w for which `v.biggerOrEqual(w) === false` and
+   * `w.biggerOrEqual(v) === false` holds.
    *
    * Do not use `Number.EPSILON` from JS, which is the smallest difference
    * between to consecutive numbers and does not work for comparisons.
@@ -387,12 +335,10 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    * @returns `true` if this vector is bigger than or equal to b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  [ge](b: this, epsilon: number = EPSILON) {
-    let retVal = true;
-    for (const prop in this.v) {
-      retVal = retVal && this.v[prop][ge](b.v[prop], epsilon);
-    }
-    return retVal;
+  [ge](b: this, epsilon: number = EPSILON): boolean {
+    const prop1 = this.v.x[ge](b.v.x, epsilon);
+    const prop2 = this.v.y[ge](b.v.y, epsilon);
+    return prop1 && prop2;
   }
 
   /**
@@ -407,12 +353,8 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    * @returns `true` if this vector is less than b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  [lt](b: this) {
-    let retVal = true;
-    for (const prop in this.v) {
-      retVal = retVal && this.v[prop][lt](b.v[prop]);
-    }
-    return retVal;
+  [lt](b: this): boolean {
+    return this.v.x[lt](b.v.x) && this.v.y[lt](b.v.y);
   }
 
   /**
@@ -427,12 +369,8 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    * @returns `true` if this vector is bigger than b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  [gt](b: this) {
-    let retVal = true;
-    for (const prop in this.v) {
-      retVal = retVal && this.v[prop][gt](b.v[prop]);
-    }
-    return retVal;
+  [gt](b: this): boolean {
+    return this.v.x[gt](b.v.x) && this.v.y[gt](b.v.y);
   }
 
   /**
@@ -441,3 +379,23 @@ export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-n
    */
   readonly isPartial = true;
 }
+
+/**
+ * Unit vector in x direction ([1, 0]).
+ */
+export const unitX = new Vec2Generic({ x: 1, y: 0 });
+
+/**
+ * Unit vector in y direction ([0, 1]).
+ */
+export const unitY = new Vec2Generic({ x: 0, y: 1 });
+
+/**
+ * The dimension of a 2 dimensional vector: 2.
+ */
+export const dimension = 2;
+
+/**
+ * The null vector, the vector [0 , 0].
+ */
+export const nullVec = new Vec2Generic({ x: 0, y: 0 });

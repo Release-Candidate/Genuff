@@ -2,13 +2,14 @@
 // Copyright (C) 2022 Roland Csaszar
 //
 // Project:  Genuff
-// File:     Vec2.ts
-// Date:     25.Feb.2022
+// File:     Vec3Generic.ts
+// Date:     04.Mar.2022
 //
 // ==============================================================================
 /* eslint-disable i18next/no-literal-string */
 
 import {
+  cross,
   div,
   dot,
   eq,
@@ -25,7 +26,6 @@ import {
   multScalar,
   neq,
   Ord,
-  OrderedVectorSpace,
   plus,
   plusScalar,
   Show,
@@ -36,7 +36,7 @@ import {
 import { EPSILON } from "Math/Math";
 
 /**
- * A class of a 2 dimensional vector.
+ * A class of a 3 dimensional vector.
  *
  * Never changes the value of `this`, always returns a new object.
  *
@@ -47,25 +47,24 @@ import { EPSILON } from "Math/Math";
  * * ToString
  * * Equal
  * * Ord
- * * VectorField
+ * * VectorSpace
  */
-export class Vec2<T extends Field> // eslint-disable-next-line indent
+export class Vec3Generic<T extends Field> // eslint-disable-next-line indent
   implements
-    Functor<T, T, Vec2<T>>,
+    Functor<T, T, Vec3Generic<T>>,
     Foldable<T, { value: T; name: string }>,
     Show,
     ToString,
     Equal,
     Ord,
-    VectorSpace<T>,
-    OrderedVectorSpace<T>
+    VectorSpace<T>
 {
   /**
-   * Constructs a new 2 dimensional vector.
+   * Constructs a new 3 dimensional vector.
    *
    * @param v The values of the vector to construct.
    */
-  constructor(private readonly v: { x: T; y: T }) {}
+  constructor(private readonly v: { x: T; y: T; z: T }) {}
 
   /**
    * Return a string representation of the vector.
@@ -77,7 +76,7 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * @returns A string representation of the vector.
    */
   toString(): string {
-    return `{ x: ${this.v.x.toString()}, y: ${this.v.y.toString()} }`;
+    return `{ x: ${this.v.x.toString()}, y: ${this.v.y.toString()}, z: ${this.v.z.toString()} }`;
   }
 
   /**
@@ -91,7 +90,7 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * output.
    */
   show(): string {
-    return `[ x: ${this.v.x.toString()}, y: ${this.v.y.toString()} ]`;
+    return `[ x: ${this.v.x.toString()}, y: ${this.v.y.toString()}, z: ${this.v.z.toString()} ]`;
   }
 
   /**
@@ -104,7 +103,11 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * @returns The mapped vector.
    */
   map(f: (e: T) => T): this {
-    return new Vec2<T>({ x: f(this.v.x), y: f(this.v.y) }) as this;
+    return new Vec3Generic({
+      x: f(this.v.x),
+      y: f(this.v.y),
+      z: f(this.v.z),
+    }) as this;
   }
 
   /**
@@ -119,7 +122,8 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
     initialValue: S
   ): S {
     const acc = f(initialValue, { value: this.v.x, name: "x" });
-    return f(acc, { value: this.v.y, name: "y" });
+    const acc2 = f(acc, { value: this.v.y, name: "y" });
+    return f(acc2, { value: this.v.z, name: "z" });
   }
 
   /**
@@ -128,10 +132,10 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * @returns The vector converted to an array.
    */
   toArray(): T[] {
-    return [this.v.x, this.v.y];
+    return [this.v.x, this.v.y, this.v.z];
   }
 
-  // Implementation of Types.VectorField. ======================================
+  // Implementation of Types.VectorSpace. ======================================
 
   /**
    * Add a vector to this vector.
@@ -140,9 +144,10 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * @returns The sum of both vectors
    */
   [plus](b: this): this {
-    return new Vec2<T>({
+    return new Vec3Generic({
       x: this.v.x[plus](b.v.x),
       y: this.v.y[plus](b.v.y),
+      z: this.v.z[plus](b.v.z),
     }) as this;
   }
 
@@ -153,9 +158,10 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * @returns The sum of both vectors
    */
   [minus](b: this): this {
-    return new Vec2<T>({
+    return new Vec3Generic({
       x: this.v.x[minus](b.v.x),
       y: this.v.y[minus](b.v.y),
+      z: this.v.z[minus](b.v.z),
     }) as this;
   }
 
@@ -166,7 +172,11 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * @returns The vector element wise multiplicated with the given value.
    */
   [multScalar](t: T): this {
-    return new Vec2<T>({ x: this.v.x[mult](t), y: this.v.y[mult](t) }) as this;
+    return new Vec3Generic({
+      x: this.v.x[mult](t),
+      y: this.v.y[mult](t),
+      z: this.v.z[mult](t),
+    }) as this;
   }
 
   /**
@@ -176,9 +186,10 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * @returns The vector with the scalar added to it.
    */
   [plusScalar](t: T): this {
-    return new Vec2<T>({
+    return new Vec3Generic({
       x: this.v.x[plus](t),
       y: this.v.y[plus](t),
+      z: this.v.z[plus](t),
     }) as this;
   }
 
@@ -189,7 +200,26 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * @returns The dot product (scalar product) of both vectors.
    */
   [dot](b: this): T {
-    return this.v.x[mult](b.v.x)[plus](this.v.y[mult](b.v.y));
+    return (
+      this.v.x[mult](b.v.x)
+        // eslint-disable-next-line no-unexpected-multiline
+        [plus](this.v.y[mult](b.v.y))
+        // eslint-disable-next-line no-unexpected-multiline
+        [plus](this.v.z[mult](b.v.z))
+    );
+  }
+
+  /**
+   * Calculate the cross product of the two vectors.
+   *
+   * @param b The vector to calculate the cross product with.
+   * @returns The cross product of both vectors.
+   */
+  [cross](b: this): this {
+    const x = this.v.y[mult](b.v.z)[minus](this.v.z[mult](b.v.y));
+    const y = this.v.z[mult](b.v.x)[minus](this.v.x[mult](b.v.z));
+    const z = this.v.x[mult](b.v.y)[minus](this.v.y[mult](b.v.x));
+    return new Vec3Generic({ x, y, z }) as this;
   }
 
   /**
@@ -200,6 +230,7 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * existing one.
    */
   normalize(): this {
+    // eslint-disable-next-line no-magic-numbers
     const fac = this.v.x.one()[div](this.length());
     return this[multScalar](fac);
   }
@@ -212,7 +243,15 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * @returns The Euclidean norm of the vector.
    */
   norm(): T {
-    return this.v.x[mult](this.v.x)[plus](this.v.y[mult](this.v.y))[sqrt]();
+    return (
+      this.v.x[mult](this.v.x)
+        // eslint-disable-next-line no-unexpected-multiline
+        [plus](this.v.y[mult](this.v.y))
+        // eslint-disable-next-line no-unexpected-multiline
+        [plus](this.v.z[mult](this.v.z))
+        // eslint-disable-next-line no-unexpected-multiline
+        [sqrt]()
+    );
   }
 
   /**
@@ -225,29 +264,37 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * @returns The length of the vector.
    */
   length(): T {
-    return this.v.x[mult](this.v.x)[plus](this.v.y[mult](this.v.y))[sqrt]();
+    return (
+      this.v.x[mult](this.v.x)
+        // eslint-disable-next-line no-unexpected-multiline
+        [plus](this.v.y[mult](this.v.y))
+        // eslint-disable-next-line no-unexpected-multiline
+        [plus](this.v.z[mult](this.v.z))
+        // eslint-disable-next-line no-unexpected-multiline
+        [sqrt]()
+    );
   }
 
   /**
-   * The dimension of a two dimensional vector: 2
+   * The dimension of a two dimensional vector: 3
    *
-   * @returns 2, the dimension of a 2 dimensional vector.
+   * @returns 3, the dimension of a 3 dimensional vector.
    */
   // eslint-disable-next-line class-methods-use-this
   dimension(): number {
     // eslint-disable-next-line no-magic-numbers
-    return 2;
+    return 3;
   }
 
   /**
-   * Return the null vector, [0, 0].
+   * Return the null vector, [0, 0, 0].
    *
-   * @returns The null vector, [0, 0].
+   * @returns The null vector, [0, 0, 0].
    */
   // eslint-disable-next-line class-methods-use-this
   null(): this {
     const nullVal = this.v.x.null();
-    return new Vec2<T>({ x: nullVal, y: nullVal }) as this;
+    return new Vec3Generic<T>({ x: nullVal, y: nullVal, z: nullVal }) as this;
   }
 
   // Implementation of Types.Equal. ============================================
@@ -268,7 +315,8 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
   [eq](b: this, epsilon: number = EPSILON): boolean {
     const prop1 = this.v.x[eq](b.v.x, epsilon);
     const prop2 = this.v.y[eq](b.v.y, epsilon);
-    return prop1 && prop2;
+    const prop3 = this.v.z[eq](b.v.z, epsilon);
+    return prop1 && prop2 && prop3;
   }
 
   /**
@@ -287,7 +335,8 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
   [neq](b: this, epsilon: number = EPSILON): boolean {
     const prop1 = this.v.x[eq](b.v.x, epsilon);
     const prop2 = this.v.y[eq](b.v.y, epsilon);
-    return !prop1 || !prop2;
+    const prop3 = this.v.z[eq](b.v.z, epsilon);
+    return !prop1 || !prop2 || !prop3;
   }
 
   // Implementation of Types.Ord. ==============================================
@@ -297,8 +346,8 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    *
    * Waring: this is just a partial order in the vector field, it is not
    * possible to compare every two vectors. For example there are many vectors
-   * v and w for which `v.lessOrEqual(w) === false` and
-   * `w.lessOrEqual(v) === false` holds.
+   * v and w for which `v[le](w) === false` and
+   * `w[le](v) === false` holds.
    *
    * Do not use `Number.EPSILON` from JS, which is the smallest difference
    * between to consecutive numbers and does not work for comparisons.
@@ -312,7 +361,8 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
   [le](b: this, epsilon: number = EPSILON): boolean {
     const prop1 = this.v.x[le](b.v.x, epsilon);
     const prop2 = this.v.y[le](b.v.y, epsilon);
-    return prop1 && prop2;
+    const prop3 = this.v.z[le](b.v.z, epsilon);
+    return prop1 && prop2 && prop3;
   }
 
   /**
@@ -320,8 +370,8 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    *
    * Waring: this is just a partial order in the vector field, it is not
    * possible to compare every two vectors. For example there are many vectors
-   * v and w for which `v.biggerOrEqual(w) === false` and
-   * `w.biggerOrEqual(v) === false` holds.
+   * v and w for which `v[ge](w) === false` and
+   * `w[ge](v) === false` holds.
    *
    * Do not use `Number.EPSILON` from JS, which is the smallest difference
    * between to consecutive numbers and does not work for comparisons.
@@ -335,7 +385,8 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
   [ge](b: this, epsilon: number = EPSILON): boolean {
     const prop1 = this.v.x[ge](b.v.x, epsilon);
     const prop2 = this.v.y[ge](b.v.y, epsilon);
-    return prop1 && prop2;
+    const prop3 = this.v.z[ge](b.v.z, epsilon);
+    return prop1 && prop2 && prop3;
   }
 
   /**
@@ -343,15 +394,15 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    *
    * Waring: this is just a partial order in the vector field, it is not
    * possible to compare every two vectors. For example there are many vectors
-   * v and w for which `v[lt](w) === false` and
-   * `w[lt](v) === false` holds.
+   * v and w for which `v.lessThan(w) === false` and
+   * `w.lessThan(v) === false` holds.
    *
    * @param b The vector to compare against.
    * @returns `true` if this vector is less than b, `false` else
    *          (which does not mean that the opposite is true)
    */
   [lt](b: this): boolean {
-    return this.v.x[lt](b.v.x) && this.v.y[lt](b.v.y);
+    return this.v.x[lt](b.v.x) && this.v.y[lt](b.v.y) && this.v.z[lt](b.v.z);
   }
 
   /**
@@ -359,15 +410,15 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    *
    * Waring: this is just a partial order in the vector field, it is not
    * possible to compare every two vectors. For example there are many vectors
-   * v and w for which `v[gt](w) === false` and
-   * `w[gt](v) === false` holds.
+   * v and w for which `v.biggerThan(w) === false` and
+   * `w.biggerThan(v) === false` holds.
    *
    * @param b The vector to compare against.
    * @returns `true` if this vector is bigger than b, `false` else
    *          (which does not mean that the opposite is true)
    */
   [gt](b: this): boolean {
-    return this.v.x[gt](b.v.x) && this.v.y[gt](b.v.y);
+    return this.v.x[gt](b.v.x) && this.v.y[gt](b.v.y) && this.v.z[gt](b.v.z);
   }
 
   /**
@@ -378,21 +429,26 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
 }
 
 /**
- * Unit vector in x direction ([1, 0]).
+ * Unit vector in x direction ([1, 0, 0]).
  */
-export const unitX = new Vec2({ x: 1, y: 0 });
+export const unitX = new Vec3Generic({ x: 1, y: 0, z: 0 });
 
 /**
- * Unit vector in y direction ([0, 1]).
+ * Unit vector in y direction ([0, 1, 0]).
  */
-export const unitY = new Vec2({ x: 0, y: 1 });
+export const unitY = new Vec3Generic({ x: 0, y: 1, z: 0 });
 
 /**
- * The dimension of a 2 dimensional vector: 2.
+ * Unit vector in z direction ([0, 0, 1]).
  */
-export const dimension = 2;
+export const unitZ = new Vec3Generic({ x: 0, y: 0, z: 1 });
 
 /**
- * The null vector, the vector [0 , 0].
+ * The dimension of a 3 dimensional vector: 3.
  */
-export const nullVec = new Vec2({ x: 0, y: 0 });
+export const dimension = 3;
+
+/**
+ * The null vector, the vector [0 , 0, 0].
+ */
+export const nullVec = new Vec3Generic({ x: 0, y: 0, z: 0 });

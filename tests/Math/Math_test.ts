@@ -17,7 +17,7 @@ import { id } from "Generics/Types";
 import { EPSILON } from "Math/Math";
 import { equalityTests } from "../../tests/Generics/EqualGenerics";
 import { ordTests } from "../../tests/Generics/OrdGenerics";
-import { vectorTests } from "../../tests/Generics/VectorFieldGenerics";
+import { vectorTests } from "../../tests/Generics/VectorSpaceGenerics";
 
 describe("Testing Math/Math", () => {
   describe("Testing Number", () => {

@@ -2,14 +2,12 @@
 // Copyright (C) 2022 Roland Csaszar
 //
 // Project:  Genuff
-// File:     Vec4.ts
-// Date:     25.Feb.2022
+// File:     VectorGeneric.ts
+// Date:     04.Mar.2022
 //
 // ==============================================================================
-/* eslint-disable i18next/no-literal-string */
 
 import {
-  cross,
   div,
   dot,
   eq,
@@ -25,6 +23,7 @@ import {
   mult,
   multScalar,
   neq,
+  NotEmpty,
   Ord,
   plus,
   plusScalar,
@@ -35,36 +34,46 @@ import {
 } from "Generics/Types";
 import { EPSILON } from "Math/Math";
 
+export type VecArgGeneric<S extends Field, T> = Record<string, S> & NotEmpty<T>;
+
+export type VecNGeneric<T> = Record<string, T>;
+
 /**
- * A class of a 4 dimensional vector.
+ * The class of a general n-dimensional vector.
  *
  * Never changes the value of `this`, always returns a new object.
  *
- * Implements the following constraints:
- * * Functor
- * * Foldable
- * * Show
- * * ToString
- * * Equal
- * * Ord
- * * VectorField
+ * Implements the constraints
+ *  * Show
+ *  * ToString
+ *  * Equal
+ *  * Ord
+ *  * VectorSpace
+ *  * Functor
+ *  * Foldable
  */
-export class Vec4<T extends Field> // eslint-disable-next-line indent
+export class VectorGeneric<S extends Field, T extends VecArgGeneric<S, T>> // eslint-disable-next-line indent
   implements
-    Functor<T, T, Vec4<T>>,
-    Foldable<T, { value: T; name: string }>,
     Show,
     ToString,
     Equal,
     Ord,
-    VectorSpace<T>
+    VectorSpace<S>,
+    Functor<S, S, VectorGeneric<S, T>>,
+    Foldable<S, { value: S; name: string }>
 {
   /**
-   * Constructs a new 4 dimensional vector.
+   * Constructor.
    *
-   * @param v The values of the vector to construct.
+   * Takes a non-empty object with only number properties as argument.
+   *
+   * @param v The vector-like object to construct the Vector from.
    */
-  constructor(private readonly v: { x: T; y: T; z: T; w: T }) {}
+  constructor(
+    private readonly v: T,
+    private readonly oneF: S,
+    private readonly nullF: S
+  ) {}
 
   /**
    * Return a string representation of the vector.
@@ -75,8 +84,13 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    *
    * @returns A string representation of the vector.
    */
-  toString(): string {
-    return `{ x: ${this.v.x.toString()}, y: ${this.v.y.toString()}, z: ${this.v.z.toString()}, w: ${this.v.w.toString()} }`;
+  toString() {
+    return (
+      this.reduce(
+        (acc, { value, name }) => acc + `${name}: ${value.toString()}, `,
+        "{ "
+      ) + "}"
+    );
   }
 
   /**
@@ -90,7 +104,7 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    * output.
    */
   show(): string {
-    return `[ x: ${this.v.x.toString()}, y: ${this.v.y.toString()}, z: ${this.v.z.toString()}, w: ${this.v.w.toString()} ]`;
+    return this.toString();
   }
 
   /**
@@ -102,13 +116,12 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    * @param f The function to apply to each element of `this`.
    * @returns The mapped vector.
    */
-  map(f: (e: T) => T): this {
-    return new Vec4<T>({
-      x: f(this.v.x),
-      y: f(this.v.y),
-      z: f(this.v.z),
-      w: f(this.v.w),
-    }) as this;
+  map(f: (e: S) => S) {
+    let c = {} as T;
+    for (const prop in this.v) {
+      c[prop] = f(this.v[prop]) as T[Extract<keyof T, string>];
+    }
+    return new VectorGeneric<S, T>(c, this.oneF, this.nullF);
   }
 
   /**
@@ -118,26 +131,31 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    * @param initialValue The starting value of the fold.
    * @returns The vector reduced to a single value.
    */
-  reduce<S>(
-    f: (acc: S, e: { value: T; name: string }) => S,
-    initialValue: S
-  ): S {
-    const acc = f(initialValue, { value: this.v.x, name: "x" });
-    const acc2 = f(acc, { value: this.v.y, name: "y" });
-    const acc3 = f(acc2, { value: this.v.z, name: "z" });
-    return f(acc3, { value: this.v.w, name: "w" });
+  reduce<U>(f: (acc: U, e: { value: S; name: string }) => U, initialValue: U) {
+    let retVal = initialValue;
+    for (const prop in this.v) {
+      retVal = f(retVal, { value: this.v[prop], name: prop });
+    }
+    return retVal;
   }
 
   /**
    * Convert the vector to an array.
    *
+   * The elements in the array have the same order as the string properties in
+   * the vector.
+   *
    * @returns The vector converted to an array.
    */
-  toArray(): T[] {
-    return [this.v.x, this.v.y, this.v.z, this.v.w];
+  toArray(): S[] {
+    let c = [];
+    for (const prop in this.v) {
+      c.push(this.v[prop]);
+    }
+    return c;
   }
 
-  // Implementation of Types.VectorField. ======================================
+  // Implementation of `Types.VectorSpace` =====================================
 
   /**
    * Add a vector to this vector.
@@ -146,12 +164,11 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    * @returns The sum of both vectors
    */
   [plus](b: this): this {
-    return new Vec4<T>({
-      x: this.v.x[plus](b.v.x),
-      y: this.v.y[plus](b.v.y),
-      z: this.v.z[plus](b.v.z),
-      w: this.v.w[plus](b.v.w),
-    }) as this;
+    let c = {} as T;
+    for (const prop in this.v) {
+      c[prop] = this.v[prop][plus](b.v[prop]) as T[Extract<keyof T, string>];
+    }
+    return new VectorGeneric(c, this.oneF, this.nullF) as this;
   }
 
   /**
@@ -161,12 +178,11 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    * @returns The sum of both vectors
    */
   [minus](b: this): this {
-    return new Vec4<T>({
-      x: this.v.x[minus](b.v.x),
-      y: this.v.y[minus](b.v.y),
-      z: this.v.z[minus](b.v.z),
-      w: this.v.w[minus](b.v.w),
-    }) as this;
+    let c = {} as T;
+    for (const prop in this.v) {
+      c[prop] = this.v[prop][minus](b.v[prop]) as T[Extract<keyof T, string>];
+    }
+    return new VectorGeneric(c, this.oneF, this.nullF) as this;
   }
 
   /**
@@ -175,13 +191,12 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    * @param t The scalar value to multiply the vector with.
    * @returns The vector element wise multiplicated with the given value.
    */
-  [multScalar](t: T): this {
-    return new Vec4<T>({
-      x: this.v.x[mult](t),
-      y: this.v.y[mult](t),
-      z: this.v.z[mult](t),
-      w: this.v.w[mult](t),
-    }) as this;
+  [multScalar](t: T[Extract<keyof T, string>]): this {
+    let c = {} as T;
+    for (const prop in this.v) {
+      c[prop] = this.v[prop][mult](t) as T[Extract<keyof T, string>];
+    }
+    return new VectorGeneric(c, this.oneF, this.nullF) as this;
   }
 
   /**
@@ -190,13 +205,12 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    * @param t The scalar value to add to each component of the vector.
    * @returns The vector with the scalar added to it.
    */
-  [plusScalar](t: T): this {
-    return new Vec4<T>({
-      x: this.v.x[plus](t),
-      y: this.v.y[plus](t),
-      z: this.v.z[plus](t),
-      w: this.v.w[plus](t),
-    }) as this;
+  [plusScalar](t: T[Extract<keyof T, string>]): this {
+    let c = {} as T;
+    for (const prop in this.v) {
+      c[prop] = this.v[prop][plus](t) as T[Extract<keyof T, string>];
+    }
+    return new VectorGeneric(c, this.oneF, this.nullF) as this;
   }
 
   /**
@@ -205,31 +219,12 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    * @param b The vector to calculate the dot product with.
    * @returns The dot product (scalar product) of both vectors.
    */
-  [dot](b: this): T {
-    return (
-      this.v.x[mult](b.v.x)
-        // eslint-disable-next-line no-unexpected-multiline
-        [plus](this.v.y[mult](b.v.y))
-        // eslint-disable-next-line no-unexpected-multiline
-        [plus](this.v.z[mult](b.v.z))
-        // eslint-disable-next-line no-unexpected-multiline
-        [plus](this.v.w[mult](b.v.w))
-    );
-  }
-
-  /**
-   * Calculate the cross product of the two vectors.
-   *
-   * Sets the 4th coordinate to 1.
-   *
-   * @param b The vector to calculate the cross product with.
-   * @returns The cross product of both vectors.
-   */
-  [cross](b: this): this {
-    const x = this.v.y[mult](b.v.z)[minus](this.v.z[mult](b.v.y));
-    const y = this.v.z[mult](b.v.x)[minus](this.v.x[mult](b.v.z));
-    const z = this.v.x[mult](b.v.y)[minus](this.v.y[mult](b.v.x));
-    return new Vec4<T>({ x, y, z, w: this.v.y.null() }) as this;
+  [dot](b: this): S {
+    let retVal = this.nullF;
+    for (const prop in this.v) {
+      retVal = retVal[plus](this.v[prop][mult](b.v[prop]));
+    }
+    return retVal;
   }
 
   /**
@@ -240,8 +235,9 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    * existing one.
    */
   normalize(): this {
+    let c = {} as T;
     // eslint-disable-next-line no-magic-numbers
-    const fac = this.v.x.one()[div](this.length());
+    const fac = this.oneF[div](this.norm()) as T[Extract<keyof T, string>];
     return this[multScalar](fac);
   }
 
@@ -252,18 +248,12 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    *
    * @returns The Euclidean norm of the vector.
    */
-  norm(): T {
-    return (
-      this.v.x[mult](this.v.x)
-        // eslint-disable-next-line no-unexpected-multiline
-        [plus](this.v.y[mult](this.v.y))
-        // eslint-disable-next-line no-unexpected-multiline
-        [plus](this.v.z[mult](this.v.z))
-        // eslint-disable-next-line no-unexpected-multiline
-        [plus](this.v.w[mult](this.v.w))
-        // eslint-disable-next-line no-unexpected-multiline
-        [sqrt]()
-    );
+  norm(): S {
+    let retVal = this.nullF;
+    for (const prop in this.v) {
+      retVal = retVal[plus](this.v[prop][mult](this.v[prop]));
+    }
+    return retVal[sqrt]();
   }
 
   /**
@@ -275,48 +265,39 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    *
    * @returns The length of the vector.
    */
-  length(): T {
-    return (
-      this.v.x[mult](this.v.x)
-        // eslint-disable-next-line no-unexpected-multiline
-        [plus](this.v.y[mult](this.v.y))
-        // eslint-disable-next-line no-unexpected-multiline
-        [plus](this.v.z[mult](this.v.z))
-        // eslint-disable-next-line no-unexpected-multiline
-        [plus](this.v.w[mult](this.v.w))
-        // eslint-disable-next-line no-unexpected-multiline
-        [sqrt]()
-    );
+  length(): S {
+    let retVal = this.nullF;
+    for (const prop in this.v) {
+      retVal = retVal[plus](this.v[prop][mult](this.v[prop]));
+    }
+    return retVal[sqrt]();
   }
 
   /**
-   * The dimension of a two dimensional vector: 4
+   * Return the dimension of the vector, the number of its components.
    *
-   * @returns 3, the dimension of a 4 dimensional vector.
+   * @returns The dimension of the vector, the number of its components.
    */
-  // eslint-disable-next-line class-methods-use-this
   dimension(): number {
-    // eslint-disable-next-line no-magic-numbers
-    return 4;
+    return Object.keys(this.v).length;
   }
 
   /**
-   * Return the null vector, [0, 0, 0, 0].
+   * Return the null vector, every component of this vector is 0:
+   * [0, 0, ... , 0].
    *
-   * @returns The null vector, [0, 0, 0, 0].
+   * @returns The null vector, [0, 0, ... , 0].
    */
-  // eslint-disable-next-line class-methods-use-this
   null(): this {
-    const nullVal = this.v.x.null();
-    return new Vec4<T>({
-      x: nullVal,
-      y: nullVal,
-      z: nullVal,
-      w: nullVal,
-    }) as this;
+    let c = {} as T;
+    for (const prop in this.v) {
+      // eslint-disable-next-line no-magic-numbers
+      c[prop] = this.nullF as T[Extract<keyof T, string>];
+    }
+    return new VectorGeneric<S, T>(c, this.oneF, this.nullF) as this;
   }
 
-  // Implementation of Types.Equal. ============================================
+  // Implementation of `Types.Equal`. ============================================
 
   /**
    * Compare the two vectors for equality.
@@ -331,12 +312,12 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    *                `Math/Math.EPSILON`, which should work for usual usage.
    * @returns `true`, if the two vectors are equal, `false` else.
    */
-  [eq](b: this, epsilon: number = EPSILON): boolean {
-    const prop1 = this.v.x[eq](b.v.x, epsilon);
-    const prop2 = this.v.y[eq](b.v.y, epsilon);
-    const prop3 = this.v.z[eq](b.v.z, epsilon);
-    const prop4 = this.v.w[eq](b.v.w, epsilon);
-    return prop1 && prop2 && prop3 && prop4;
+  [eq](b: this, epsilon: number = EPSILON) {
+    let retVal = true;
+    for (const prop in this.v) {
+      retVal = retVal && this.v[prop][eq](b.v[prop], epsilon);
+    }
+    return retVal;
   }
 
   /**
@@ -352,15 +333,16 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    *                `Math/Math.EPSILON`, which should work for usual usage.
    * @returns `false`, if the two vectors are equal, `true` else.
    */
-  [neq](b: this, epsilon: number = EPSILON): boolean {
-    const prop1 = this.v.x[eq](b.v.x, epsilon);
-    const prop2 = this.v.y[eq](b.v.y, epsilon);
-    const prop3 = this.v.z[eq](b.v.z, epsilon);
-    const prop4 = this.v.w[eq](b.v.w, epsilon);
-    return !prop1 || !prop2 || !prop3 || !prop4;
+  [neq](b: this, epsilon: number = EPSILON) {
+    for (const prop in this.v) {
+      if (this.v[prop][neq](b.v[prop], epsilon)) {
+        return true;
+      }
+    }
+    return false;
   }
 
-  // Implementation of Types.Ord. ==============================================
+  // Implementation of `Types.Ord` ===============================================
 
   /**
    * Compare two vectors, if `this <= b`.
@@ -379,12 +361,12 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    * @returns `true` if this vector is less than or equal to b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  [le](b: this, epsilon: number = EPSILON): boolean {
-    const prop1 = this.v.x[le](b.v.x, epsilon);
-    const prop2 = this.v.y[le](b.v.y, epsilon);
-    const prop3 = this.v.z[le](b.v.z, epsilon);
-    const prop4 = this.v.w[le](b.v.w, epsilon);
-    return prop1 && prop2 && prop3 && prop4;
+  [le](b: this, epsilon: number = EPSILON) {
+    let retVal = true;
+    for (const prop in this.v) {
+      retVal = retVal && this.v[prop][le](b.v[prop], epsilon);
+    }
+    return retVal;
   }
 
   /**
@@ -404,12 +386,12 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    * @returns `true` if this vector is bigger than or equal to b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  [ge](b: this, epsilon: number = EPSILON): boolean {
-    const prop1 = this.v.x[ge](b.v.x, epsilon);
-    const prop2 = this.v.y[ge](b.v.y, epsilon);
-    const prop3 = this.v.z[ge](b.v.z, epsilon);
-    const prop4 = this.v.w[ge](b.v.w, epsilon);
-    return prop1 && prop2 && prop3 && prop4;
+  [ge](b: this, epsilon: number = EPSILON) {
+    let retVal = true;
+    for (const prop in this.v) {
+      retVal = retVal && this.v[prop][ge](b.v[prop], epsilon);
+    }
+    return retVal;
   }
 
   /**
@@ -424,13 +406,12 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    * @returns `true` if this vector is less than b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  [lt](b: this): boolean {
-    return (
-      this.v.x[lt](b.v.x) &&
-      this.v.y[lt](b.v.y) &&
-      this.v.z[lt](b.v.z) &&
-      this.v.w[lt](b.v.w)
-    );
+  [lt](b: this) {
+    let retVal = true;
+    for (const prop in this.v) {
+      retVal = retVal && this.v[prop][lt](b.v[prop]);
+    }
+    return retVal;
   }
 
   /**
@@ -445,13 +426,12 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    * @returns `true` if this vector is bigger than b, `false` else
    *          (which does not mean that the opposite is true)
    */
-  [gt](b: this): boolean {
-    return (
-      this.v.x[gt](b.v.x) &&
-      this.v.y[gt](b.v.y) &&
-      this.v.z[gt](b.v.z) &&
-      this.v.w[gt](b.v.w)
-    );
+  [gt](b: this) {
+    let retVal = true;
+    for (const prop in this.v) {
+      retVal = retVal && this.v[prop][gt](b.v[prop]);
+    }
+    return retVal;
   }
 
   /**
@@ -460,33 +440,3 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    */
   readonly isPartial = true;
 }
-
-/**
- * Unit vector in x direction ([1, 0, 0, 0]).
- */
-export const unitX = new Vec4({ x: 1, y: 0, z: 0, w: 0 });
-
-/**
- * Unit vector in y direction ([0, 1, 0, 0]).
- */
-export const unitY = new Vec4({ x: 0, y: 1, z: 0, w: 0 });
-
-/**
- * Unit vector in z direction ([0, 0, 1, 0]).
- */
-export const unitZ = new Vec4({ x: 0, y: 0, z: 1, w: 0 });
-
-/**
- * Unit vector in w direction ([0, 0, 0, 1]).
- */
-export const unitW = new Vec4({ x: 0, y: 0, z: 0, w: 1 });
-
-/**
- * The dimension of a 4 dimensional vector: 3.
- */
-export const dimension = 4;
-
-/**
- * The null vector, the vector [0, 0, 0, 0].
- */
-export const nullVec = new Vec4({ x: 0, y: 0, z: 0, w: 0 });

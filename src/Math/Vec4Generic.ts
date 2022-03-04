@@ -2,8 +2,8 @@
 // Copyright (C) 2022 Roland Csaszar
 //
 // Project:  Genuff
-// File:     Vec3.ts
-// Date:     25.Feb.2022
+// File:     Vec4Generic.ts
+// Date:     04.Mar.2022
 //
 // ==============================================================================
 /* eslint-disable i18next/no-literal-string */
@@ -36,7 +36,7 @@ import {
 import { EPSILON } from "Math/Math";
 
 /**
- * A class of a 3 dimensional vector.
+ * A class of a 4 dimensional vector.
  *
  * Never changes the value of `this`, always returns a new object.
  *
@@ -47,11 +47,11 @@ import { EPSILON } from "Math/Math";
  * * ToString
  * * Equal
  * * Ord
- * * VectorField
+ * * VectorSpace
  */
-export class Vec3<T extends Field> // eslint-disable-next-line indent
+export class Vec4Generic<T extends Field> // eslint-disable-next-line indent
   implements
-    Functor<T, T, Vec3<T>>,
+    Functor<T, T, Vec4Generic<T>>,
     Foldable<T, { value: T; name: string }>,
     Show,
     ToString,
@@ -60,11 +60,11 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
     VectorSpace<T>
 {
   /**
-   * Constructs a new 3 dimensional vector.
+   * Constructs a new 4 dimensional vector.
    *
    * @param v The values of the vector to construct.
    */
-  constructor(private readonly v: { x: T; y: T; z: T }) {}
+  constructor(private readonly v: { x: T; y: T; z: T; w: T }) {}
 
   /**
    * Return a string representation of the vector.
@@ -76,7 +76,7 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
    * @returns A string representation of the vector.
    */
   toString(): string {
-    return `{ x: ${this.v.x.toString()}, y: ${this.v.y.toString()}, z: ${this.v.z.toString()} }`;
+    return `{ x: ${this.v.x.toString()}, y: ${this.v.y.toString()}, z: ${this.v.z.toString()}, w: ${this.v.w.toString()} }`;
   }
 
   /**
@@ -90,7 +90,7 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
    * output.
    */
   show(): string {
-    return `[ x: ${this.v.x.toString()}, y: ${this.v.y.toString()}, z: ${this.v.z.toString()} ]`;
+    return `[ x: ${this.v.x.toString()}, y: ${this.v.y.toString()}, z: ${this.v.z.toString()}, w: ${this.v.w.toString()} ]`;
   }
 
   /**
@@ -103,7 +103,12 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
    * @returns The mapped vector.
    */
   map(f: (e: T) => T): this {
-    return new Vec3({ x: f(this.v.x), y: f(this.v.y), z: f(this.v.z) }) as this;
+    return new Vec4Generic<T>({
+      x: f(this.v.x),
+      y: f(this.v.y),
+      z: f(this.v.z),
+      w: f(this.v.w),
+    }) as this;
   }
 
   /**
@@ -119,7 +124,8 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
   ): S {
     const acc = f(initialValue, { value: this.v.x, name: "x" });
     const acc2 = f(acc, { value: this.v.y, name: "y" });
-    return f(acc2, { value: this.v.z, name: "z" });
+    const acc3 = f(acc2, { value: this.v.z, name: "z" });
+    return f(acc3, { value: this.v.w, name: "w" });
   }
 
   /**
@@ -128,10 +134,10 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
    * @returns The vector converted to an array.
    */
   toArray(): T[] {
-    return [this.v.x, this.v.y, this.v.z];
+    return [this.v.x, this.v.y, this.v.z, this.v.w];
   }
 
-  // Implementation of Types.VectorField. ======================================
+  // Implementation of Types.VectorSpace. ======================================
 
   /**
    * Add a vector to this vector.
@@ -140,10 +146,11 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
    * @returns The sum of both vectors
    */
   [plus](b: this): this {
-    return new Vec3({
+    return new Vec4Generic<T>({
       x: this.v.x[plus](b.v.x),
       y: this.v.y[plus](b.v.y),
       z: this.v.z[plus](b.v.z),
+      w: this.v.w[plus](b.v.w),
     }) as this;
   }
 
@@ -154,10 +161,11 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
    * @returns The sum of both vectors
    */
   [minus](b: this): this {
-    return new Vec3({
+    return new Vec4Generic<T>({
       x: this.v.x[minus](b.v.x),
       y: this.v.y[minus](b.v.y),
       z: this.v.z[minus](b.v.z),
+      w: this.v.w[minus](b.v.w),
     }) as this;
   }
 
@@ -168,10 +176,11 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
    * @returns The vector element wise multiplicated with the given value.
    */
   [multScalar](t: T): this {
-    return new Vec3({
+    return new Vec4Generic<T>({
       x: this.v.x[mult](t),
       y: this.v.y[mult](t),
       z: this.v.z[mult](t),
+      w: this.v.w[mult](t),
     }) as this;
   }
 
@@ -182,10 +191,11 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
    * @returns The vector with the scalar added to it.
    */
   [plusScalar](t: T): this {
-    return new Vec3({
+    return new Vec4Generic<T>({
       x: this.v.x[plus](t),
       y: this.v.y[plus](t),
       z: this.v.z[plus](t),
+      w: this.v.w[plus](t),
     }) as this;
   }
 
@@ -202,11 +212,15 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
         [plus](this.v.y[mult](b.v.y))
         // eslint-disable-next-line no-unexpected-multiline
         [plus](this.v.z[mult](b.v.z))
+        // eslint-disable-next-line no-unexpected-multiline
+        [plus](this.v.w[mult](b.v.w))
     );
   }
 
   /**
    * Calculate the cross product of the two vectors.
+   *
+   * Sets the 4th coordinate to 1.
    *
    * @param b The vector to calculate the cross product with.
    * @returns The cross product of both vectors.
@@ -215,7 +229,7 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
     const x = this.v.y[mult](b.v.z)[minus](this.v.z[mult](b.v.y));
     const y = this.v.z[mult](b.v.x)[minus](this.v.x[mult](b.v.z));
     const z = this.v.x[mult](b.v.y)[minus](this.v.y[mult](b.v.x));
-    return new Vec3({ x, y, z }) as this;
+    return new Vec4Generic<T>({ x, y, z, w: this.v.y.null() }) as this;
   }
 
   /**
@@ -246,6 +260,8 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
         // eslint-disable-next-line no-unexpected-multiline
         [plus](this.v.z[mult](this.v.z))
         // eslint-disable-next-line no-unexpected-multiline
+        [plus](this.v.w[mult](this.v.w))
+        // eslint-disable-next-line no-unexpected-multiline
         [sqrt]()
     );
   }
@@ -267,30 +283,37 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
         // eslint-disable-next-line no-unexpected-multiline
         [plus](this.v.z[mult](this.v.z))
         // eslint-disable-next-line no-unexpected-multiline
+        [plus](this.v.w[mult](this.v.w))
+        // eslint-disable-next-line no-unexpected-multiline
         [sqrt]()
     );
   }
 
   /**
-   * The dimension of a two dimensional vector: 3
+   * The dimension of a two dimensional vector: 4
    *
-   * @returns 3, the dimension of a 3 dimensional vector.
+   * @returns 3, the dimension of a 4 dimensional vector.
    */
   // eslint-disable-next-line class-methods-use-this
   dimension(): number {
     // eslint-disable-next-line no-magic-numbers
-    return 3;
+    return 4;
   }
 
   /**
-   * Return the null vector, [0, 0, 0].
+   * Return the null vector, [0, 0, 0, 0].
    *
-   * @returns The null vector, [0, 0, 0].
+   * @returns The null vector, [0, 0, 0, 0].
    */
   // eslint-disable-next-line class-methods-use-this
   null(): this {
     const nullVal = this.v.x.null();
-    return new Vec3<T>({ x: nullVal, y: nullVal, z: nullVal }) as this;
+    return new Vec4Generic<T>({
+      x: nullVal,
+      y: nullVal,
+      z: nullVal,
+      w: nullVal,
+    }) as this;
   }
 
   // Implementation of Types.Equal. ============================================
@@ -312,7 +335,8 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
     const prop1 = this.v.x[eq](b.v.x, epsilon);
     const prop2 = this.v.y[eq](b.v.y, epsilon);
     const prop3 = this.v.z[eq](b.v.z, epsilon);
-    return prop1 && prop2 && prop3;
+    const prop4 = this.v.w[eq](b.v.w, epsilon);
+    return prop1 && prop2 && prop3 && prop4;
   }
 
   /**
@@ -332,7 +356,8 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
     const prop1 = this.v.x[eq](b.v.x, epsilon);
     const prop2 = this.v.y[eq](b.v.y, epsilon);
     const prop3 = this.v.z[eq](b.v.z, epsilon);
-    return !prop1 || !prop2 || !prop3;
+    const prop4 = this.v.w[eq](b.v.w, epsilon);
+    return !prop1 || !prop2 || !prop3 || !prop4;
   }
 
   // Implementation of Types.Ord. ==============================================
@@ -358,7 +383,8 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
     const prop1 = this.v.x[le](b.v.x, epsilon);
     const prop2 = this.v.y[le](b.v.y, epsilon);
     const prop3 = this.v.z[le](b.v.z, epsilon);
-    return prop1 && prop2 && prop3;
+    const prop4 = this.v.w[le](b.v.w, epsilon);
+    return prop1 && prop2 && prop3 && prop4;
   }
 
   /**
@@ -382,7 +408,8 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
     const prop1 = this.v.x[ge](b.v.x, epsilon);
     const prop2 = this.v.y[ge](b.v.y, epsilon);
     const prop3 = this.v.z[ge](b.v.z, epsilon);
-    return prop1 && prop2 && prop3;
+    const prop4 = this.v.w[ge](b.v.w, epsilon);
+    return prop1 && prop2 && prop3 && prop4;
   }
 
   /**
@@ -390,15 +417,20 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
    *
    * Waring: this is just a partial order in the vector field, it is not
    * possible to compare every two vectors. For example there are many vectors
-   * v and w for which `v.lessThan(w) === false` and
-   * `w.lessThan(v) === false` holds.
+   * v and w for which `v[lt](w) === false` and
+   * `w[lt](v) === false` holds.
    *
    * @param b The vector to compare against.
    * @returns `true` if this vector is less than b, `false` else
    *          (which does not mean that the opposite is true)
    */
   [lt](b: this): boolean {
-    return this.v.x[lt](b.v.x) && this.v.y[lt](b.v.y) && this.v.z[lt](b.v.z);
+    return (
+      this.v.x[lt](b.v.x) &&
+      this.v.y[lt](b.v.y) &&
+      this.v.z[lt](b.v.z) &&
+      this.v.w[lt](b.v.w)
+    );
   }
 
   /**
@@ -406,15 +438,20 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
    *
    * Waring: this is just a partial order in the vector field, it is not
    * possible to compare every two vectors. For example there are many vectors
-   * v and w for which `v.biggerThan(w) === false` and
-   * `w.biggerThan(v) === false` holds.
+   * v and w for which `v[gt](w) === false` and
+   * `w[gt](v) === false` holds.
    *
    * @param b The vector to compare against.
    * @returns `true` if this vector is bigger than b, `false` else
    *          (which does not mean that the opposite is true)
    */
   [gt](b: this): boolean {
-    return this.v.x[gt](b.v.x) && this.v.y[gt](b.v.y) && this.v.z[gt](b.v.z);
+    return (
+      this.v.x[gt](b.v.x) &&
+      this.v.y[gt](b.v.y) &&
+      this.v.z[gt](b.v.z) &&
+      this.v.w[gt](b.v.w)
+    );
   }
 
   /**
@@ -425,26 +462,31 @@ export class Vec3<T extends Field> // eslint-disable-next-line indent
 }
 
 /**
- * Unit vector in x direction ([1, 0, 0]).
+ * Unit vector in x direction ([1, 0, 0, 0]).
  */
-export const unitX = new Vec3({ x: 1, y: 0, z: 0 });
+export const unitX = new Vec4Generic({ x: 1, y: 0, z: 0, w: 0 });
 
 /**
- * Unit vector in y direction ([0, 1, 0]).
+ * Unit vector in y direction ([0, 1, 0, 0]).
  */
-export const unitY = new Vec3({ x: 0, y: 1, z: 0 });
+export const unitY = new Vec4Generic({ x: 0, y: 1, z: 0, w: 0 });
 
 /**
- * Unit vector in z direction ([0, 0, 1]).
+ * Unit vector in z direction ([0, 0, 1, 0]).
  */
-export const unitZ = new Vec3({ x: 0, y: 0, z: 1 });
+export const unitZ = new Vec4Generic({ x: 0, y: 0, z: 1, w: 0 });
 
 /**
- * The dimension of a 3 dimensional vector: 3.
+ * Unit vector in w direction ([0, 0, 0, 1]).
  */
-export const dimension = 3;
+export const unitW = new Vec4Generic({ x: 0, y: 0, z: 0, w: 1 });
 
 /**
- * The null vector, the vector [0 , 0, 0].
+ * The dimension of a 4 dimensional vector: 3.
  */
-export const nullVec = new Vec3({ x: 0, y: 0, z: 0 });
+export const dimension = 4;
+
+/**
+ * The null vector, the vector [0, 0, 0, 0].
+ */
+export const nullVec = new Vec4Generic({ x: 0, y: 0, z: 0, w: 0 });

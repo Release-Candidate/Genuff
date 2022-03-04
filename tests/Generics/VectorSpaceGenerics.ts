@@ -2,7 +2,7 @@
 // Copyright (C) 2022 Roland Csaszar
 //
 // Project:  Genuff
-// File:     VectorFieldGenerics.ts
+// File:     VectorSpaceGenerics.ts
 // Date:     01.Mar.2022
 //
 // ==============================================================================
