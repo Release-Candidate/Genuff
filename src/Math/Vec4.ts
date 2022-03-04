@@ -9,7 +9,6 @@
 /* eslint-disable i18next/no-literal-string */
 
 import {
-  abs,
   cross,
   div,
   dot,
@@ -333,15 +332,10 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    * @returns `true`, if the two vectors are equal, `false` else.
    */
   [eq](b: this, epsilon: number = EPSILON): boolean {
-    const eps = this.v.x.fromNumber(epsilon);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop1 = this.v.x[minus](b.v.x)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop2 = this.v.y[minus](b.v.y)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop3 = this.v.z[minus](b.v.z)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop4 = this.v.w[minus](b.v.w)[abs]()[lt](eps);
+    const prop1 = this.v.x[eq](b.v.x, epsilon);
+    const prop2 = this.v.y[eq](b.v.y, epsilon);
+    const prop3 = this.v.z[eq](b.v.z, epsilon);
+    const prop4 = this.v.w[eq](b.v.w, epsilon);
     return prop1 && prop2 && prop3 && prop4;
   }
 
@@ -359,15 +353,10 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    * @returns `false`, if the two vectors are equal, `true` else.
    */
   [neq](b: this, epsilon: number = EPSILON): boolean {
-    const eps = this.v.x.fromNumber(epsilon);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop1 = this.v.x[minus](b.v.x)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop2 = this.v.y[minus](b.v.y)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop3 = this.v.z[minus](b.v.z)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop4 = this.v.w[minus](b.v.w)[abs]()[lt](eps);
+    const prop1 = this.v.x[eq](b.v.x, epsilon);
+    const prop2 = this.v.y[eq](b.v.y, epsilon);
+    const prop3 = this.v.z[eq](b.v.z, epsilon);
+    const prop4 = this.v.w[eq](b.v.w, epsilon);
     return !prop1 || !prop2 || !prop3 || !prop4;
   }
 
@@ -391,15 +380,10 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    *          (which does not mean that the opposite is true)
    */
   [le](b: this, epsilon: number = EPSILON): boolean {
-    const eps = this.v.x.fromNumber(epsilon);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop1 = this.v.x[lt](b.v.x) || this.v.x[minus](b.v.x)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop2 = this.v.y[lt](b.v.y) || this.v.y[minus](b.v.y)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop3 = this.v.z[lt](b.v.z) || this.v.z[minus](b.v.z)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop4 = this.v.w[lt](b.v.w) || this.v.w[minus](b.v.w)[abs]()[lt](eps);
+    const prop1 = this.v.x[le](b.v.x, epsilon);
+    const prop2 = this.v.y[le](b.v.y, epsilon);
+    const prop3 = this.v.z[le](b.v.z, epsilon);
+    const prop4 = this.v.w[le](b.v.w, epsilon);
     return prop1 && prop2 && prop3 && prop4;
   }
 
@@ -421,15 +405,10 @@ export class Vec4<T extends Field> // eslint-disable-next-line indent
    *          (which does not mean that the opposite is true)
    */
   [ge](b: this, epsilon: number = EPSILON): boolean {
-    const eps = this.v.x.fromNumber(epsilon);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop1 = this.v.x[gt](b.v.x) || this.v.x[minus](b.v.x)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop2 = this.v.y[gt](b.v.y) || this.v.y[minus](b.v.y)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop3 = this.v.z[gt](b.v.z) || this.v.z[minus](b.v.z)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop4 = this.v.w[gt](b.v.w) || this.v.w[minus](b.v.w)[abs]()[lt](eps);
+    const prop1 = this.v.x[ge](b.v.x, epsilon);
+    const prop2 = this.v.y[ge](b.v.y, epsilon);
+    const prop3 = this.v.z[ge](b.v.z, epsilon);
+    const prop4 = this.v.w[ge](b.v.w, epsilon);
     return prop1 && prop2 && prop3 && prop4;
   }
 

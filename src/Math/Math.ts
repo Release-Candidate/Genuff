@@ -7,6 +7,8 @@
 //
 // ==============================================================================
 /* eslint-disable no-extend-native */
+/* eslint-disable no-magic-numbers */
+/* eslint-disable newline-per-chained-call */
 
 import Decimal from "decimal.js";
 import {
@@ -202,8 +204,33 @@ Decimal.prototype[abs] = function () {
   return this.abs();
 };
 
+Decimal.prototype[eq] = function (b, epsilon = 0) {
+  return this.minus(b).abs().lessThanOrEqualTo(epsilon);
+};
+
+Decimal.prototype[neq] = function (b, epsilon = 0) {
+  return !this.minus(b).abs().lessThanOrEqualTo(epsilon);
+};
+
 Decimal.prototype[lt] = function (b) {
   return this.lt(b);
+};
+
+Decimal.prototype[gt] = function (b) {
+  return this.gt(b);
+};
+
+Decimal.prototype[le] = function (b, epsilon = 0) {
+  return (
+    this.lessThanOrEqualTo(b) || this.minus(b).abs().lessThanOrEqualTo(epsilon)
+  );
+};
+
+Decimal.prototype[ge] = function (b, epsilon = 0) {
+  return (
+    this.greaterThanOrEqualTo(b) ||
+    this.minus(b).abs().lessThanOrEqualTo(epsilon)
+  );
 };
 
 Decimal.prototype.one = function () {

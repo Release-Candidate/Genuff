@@ -8,9 +8,11 @@
 // ==============================================================================
 
 import {
+  div,
   dot,
   eq,
   Equal,
+  Field,
   Foldable,
   Functor,
   ge,
@@ -18,6 +20,7 @@ import {
   le,
   lt,
   minus,
+  mult,
   multScalar,
   neq,
   NotEmpty,
@@ -26,12 +29,13 @@ import {
   plus,
   plusScalar,
   Show,
+  sqrt,
   ToString,
   VectorSpace,
 } from "Generics/Types";
 import { EPSILON } from "Math/Math";
 
-export type VecArg<T> = OnlyNumbers & NotEmpty<T>;
+export type VecArg<S extends Field, T> = Record<string, S> & NotEmpty<T>;
 
 export type VecN = OnlyNumbers;
 
@@ -49,15 +53,15 @@ export type VecN = OnlyNumbers;
  *  * Functor
  *  * Foldable
  */
-export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
+export class Vector<S extends Field, T extends VecArg<S, T>> // eslint-disable-next-line indent
   implements
     Show,
     ToString,
     Equal,
     Ord,
-    VectorSpace<number>,
-    Functor<number, number, Vector<T>>,
-    Foldable<number, { value: number; name: string }>
+    VectorSpace<S>,
+    Functor<S, S, Vector<S, T>>,
+    Foldable<S, { value: S; name: string }>
 {
   /**
    * Constructor.
@@ -66,7 +70,11 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    *
    * @param v The vector-like object to construct the Vector from.
    */
-  constructor(private readonly v: T) {}
+  constructor(
+    private readonly v: T,
+    private readonly oneF: S,
+    private readonly nullF: S
+  ) {}
 
   /**
    * Return a string representation of the vector.
@@ -109,12 +117,12 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @param f The function to apply to each element of `this`.
    * @returns The mapped vector.
    */
-  map(f: (e: number) => number) {
+  map(f: (e: S) => S) {
     let c = {} as T;
     for (const prop in this.v) {
       c[prop] = f(this.v[prop]) as T[Extract<keyof T, string>];
     }
-    return new Vector(c);
+    return new Vector<S, T>(c, this.oneF, this.nullF);
   }
 
   /**
@@ -124,10 +132,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @param initialValue The starting value of the fold.
    * @returns The vector reduced to a single value.
    */
-  reduce<S>(
-    f: (acc: S, e: { value: number; name: string }) => S,
-    initialValue: S
-  ) {
+  reduce<U>(f: (acc: U, e: { value: S; name: string }) => U, initialValue: U) {
     let retVal = initialValue;
     for (const prop in this.v) {
       retVal = f(retVal, { value: this.v[prop], name: prop });
@@ -143,7 +148,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    *
    * @returns The vector converted to an array.
    */
-  toArray(): number[] {
+  toArray(): S[] {
     let c = [];
     for (const prop in this.v) {
       c.push(this.v[prop]);
@@ -162,9 +167,9 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
   [plus](b: this): this {
     let c = {} as T;
     for (const prop in this.v) {
-      c[prop] = (this.v[prop] + b.v[prop]) as T[Extract<keyof T, string>];
+      c[prop] = this.v[prop][plus](b.v[prop]) as T[Extract<keyof T, string>];
     }
-    return new Vector(c) as this;
+    return new Vector(c, this.oneF, this.nullF) as this;
   }
 
   /**
@@ -176,9 +181,9 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
   [minus](b: this): this {
     let c = {} as T;
     for (const prop in this.v) {
-      c[prop] = (this.v[prop] - b.v[prop]) as T[Extract<keyof T, string>];
+      c[prop] = this.v[prop][minus](b.v[prop]) as T[Extract<keyof T, string>];
     }
-    return new Vector(c) as this;
+    return new Vector(c, this.oneF, this.nullF) as this;
   }
 
   /**
@@ -187,12 +192,12 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @param t The scalar value to multiply the vector with.
    * @returns The vector element wise multiplicated with the given value.
    */
-  [multScalar](t: number): this {
+  [multScalar](t: T[Extract<keyof T, string>]): this {
     let c = {} as T;
     for (const prop in this.v) {
-      c[prop] = (this.v[prop] * t) as T[Extract<keyof T, string>];
+      c[prop] = this.v[prop][mult](t) as T[Extract<keyof T, string>];
     }
-    return new Vector(c) as this;
+    return new Vector(c, this.oneF, this.nullF) as this;
   }
 
   /**
@@ -201,12 +206,12 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @param t The scalar value to add to each component of the vector.
    * @returns The vector with the scalar added to it.
    */
-  [plusScalar](t: number): this {
+  [plusScalar](t: T[Extract<keyof T, string>]): this {
     let c = {} as T;
     for (const prop in this.v) {
-      c[prop] = (this.v[prop] + t) as T[Extract<keyof T, string>];
+      c[prop] = this.v[prop][plus](t) as T[Extract<keyof T, string>];
     }
-    return new Vector(c) as this;
+    return new Vector(c, this.oneF, this.nullF) as this;
   }
 
   /**
@@ -215,10 +220,10 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    * @param b The vector to calculate the dot product with.
    * @returns The dot product (scalar product) of both vectors.
    */
-  [dot](b: this): number {
-    let retVal = 0;
+  [dot](b: this): S {
+    let retVal = this.nullF;
     for (const prop in this.v) {
-      retVal += this.v[prop] * b.v[prop];
+      retVal = retVal[plus](this.v[prop][mult](b.v[prop]));
     }
     return retVal;
   }
@@ -233,11 +238,8 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
   normalize(): this {
     let c = {} as T;
     // eslint-disable-next-line no-magic-numbers
-    const fac = 1.0 / this.norm();
-    for (const prop in this.v) {
-      c[prop] = (this.v[prop] * fac) as T[Extract<keyof T, string>];
-    }
-    return new Vector(c) as this;
+    const fac = this.oneF[div](this.norm()) as T[Extract<keyof T, string>];
+    return this[multScalar](fac);
   }
 
   /**
@@ -247,12 +249,12 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    *
    * @returns The Euclidean norm of the vector.
    */
-  norm(): number {
-    let retVal = 0;
+  norm(): S {
+    let retVal = this.nullF;
     for (const prop in this.v) {
-      retVal += this.v[prop] * this.v[prop];
+      retVal = retVal[plus](this.v[prop][mult](this.v[prop]));
     }
-    return Math.sqrt(retVal);
+    return retVal[sqrt]();
   }
 
   /**
@@ -264,12 +266,12 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    *
    * @returns The length of the vector.
    */
-  length(): number {
-    let retVal = 0;
+  length(): S {
+    let retVal = this.nullF;
     for (const prop in this.v) {
-      retVal += this.v[prop] * this.v[prop];
+      retVal = retVal[plus](this.v[prop][mult](this.v[prop]));
     }
-    return Math.sqrt(retVal);
+    return retVal[sqrt]();
   }
 
   /**
@@ -291,9 +293,9 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
     let c = {} as T;
     for (const prop in this.v) {
       // eslint-disable-next-line no-magic-numbers
-      c[prop] = 0 as T[Extract<keyof T, string>];
+      c[prop] = this.nullF as T[Extract<keyof T, string>];
     }
-    return new Vector(c) as this;
+    return new Vector<S, T>(c, this.oneF, this.nullF) as this;
   }
 
   // Implementation of `Types.Equal`. ============================================
@@ -314,7 +316,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
   [eq](b: this, epsilon: number = EPSILON) {
     let retVal = true;
     for (const prop in this.v) {
-      retVal = retVal && Math.abs(this.v[prop] - b.v[prop]) < epsilon;
+      retVal = retVal && this.v[prop][eq](b.v[prop], epsilon);
     }
     return retVal;
   }
@@ -334,7 +336,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
    */
   [neq](b: this, epsilon: number = EPSILON) {
     for (const prop in this.v) {
-      if (Math.abs(this.v[prop] - b.v[prop]) >= epsilon) {
+      if (this.v[prop][neq](b.v[prop], epsilon)) {
         return true;
       }
     }
@@ -363,8 +365,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
   [le](b: this, epsilon: number = EPSILON) {
     let retVal = true;
     for (const prop in this.v) {
-      const eql = Math.abs(this.v[prop] - b.v[prop]) < epsilon;
-      retVal = retVal && (this.v[prop] < b.v[prop] || eql);
+      retVal = retVal && this.v[prop][le](b.v[prop], epsilon);
     }
     return retVal;
   }
@@ -389,8 +390,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
   [ge](b: this, epsilon: number = EPSILON) {
     let retVal = true;
     for (const prop in this.v) {
-      const eql = Math.abs(this.v[prop] - b.v[prop]) < epsilon;
-      retVal = retVal && (this.v[prop] > b.v[prop] || eql);
+      retVal = retVal && this.v[prop][ge](b.v[prop], epsilon);
     }
     return retVal;
   }
@@ -410,7 +410,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
   [lt](b: this) {
     let retVal = true;
     for (const prop in this.v) {
-      retVal = retVal && this.v[prop] < b.v[prop];
+      retVal = retVal && this.v[prop][lt](b.v[prop]);
     }
     return retVal;
   }
@@ -430,7 +430,7 @@ export class Vector<T extends VecArg<T>> // eslint-disable-next-line indent
   [gt](b: this) {
     let retVal = true;
     for (const prop in this.v) {
-      retVal = retVal && this.v[prop] > b.v[prop];
+      retVal = retVal && this.v[prop][gt](b.v[prop]);
     }
     return retVal;
   }

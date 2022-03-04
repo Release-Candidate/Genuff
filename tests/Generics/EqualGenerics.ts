@@ -16,34 +16,40 @@ import * as fc from "fast-check";
 import { eq, Equal, neq } from "Generics/Types";
 import { EPSILON } from "Math/Math";
 
-const BIGGER_THAN_EPSILON = EPSILON + 0.01 * EPSILON;
-const SMALLER_THAN_EPSILON = EPSILON - 0.01 * EPSILON;
-
 // eslint-disable-next-line max-params
 export function equalityTests<S, T extends Equal>(
   typeName: string,
   arbType: fc.Arbitrary<S>,
   constructor: (arb: S) => T,
-  addFunc: (a: S, epsilon: number) => T
+  addFunc: (a: S, eps: number) => T,
+  epsilon: number
 ) {
+  const BIGGER_THAN_EPSILON = epsilon > 0 ? epsilon + 0.01 * epsilon : EPSILON;
+  const SMALLER_THAN_EPSILON = epsilon - 0.01 * epsilon;
   describe(`Testing Equality constraint for ${typeName}`, () => {
-    describe(`${typeName}: Testing equal`, () => {
-      it(`${typeName}s should compare equal`, () => {
+    describe(`${typeName}: Testing equal, epsilon: ${epsilon}`, () => {
+      it(`${typeName}s should compare equal: ${SMALLER_THAN_EPSILON}`, () => {
         fc.assert(
           fc.property(arbType, (a) => {
-            assert.isTrue(constructor(a)[eq](addFunc(a, SMALLER_THAN_EPSILON)));
             assert.isTrue(
-              constructor(a)[eq](addFunc(a, -SMALLER_THAN_EPSILON))
+              constructor(a)[eq](addFunc(a, SMALLER_THAN_EPSILON), epsilon)
+            );
+            assert.isTrue(
+              constructor(a)[eq](addFunc(a, -SMALLER_THAN_EPSILON), epsilon)
             );
           }),
           { verbose: true, numRuns: 1000 }
         );
       });
-      it(`Symmetry of ${typeName}'s equal`, () => {
+      it(`Symmetry of ${typeName}'s equal: ${SMALLER_THAN_EPSILON}`, () => {
         fc.assert(
           fc.property(arbType, (a) => {
-            assert.isTrue(constructor(a)[eq](addFunc(a, SMALLER_THAN_EPSILON)));
-            assert.isTrue(addFunc(a, SMALLER_THAN_EPSILON)[eq](constructor(a)));
+            assert.isTrue(
+              constructor(a)[eq](addFunc(a, SMALLER_THAN_EPSILON), epsilon)
+            );
+            assert.isTrue(
+              addFunc(a, SMALLER_THAN_EPSILON)[eq](constructor(a), epsilon)
+            );
           }),
           { verbose: true, numRuns: 1000 }
         );
@@ -56,12 +62,14 @@ export function equalityTests<S, T extends Equal>(
           { verbose: true, numRuns: 1000 }
         );
       });
-      it(`${typeName}s should not compare equal`, () => {
+      it(`${typeName}s should not compare equal: ${BIGGER_THAN_EPSILON}`, () => {
         fc.assert(
           fc.property(arbType, (a) => {
-            assert.isFalse(constructor(a)[eq](addFunc(a, BIGGER_THAN_EPSILON)));
             assert.isFalse(
-              constructor(a)[eq](addFunc(a, -BIGGER_THAN_EPSILON))
+              constructor(a)[eq](addFunc(a, BIGGER_THAN_EPSILON), epsilon)
+            );
+            assert.isFalse(
+              constructor(a)[eq](addFunc(a, -BIGGER_THAN_EPSILON), epsilon)
             );
           }),
           { verbose: true, numRuns: 1000 }
@@ -85,7 +93,7 @@ export function equalityTests<S, T extends Equal>(
         fc.assert(
           fc.property(
             arbType,
-            fc.double({ min: 1e-15, max: 1e-10 }),
+            fc.double({ min: 1e-14, max: 1e-10 }),
             (a, eps) => {
               assert.isTrue(
                 constructor(a)[eq](addFunc(a, eps - 0.1 * eps), eps)
@@ -102,7 +110,7 @@ export function equalityTests<S, T extends Equal>(
         fc.assert(
           fc.property(
             arbType,
-            fc.double({ min: 1e-15, max: 1e-10 }),
+            fc.double({ min: 1e-14, max: 1e-10 }),
             (a, eps) => {
               assert.isFalse(
                 constructor(a)[eq](addFunc(a, eps + 0.1 * eps), eps)
@@ -119,7 +127,7 @@ export function equalityTests<S, T extends Equal>(
         fc.assert(
           fc.property(
             arbType,
-            fc.double({ min: 1e-15, max: 1e-10 }),
+            fc.double({ min: 1e-14, max: 1e-10 }),
             (a, eps) => {
               assert.isTrue(
                 constructor(a)[eq](addFunc(a, eps - 0.1 * eps), eps)
@@ -136,7 +144,7 @@ export function equalityTests<S, T extends Equal>(
         fc.assert(
           fc.property(
             arbType,
-            fc.double({ min: 1e-15, max: 1e-10 }),
+            fc.double({ min: 1e-14, max: 1e-10 }),
             (a, eps) => {
               assert.isTrue(constructor(a)[eq](constructor(a), eps));
             }
@@ -145,23 +153,29 @@ export function equalityTests<S, T extends Equal>(
         );
       });
     });
-    describe(`${typeName}: Testing notEqual`, () => {
-      it(`${typeName}s should compare notEqual`, () => {
+    describe(`${typeName}: Testing notEqual, epsilon: ${epsilon}`, () => {
+      it(`${typeName}s should compare notEqual: ${BIGGER_THAN_EPSILON}`, () => {
         fc.assert(
           fc.property(arbType, (a) => {
-            assert.isTrue(constructor(a)[neq](addFunc(a, BIGGER_THAN_EPSILON)));
             assert.isTrue(
-              constructor(a)[neq](addFunc(a, -BIGGER_THAN_EPSILON))
+              constructor(a)[neq](addFunc(a, BIGGER_THAN_EPSILON), epsilon)
+            );
+            assert.isTrue(
+              constructor(a)[neq](addFunc(a, -BIGGER_THAN_EPSILON), epsilon)
             );
           }),
           { verbose: true, numRuns: 1000 }
         );
       });
-      it(`Symmetry of ${typeName}'s notEqual`, () => {
+      it(`Symmetry of ${typeName}'s notEqual: ${BIGGER_THAN_EPSILON}`, () => {
         fc.assert(
           fc.property(arbType, (a) => {
-            assert.isTrue(constructor(a)[neq](addFunc(a, BIGGER_THAN_EPSILON)));
-            assert.isTrue(addFunc(a, BIGGER_THAN_EPSILON)[neq](constructor(a)));
+            assert.isTrue(
+              constructor(a)[neq](addFunc(a, BIGGER_THAN_EPSILON), epsilon)
+            );
+            assert.isTrue(
+              addFunc(a, BIGGER_THAN_EPSILON)[neq](constructor(a), epsilon)
+            );
           }),
           { verbose: true, numRuns: 1000 }
         );
@@ -180,14 +194,14 @@ export function equalityTests<S, T extends Equal>(
           { verbose: true }
         );
       });
-      it(`${typeName}s should not compare notEqual`, () => {
+      it(`${typeName}s should not compare notEqual, ${SMALLER_THAN_EPSILON}`, () => {
         fc.assert(
           fc.property(arbType, (a) => {
             assert.isFalse(
-              constructor(a)[neq](addFunc(a, SMALLER_THAN_EPSILON))
+              constructor(a)[neq](addFunc(a, SMALLER_THAN_EPSILON), epsilon)
             );
             assert.isFalse(
-              constructor(a)[neq](addFunc(a, -SMALLER_THAN_EPSILON))
+              constructor(a)[neq](addFunc(a, -SMALLER_THAN_EPSILON), epsilon)
             );
           }),
           { verbose: true, numRuns: 1000 }
@@ -197,7 +211,7 @@ export function equalityTests<S, T extends Equal>(
         fc.assert(
           fc.property(
             arbType,
-            fc.double({ min: 1e-15, max: 1e-10 }),
+            fc.double({ min: 1e-14, max: 1e-10 }),
             (a, eps) => {
               assert.isTrue(
                 constructor(a)[neq](addFunc(a, eps + 0.1 * eps), eps)
@@ -214,7 +228,7 @@ export function equalityTests<S, T extends Equal>(
         fc.assert(
           fc.property(
             arbType,
-            fc.double({ min: 1e-15, max: 1e-10 }),
+            fc.double({ min: 1e-14, max: 1e-10 }),
             (a, eps) => {
               assert.isTrue(
                 constructor(a)[neq](addFunc(a, eps + 0.1 * eps), eps)
@@ -231,7 +245,7 @@ export function equalityTests<S, T extends Equal>(
         fc.assert(
           fc.property(
             arbType,
-            fc.double({ min: 1e-15, max: 1e-10 }),
+            fc.double({ min: 1e-14, max: 1e-10 }),
             (a, eps) => {
               assert.isFalse(
                 constructor(a)[neq](addFunc(a, eps - 0.1 * eps), eps)

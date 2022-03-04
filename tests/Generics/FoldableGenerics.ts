@@ -12,15 +12,18 @@
 
 import { assert } from "chai";
 import * as fc from "fast-check";
-import { Equal, Foldable } from "Generics/Types";
+import { Equal, Field, Foldable } from "Generics/Types";
 
-export interface FoldableEqual<T> extends Foldable<Number, T>, Equal {}
+export interface FoldableEqual<S extends Field, T>
+  extends Foldable<S, T>,
+    Equal {}
 
-export function foldableTests<S, E, T extends FoldableEqual<E>>(
-  typeName: string,
-  arbType: fc.Arbitrary<S>,
-  constructor: (v: S) => T
-) {
+export function foldableTests<
+  U extends Field,
+  S,
+  E,
+  T extends FoldableEqual<U, E>
+>(typeName: string, arbType: fc.Arbitrary<S>, constructor: (v: S) => T) {
   describe(`${typeName}: Testing Foldable constraint`, () => {
     describe(`${typeName}: Testing reduce`, () => {
       it(`${typeName}: reduce of constant 1 is number of properties`, () => {

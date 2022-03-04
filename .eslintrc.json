@@ -47,7 +47,7 @@
         "brace-style": "off",
         "camelcase": "error",
         "capitalized-comments": [
-            "error",
+            "off",
             "always"
         ],
         "class-methods-use-this": "error",
@@ -152,7 +152,7 @@
         ],
         "new-cap": "error",
         "new-parens": "error",
-        "newline-per-chained-call": "error",
+        "newline-per-chained-call": "off",
         "no-alert": "error",
         "no-array-constructor": "error",
         "no-await-in-loop": "error",
@@ -271,6 +271,7 @@
         "no-undef": "off",
         "no-undefined": "warn",
         "no-underscore-dangle": "error",
+        "no-unexpected-multiline": "off",
         "no-unmodified-loop-condition": "error",
         "no-unneeded-ternary": "error",
         "no-unreachable-loop": "error",

@@ -27,6 +27,7 @@ import {
   plusScalar,
   VectorSpace,
 } from "Generics/Types";
+import { EPSILON } from "Math/Math";
 
 // eslint-disable-next-line max-params
 export function vectorTests<S, U extends Field, T extends VectorSpace<U>>(
@@ -42,7 +43,7 @@ export function vectorTests<S, U extends Field, T extends VectorSpace<U>>(
           fc.property(arbType, (a) => {
             const v = constructor(a);
             assert.isTrue(v[plus](v.null())[eq](v));
-            // eslint-disable-next-line newline-per-chained-call
+
             assert.isTrue(v.null()[plus](v)[eq](v));
           }),
           { verbose: true }
@@ -200,8 +201,8 @@ export function vectorTests<S, U extends Field, T extends VectorSpace<U>>(
           fc.property(arbType, (a) => {
             const v = constructor(a);
             const n = v.null();
-            assert.isTrue(v[dot](n)[eq](0));
-            assert.isTrue(n[dot](v)[eq](0));
+            assert.isTrue(v[dot](n)[eq](fromNumber(0)));
+            assert.isTrue(n[dot](v)[eq](fromNumber(0)));
           }),
           { verbose: true }
         );
@@ -231,7 +232,9 @@ export function vectorTests<S, U extends Field, T extends VectorSpace<U>>(
             const v = constructor(a);
             const w = constructor(b);
             const u = constructor(c);
-            assert.isTrue(v[dot](w[plus](u))[eq](v[dot](w)[plus](v[dot](u))));
+            assert.isTrue(
+              v[dot](w[plus](u))[eq](v[dot](w)[plus](v[dot](u)), EPSILON)
+            );
           }),
           { verbose: true }
         );
@@ -243,7 +246,8 @@ export function vectorTests<S, U extends Field, T extends VectorSpace<U>>(
             const w = constructor(b);
             assert.isTrue(
               v[dot](w[multScalar](fromNumber(t)))[eq](
-                fromNumber(t)[mult](v[dot](w))
+                fromNumber(t)[mult](v[dot](w)),
+                EPSILON
               )
             );
           }),
@@ -256,8 +260,8 @@ export function vectorTests<S, U extends Field, T extends VectorSpace<U>>(
         fc.assert(
           fc.property(arbType, (a) => {
             const v = constructor(a);
-            // eslint-disable-next-line newline-per-chained-call
-            assert.isTrue(v.normalize().length()[eq](1));
+
+            assert.isTrue(v.normalize().length()[eq](fromNumber(1), EPSILON));
           }),
           { verbose: true }
         );
@@ -268,7 +272,7 @@ export function vectorTests<S, U extends Field, T extends VectorSpace<U>>(
         fc.assert(
           fc.property(arbType, (a) => {
             const v = constructor(a).null();
-            assert.isTrue(v.norm()[eq](0));
+            assert.isTrue(v.norm()[eq](fromNumber(0)));
           }),
           { verbose: true }
         );
@@ -288,7 +292,6 @@ export function vectorTests<S, U extends Field, T extends VectorSpace<U>>(
             const v = constructor(a);
             const w = constructor(b);
             assert.isTrue(
-              // eslint-disable-next-line newline-per-chained-call
               v.norm()[minus](w.norm())[abs]()[le](v[minus](w).norm())
             );
           }),

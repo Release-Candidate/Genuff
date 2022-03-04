@@ -9,7 +9,6 @@
 /* eslint-disable i18next/no-literal-string */
 
 import {
-  abs,
   div,
   dot,
   eq,
@@ -190,7 +189,6 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * @returns The dot product (scalar product) of both vectors.
    */
   [dot](b: this): T {
-    // eslint-disable-next-line newline-per-chained-call
     return this.v.x[mult](b.v.x)[plus](this.v.y[mult](b.v.y));
   }
 
@@ -202,7 +200,6 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * existing one.
    */
   normalize(): this {
-    // eslint-disable-next-line newline-per-chained-call
     const fac = this.v.x.one()[div](this.length());
     return this[multScalar](fac);
   }
@@ -215,7 +212,6 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * @returns The Euclidean norm of the vector.
    */
   norm(): T {
-    // eslint-disable-next-line newline-per-chained-call
     return this.v.x[mult](this.v.x)[plus](this.v.y[mult](this.v.y))[sqrt]();
   }
 
@@ -229,7 +225,6 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * @returns The length of the vector.
    */
   length(): T {
-    // eslint-disable-next-line newline-per-chained-call
     return this.v.x[mult](this.v.x)[plus](this.v.y[mult](this.v.y))[sqrt]();
   }
 
@@ -271,11 +266,8 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * @returns `true`, if the two vectors are equal, `false` else.
    */
   [eq](b: this, epsilon: number = EPSILON): boolean {
-    const eps = this.v.x.fromNumber(epsilon);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop1 = this.v.x[minus](b.v.x)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop2 = this.v.y[minus](b.v.y)[abs]()[lt](eps);
+    const prop1 = this.v.x[eq](b.v.x, epsilon);
+    const prop2 = this.v.y[eq](b.v.y, epsilon);
     return prop1 && prop2;
   }
 
@@ -293,11 +285,8 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    * @returns `false`, if the two vectors are equal, `true` else.
    */
   [neq](b: this, epsilon: number = EPSILON): boolean {
-    const eps = this.v.x.fromNumber(epsilon);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop1 = this.v.x[minus](b.v.x)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop2 = this.v.y[minus](b.v.y)[abs]()[lt](eps);
+    const prop1 = this.v.x[eq](b.v.x, epsilon);
+    const prop2 = this.v.y[eq](b.v.y, epsilon);
     return !prop1 || !prop2;
   }
 
@@ -321,9 +310,8 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    *          (which does not mean that the opposite is true)
    */
   [le](b: this, epsilon: number = EPSILON): boolean {
-    const eps = this.v.x.fromNumber(epsilon);
-    const prop1 = this.v.x[lt](b.v.x) || this.v.x[minus](b.v.x)[lt](eps);
-    const prop2 = this.v.y[lt](b.v.y) || this.v.y[minus](b.v.y)[lt](eps);
+    const prop1 = this.v.x[le](b.v.x, epsilon);
+    const prop2 = this.v.y[le](b.v.y, epsilon);
     return prop1 && prop2;
   }
 
@@ -345,12 +333,8 @@ export class Vec2<T extends Field> // eslint-disable-next-line indent
    *          (which does not mean that the opposite is true)
    */
   [ge](b: this, epsilon: number = EPSILON): boolean {
-    const eps = this.v.x.fromNumber(epsilon);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop1 = this.v.x[gt](b.v.x) || this.v.x[minus](b.v.x)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
-    const prop2 = this.v.y[gt](b.v.y) || this.v.y[minus](b.v.y)[abs]()[lt](eps);
-    // eslint-disable-next-line newline-per-chained-call
+    const prop1 = this.v.x[ge](b.v.x, epsilon);
+    const prop2 = this.v.y[ge](b.v.y, epsilon);
     return prop1 && prop2;
   }
 

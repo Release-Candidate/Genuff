@@ -250,7 +250,7 @@ export interface Equal {
    *
    * @returns `true` if the objects are almost the same, `false` else.
    */
-  [eq](b: Equal, epsilon?: number): boolean;
+  [eq](b: this, epsilon?: number): boolean;
 
   /**
    * Compare two objects using an interval to test against instead of exact
@@ -262,7 +262,7 @@ export interface Equal {
    *
    * @returns `false` if the objects are almost the same, `true` else.
    */
-  [neq](b: Equal, epsilon?: number): boolean;
+  [neq](b: this, epsilon?: number): boolean;
 }
 
 /**
