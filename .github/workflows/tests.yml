@@ -51,7 +51,8 @@ jobs:
                   cache: "npm"
             - run: npm install -g yarn
             - run: yarn install
-            - run: yarn bench > benchmark.txt
+            - run: yarn bench
+            - run: zip -r -v benchmark_results.zip benchmark/results/*
 
             - name: Upload a Build Artifact
               uses: actions/upload-artifact@v2.2.4
@@ -59,7 +60,7 @@ jobs:
               with:
                   name: "Benchmark report"
                   if-no-files-found: ignore
-                  path: ./benchmark.txt
+                  path: ./benchmark_results.zip
 
     coverage:
         runs-on: ubuntu-latest
