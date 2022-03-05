@@ -1,3 +1,11 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2022 Roland Csaszar
+//
+// Project:  Genuff
+// File:     Interpolation_bench.ts
+// Date:     05.Mar.2022
+//
+// ==============================================================================
 /* eslint-disable no-magic-numbers */
 /* eslint-disable no-unused-vars */
 /* eslint-disable chai-friendly/no-unused-expressions */
