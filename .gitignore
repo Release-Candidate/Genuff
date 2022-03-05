@@ -2,3 +2,6 @@ node_modules/
 coverage/
 http/
 ts_out/
+benchmark/results/*.html
+benchmark/results/*.csv
+benchmark/results/*.json

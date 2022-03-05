@@ -55,6 +55,6 @@
     "tailwind": "gulp tailwind",
     "translations": "gulp translate",
     "types": "tsc --emitDeclarationOnly",
-    "bench": "node tests/main_bench.mjs"
+    "bench": "tsc && node ts_out/tests/main_bench.js"
   }
 }

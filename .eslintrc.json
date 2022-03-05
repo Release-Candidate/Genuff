@@ -248,7 +248,12 @@
         "no-nonoctal-decimal-escape": "error",
         "no-octal-escape": "error",
         "no-param-reassign": "error",
-        "no-plusplus": "error",
+        "no-plusplus": [
+            "error",
+            {
+                "allowForLoopAfterthoughts": true
+            }
+        ],
         "no-promise-executor-return": "error",
         "no-proto": "error",
         "no-restricted-exports": "error",
@@ -306,7 +311,13 @@
         "padding-line-between-statements": "error",
         "prefer-arrow-callback": "off",
         "prefer-const": "off",
-        "prefer-destructuring": "error",
+        "prefer-destructuring": [
+            "error",
+            {
+                "object": true,
+                "array": false
+            }
+        ],
         "prefer-exponentiation-operator": "error",
         "prefer-named-capture-group": "off",
         "prefer-numeric-literals": "error",
