@@ -18,6 +18,7 @@ import { Vec2RecordGen } from "Math/Vec2Generic";
 export interface Interpolation<T extends Field> {
   point(t: T): Vec2RecordGen<T>;
   f(x: T): T;
+  fEvenGrid(x: T): T;
   f1(x: T): T;
   tangent(x: T): Vec2RecordGen<T>;
   curvature(x: T): T;

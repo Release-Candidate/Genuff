@@ -46,6 +46,10 @@ export class KroghIInterpolation implements Interpolation<number> {
     return p;
   }
 
+  fEvenGrid(x: number): number {
+    throw new Error("Method not implemented.");
+  }
+
   f1(x: number): number {
     throw new Error("Method not implemented.");
   }

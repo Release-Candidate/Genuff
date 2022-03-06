@@ -19,8 +19,9 @@ export class LagrangeInterpolation implements Interpolation<number> {
 
   constructor(private arr: Array<[number, number]>) {
     this.arr.sort(([a, _x], [b, _y]) => a - b);
+
     for (let i = 0; i < this.arr.length; i++) {
-      this.scratch[i] = 0;
+      this.scratch[i] = 1;
       for (let j = 0; j < this.arr.length; j++) {
         if (j !== i) {
           this.scratch[i] /= this.arr[i][0] - this.arr[j][0];
@@ -48,6 +49,10 @@ export class LagrangeInterpolation implements Interpolation<number> {
     }
 
     return p;
+  }
+
+  fEvenGrid(x: number): number {
+    throw new Error("Method not implemented.");
   }
 
   f1(x: number): number {

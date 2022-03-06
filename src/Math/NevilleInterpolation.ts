@@ -46,6 +46,10 @@ export class NevilleInterpolation implements Interpolation<number> {
     return this.scratch[0];
   }
 
+  fEvenGrid(x: number): number {
+    throw new Error("Method not implemented.");
+  }
+
   f1(x: number): number {
     throw new Error("Method not implemented.");
   }

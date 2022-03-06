@@ -6,6 +6,7 @@
 // Date:     05.Mar.2022
 //
 // ==============================================================================
+/* eslint-disable i18next/no-literal-string */
 /* eslint-disable no-magic-numbers */
 
 import { Interpolation } from "./Interpolation";
@@ -38,6 +39,10 @@ export class LinearInterpolation implements Interpolation<number> {
 
     // eslint-disable-next-line no-extra-parens
     return f0 + ((f0 - f1) * (x0 - x)) / (x1 - x0);
+  }
+
+  fEvenGrid(x: number): number {
+    throw new Error("Method not implemented.");
   }
 
   f1(x: number): number {

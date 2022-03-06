@@ -31,7 +31,7 @@ export class KroghIIInterpolation implements Interpolation<number> {
 
     this.scratch[0] = this.arr[0][1];
     let r = 1;
-    let p = this.scratch[0];
+    let p = this.arr[0][1];
 
     for (let k = 1; k < n; k++) {
       this.scratch[k] = this.arr[k][1];
@@ -42,11 +42,15 @@ export class KroghIIInterpolation implements Interpolation<number> {
       }
     }
     for (let k = n - 1; k > 0; k--) {
-      this.scratch[k] =
+      this.scratch[k - 1] =
         this.scratch[k - 1] + (x - this.arr[k - 1][0]) * this.scratch[k];
     }
 
     return this.scratch[0];
+  }
+
+  fEvenGrid(x: number): number {
+    throw new Error("Method not implemented.");
   }
 
   f1(x: number): number {

@@ -17,8 +17,12 @@ const INDEX_NOT_FOUND = -1;
 export class AitkenInterpolation implements Interpolation<number> {
   private scratch: Array<number> = [];
 
+  private gridStep: number = 0;
+
   constructor(private arr: Array<[number, number]>) {
     this.arr.sort(([a, _x], [b, _y]) => a - b);
+
+    this.gridStep = this.arr[1][0] - this.arr[0][0];
   }
 
   point(t: number): { x: number; y: number } {
@@ -39,6 +43,28 @@ export class AitkenInterpolation implements Interpolation<number> {
           // eslint-disable-next-line no-extra-parens
           ((this.arr[i][0] - x) * (this.scratch[i] - this.scratch[k])) /
             (this.arr[k][0] - this.arr[i][0]);
+        this.scratch[k] = newV;
+      }
+    }
+
+    return this.scratch[n - 1];
+  }
+
+  fEvenGrid(x: number): number {
+    const n = this.arr.length;
+
+    for (let i = 0; i < n; i++) {
+      this.scratch[i] = this.arr[i][1];
+    }
+
+    for (let i = 0; i < n; i++) {
+      for (let k = i + 1; k < n; k++) {
+        const gridFac = this.gridStep * (k - i);
+        const newV =
+          this.scratch[i] +
+          // eslint-disable-next-line no-extra-parens
+          ((this.arr[i][0] - x) * (this.scratch[i] - this.scratch[k])) /
+            gridFac;
         this.scratch[k] = newV;
       }
     }
