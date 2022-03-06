@@ -273,14 +273,29 @@ module.exports = b.suite(
 module.exports = b.suite(
   `Interpolation Benchmark (x-1)(x-2)(x-3)(x-4)(x-5)(x-6)(x-7)(x-8)(x-9)(x-10), 11 points`,
   b.add("Linear Interpolation", () => xArr.map((x) => linear4.f(x))),
+  b.add("Linear Interpolation, evenly spaced", () =>
+    xArr.map((x) => linear4.fEvenlyGrid(x))
+  ),
   b.add("Aitken Interpolation", () => xArr.map((x) => aitken4.f(x))),
   b.add("Aitken Interpolation evenly spaced", () =>
-    xArr.map((x) => aitken4.fEvenGrid(x))
+    xArr.map((x) => aitken4.fEvenlyGrid(x))
   ),
   b.add("Neville Interpolation", () => xArr.map((x) => neville4.f(x))),
+  b.add("Neville Interpolation, evenly spaced", () =>
+    xArr.map((x) => neville4.fEvenlyGrid(x))
+  ),
   b.add("Krogh I Interpolation", () => xArr.map((x) => kroghI4.f(x))),
+  b.add("Krogh I Interpolation, evenly spaced", () =>
+    xArr.map((x) => kroghI4.fEvenlyGrid(x))
+  ),
   b.add("Krogh II Interpolation", () => xArr.map((x) => kroghII4.f(x))),
+  b.add("Krogh II Interpolation, evenly spaced", () =>
+    xArr.map((x) => kroghII4.fEvenlyGrid(x))
+  ),
   b.add("Lagrange Interpolation", () => xArr.map((x) => lagrange4.f(x))),
+  b.add("Lagrange Interpolation, evenly spaced", () =>
+    xArr.map((x) => lagrange4.fEvenlyGrid(x))
+  ),
   b.cycle(),
   b.complete(),
   b.save({ file: "interpolation4", format: "csv", details: false }),
@@ -289,14 +304,29 @@ module.exports = b.suite(
 module.exports = b.suite(
   `Interpolation Benchmark |x - 4|, 6 points`,
   b.add("Linear Interpolation", () => xArr.map((x) => linear5.f(x))),
+  b.add("Linear Interpolation, evenly spaced", () =>
+    xArr.map((x) => linear5.fEvenlyGrid(x))
+  ),
   b.add("Aitken Interpolation", () => xArr.map((x) => aitken5.f(x))),
-  b.add("Aitken Interpolation evenly spaced", () =>
-    xArr.map((x) => aitken5.fEvenGrid(x))
+  b.add("Aitken Interpolation, evenly spaced", () =>
+    xArr.map((x) => aitken5.fEvenlyGrid(x))
   ),
   b.add("Neville Interpolation", () => xArr.map((x) => neville5.f(x))),
+  b.add("Neville Interpolation, evenly spaced", () =>
+    xArr.map((x) => neville5.fEvenlyGrid(x))
+  ),
   b.add("Krogh I Interpolation", () => xArr.map((x) => kroghI5.f(x))),
+  b.add("Krogh I Interpolation, evenly spaced", () =>
+    xArr.map((x) => kroghI5.fEvenlyGrid(x))
+  ),
   b.add("Krogh II Interpolation", () => xArr.map((x) => kroghII5.f(x))),
+  b.add("Krogh II Interpolation, evenly spaced", () =>
+    xArr.map((x) => kroghII5.fEvenlyGrid(x))
+  ),
   b.add("Lagrange Interpolation", () => xArr.map((x) => lagrange5.f(x))),
+  b.add("Lagrange Interpolation, evenly spaced", () =>
+    xArr.map((x) => lagrange5.fEvenlyGrid(x))
+  ),
   b.cycle(),
   b.complete(),
   b.save({ file: "interpolation5", format: "csv", details: false }),
@@ -305,14 +335,29 @@ module.exports = b.suite(
 module.exports = b.suite(
   `Interpolation Benchmark |x - 4|, 13 points`,
   b.add("Linear Interpolation", () => xArr.map((x) => linear6.f(x))),
+  b.add("Linear Interpolation, evenly spaced", () =>
+    xArr.map((x) => linear6.fEvenlyGrid(x))
+  ),
   b.add("Aitken Interpolation", () => xArr.map((x) => aitken6.f(x))),
   b.add("Aitken Interpolation evenly spaced", () =>
-    xArr.map((x) => aitken6.fEvenGrid(x))
+    xArr.map((x) => aitken6.fEvenlyGrid(x))
   ),
   b.add("Neville Interpolation", () => xArr.map((x) => neville6.f(x))),
+  b.add("Neville Interpolation, evenly spaced", () =>
+    xArr.map((x) => neville6.fEvenlyGrid(x))
+  ),
   b.add("Krogh I Interpolation", () => xArr.map((x) => kroghI6.f(x))),
+  b.add("Krogh I Interpolation, evenly spaced", () =>
+    xArr.map((x) => kroghI6.fEvenlyGrid(x))
+  ),
   b.add("Krogh II Interpolation", () => xArr.map((x) => kroghII6.f(x))),
+  b.add("Krogh II Interpolation, evenly spaced", () =>
+    xArr.map((x) => kroghII6.fEvenlyGrid(x))
+  ),
   b.add("Lagrange Interpolation", () => xArr.map((x) => lagrange6.f(x))),
+  b.add("Lagrange Interpolation, evenly spaced", () =>
+    xArr.map((x) => lagrange6.fEvenlyGrid(x))
+  ),
   b.cycle(),
   b.complete(),
   b.save({ file: "interpolation6", format: "csv", details: false }),
@@ -347,14 +392,29 @@ module.exports = b.suite(
 module.exports = b.suite(
   `Interpolation Benchmark ln(1 + x), 11 points`,
   b.add("Linear Interpolation", () => xArr.map((x) => linear9.f(x))),
+  b.add("Linear Interpolation, evenly spaced", () =>
+    xArr.map((x) => linear9.fEvenlyGrid(x))
+  ),
   b.add("Aitken Interpolation", () => xArr.map((x) => aitken9.f(x))),
   b.add("Aitken Interpolation evenly spaced", () =>
-    xArr.map((x) => aitken9.f(x))
+    xArr.map((x) => aitken9.fEvenlyGrid(x))
   ),
   b.add("Neville Interpolation", () => xArr.map((x) => neville9.f(x))),
+  b.add("Neville Interpolation, evenly spaced", () =>
+    xArr.map((x) => neville9.fEvenlyGrid(x))
+  ),
   b.add("Krogh I Interpolation", () => xArr.map((x) => kroghI9.f(x))),
+  b.add("Krogh I Interpolation, evenly spaced", () =>
+    xArr.map((x) => kroghI9.fEvenlyGrid(x))
+  ),
   b.add("Krogh II Interpolation", () => xArr.map((x) => kroghII9.f(x))),
+  b.add("Krogh II Interpolation, evenly spaced", () =>
+    xArr.map((x) => kroghII9.fEvenlyGrid(x))
+  ),
   b.add("Lagrange Interpolation", () => xArr.map((x) => lagrange9.f(x))),
+  b.add("Lagrange Interpolation, evenly spaced", () =>
+    xArr.map((x) => lagrange9.fEvenlyGrid(x))
+  ),
   b.cycle(),
   b.complete(),
   b.save({ file: "interpolation9", format: "csv", details: false }),
@@ -363,14 +423,29 @@ module.exports = b.suite(
 module.exports = b.suite(
   `Interpolation Benchmark ln(1 + x), 21 points`,
   b.add("Linear Interpolation", () => xArr.map((x) => linear10.f(x))),
+  b.add("Linear Interpolation, evenly spaced", () =>
+    xArr.map((x) => linear10.fEvenlyGrid(x))
+  ),
   b.add("Aitken Interpolation", () => xArr.map((x) => aitken10.f(x))),
   b.add("Aitken Interpolation, evenly spaced", () =>
-    xArr.map((x) => aitken10.fEvenGrid(x))
+    xArr.map((x) => aitken10.fEvenlyGrid(x))
   ),
   b.add("Neville Interpolation", () => xArr.map((x) => neville10.f(x))),
+  b.add("Neville Interpolation, evenly spaced", () =>
+    xArr.map((x) => neville10.fEvenlyGrid(x))
+  ),
   b.add("Krogh I Interpolation", () => xArr.map((x) => kroghI10.f(x))),
+  b.add("Krogh I Interpolation, evenly spaced", () =>
+    xArr.map((x) => kroghI10.fEvenlyGrid(x))
+  ),
   b.add("Krogh II Interpolation", () => xArr.map((x) => kroghII10.f(x))),
+  b.add("Krogh II Interpolation, evenly spaced", () =>
+    xArr.map((x) => kroghII10.fEvenlyGrid(x))
+  ),
   b.add("Lagrange Interpolation", () => xArr.map((x) => lagrange10.f(x))),
+  b.add("Lagrange Interpolation, evenly spaced", () =>
+    xArr.map((x) => lagrange10.fEvenlyGrid(x))
+  ),
   b.cycle(),
   b.complete(),
   b.save({ file: "interpolation10", format: "csv", details: false }),

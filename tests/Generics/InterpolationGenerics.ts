@@ -46,7 +46,7 @@ export function polynomialInterpolationTests<T extends Field>(
         const xyArr: Array<[T, T]> = [
           [fromNumber(0), func(fromNumber(0))],
           [fromNumber(4), func(fromNumber(4))],
-          [fromNumber(9), func(fromNumber(9))],
+          [fromNumber(8), func(fromNumber(8))],
         ];
         fc.assert(
           fc.property(fc.double(), (a) => {
@@ -57,6 +57,10 @@ export function polynomialInterpolationTests<T extends Field>(
             assert.isTrue(
               interpolF.f(x)[eq](y, epsilon),
               `x: ${x} f(x):${interpolF.f(x)} y: ${y}`
+            );
+            assert.isTrue(
+              interpolF.fEvenlyGrid(x)[eq](y, epsilon),
+              `x: ${x} f(x):${interpolF.fEvenlyGrid(x)} y: ${y}`
             );
           }),
           { verbose: true }
@@ -78,7 +82,7 @@ export function polynomialInterpolationTests<T extends Field>(
               }
               const xyArr: Array<[T, T]> = [
                 [fromNumber(1), func(fromNumber(1))],
-                [fromNumber(4), func(fromNumber(4))],
+                [fromNumber(5), func(fromNumber(5))],
                 [fromNumber(9), func(fromNumber(9))],
               ];
               const interpolF = interpolation(xyArr);
@@ -89,6 +93,10 @@ export function polynomialInterpolationTests<T extends Field>(
                 assert.isTrue(
                   interpolF.f(x)[eq](y, epsilon),
                   `x: ${x} f(x):${interpolF.f(x)} y: ${y}`
+                );
+                assert.isTrue(
+                  interpolF.fEvenlyGrid(x)[eq](y, epsilon),
+                  `x: ${x} f(x):${interpolF.fEvenlyGrid(x)} y: ${y}`
                 );
               });
             }
@@ -115,9 +123,9 @@ export function polynomialInterpolationTests<T extends Field>(
               }
               const xyArr: Array<[T, T]> = [
                 [fromNumber(0), func(fromNumber(0))],
-                [fromNumber(2), func(fromNumber(2))],
-                [fromNumber(7), func(fromNumber(7))],
-                [fromNumber(9), func(fromNumber(9))],
+                [fromNumber(-2), func(fromNumber(-2))],
+                [fromNumber(-4), func(fromNumber(-4))],
+                [fromNumber(-6), func(fromNumber(-6))],
               ];
               const interpolF = interpolation(xyArr);
 
@@ -127,6 +135,10 @@ export function polynomialInterpolationTests<T extends Field>(
                 assert.isTrue(
                   interpolF.f(x)[eq](y, epsilon),
                   `x: ${x} f(x):${interpolF.f(x)} y: ${y}`
+                );
+                assert.isTrue(
+                  interpolF.fEvenlyGrid(x)[eq](y, epsilon),
+                  `x: ${x} f(x):${interpolF.fEvenlyGrid(x)} y: ${y}`
                 );
               });
             }
@@ -155,9 +167,9 @@ export function polynomialInterpolationTests<T extends Field>(
                   [plus](fromNumber(c));
               }
               const xyArr: Array<[T, T]> = [
-                [fromNumber(0), func(fromNumber(0))],
-                [fromNumber(1), func(fromNumber(1))],
-                [fromNumber(2), func(fromNumber(2))],
+                [fromNumber(4), func(fromNumber(4))],
+                [fromNumber(5), func(fromNumber(5))],
+                [fromNumber(6), func(fromNumber(6))],
                 [fromNumber(7), func(fromNumber(7))],
                 [fromNumber(8), func(fromNumber(8))],
               ];
@@ -169,6 +181,10 @@ export function polynomialInterpolationTests<T extends Field>(
                 assert.isTrue(
                   interpolF.f(x)[eq](y, epsilon),
                   `x: ${x} f(x):${interpolF.f(x)} y: ${y}`
+                );
+                assert.isTrue(
+                  interpolF.fEvenlyGrid(x)[eq](y, epsilon),
+                  `x: ${x} f(x):${interpolF.fEvenlyGrid(x)} y: ${y}`
                 );
               });
             }
@@ -203,9 +219,9 @@ export function polynomialInterpolationTests<T extends Field>(
                 [fromNumber(0), func(fromNumber(0))],
                 [fromNumber(1), func(fromNumber(1))],
                 [fromNumber(2), func(fromNumber(2))],
+                [fromNumber(3), func(fromNumber(3))],
                 [fromNumber(4), func(fromNumber(4))],
-                [fromNumber(7), func(fromNumber(7))],
-                [fromNumber(8), func(fromNumber(8))],
+                [fromNumber(5), func(fromNumber(5))],
               ];
               const interpolF = interpolation(xyArr);
 
@@ -215,6 +231,10 @@ export function polynomialInterpolationTests<T extends Field>(
                 assert.isTrue(
                   interpolF.f(x)[eq](y, epsilon),
                   `x: ${x} f(x):${interpolF.f(x)} y: ${y}`
+                );
+                assert.isTrue(
+                  interpolF.fEvenlyGrid(x)[eq](y, epsilon),
+                  `x: ${x} f(x):${interpolF.fEvenlyGrid(x)} y: ${y}`
                 );
               });
             }
@@ -243,12 +263,35 @@ export function interpolationTests<T extends Field>(
             ]);
 
             const interpolF = interpolation(xyArr);
-            xyArr.map(([x, y]) =>
+            xyArr.forEach(([x, y]) =>
               assert.isTrue(
                 interpolF.f(x)[eq](y, epsilon),
                 `x: ${x} f(x): ${interpolF.f(x)} y: ${y}`
               )
             );
+          }),
+          { verbose: true }
+        );
+      });
+      it(`${name} interpolation includes given random, evenly spaced, points`, () => {
+        fc.assert(
+          fc.property(interpolXYArray, (arr) => {
+            const xyArr: Array<[T, T]> = arr.map((e, i) => [
+              fromNumber(e[0] * i),
+              fromNumber(e[1]),
+            ]);
+
+            const interpolF = interpolation(xyArr);
+            xyArr.forEach(([x, y]) => {
+              assert.isTrue(
+                interpolF.f(x)[eq](y, epsilon),
+                `x: ${x} f(x): ${interpolF.f(x)} y: ${y}`
+              );
+              assert.isTrue(
+                interpolF.fEvenlyGrid(x)[eq](y, epsilon),
+                `x: ${x} f(x): ${interpolF.fEvenlyGrid(x)} y: ${y}`
+              );
+            });
           }),
           { verbose: true }
         );

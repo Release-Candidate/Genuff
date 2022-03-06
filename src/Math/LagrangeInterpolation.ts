@@ -51,8 +51,21 @@ export class LagrangeInterpolation implements Interpolation<number> {
     return p;
   }
 
-  fEvenGrid(x: number): number {
-    throw new Error("Method not implemented.");
+  fEvenlyGrid(x: number): number {
+    const n = this.arr.length;
+
+    let p = 0;
+    for (let i = 0; i < n; i++) {
+      let prod = 1;
+      for (let j = 0; j < n; j++) {
+        if (i !== j) {
+          prod *= x - this.arr[j][0];
+        }
+      }
+      p += this.scratch[i] * this.arr[i][1] * prod;
+    }
+
+    return p;
   }
 
   f1(x: number): number {

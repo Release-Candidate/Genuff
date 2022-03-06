@@ -17,8 +17,11 @@ const INDEX_NOT_FOUND = -1;
 export class NevilleInterpolation implements Interpolation<number> {
   private scratch: number[] = [];
 
+  private gridStep: number = 0;
+
   constructor(private arr: Array<[number, number]>) {
     this.arr.sort(([a, _x], [b, _y]) => a - b);
+    this.gridStep = this.arr[1][0] - this.arr[0][0];
   }
 
   point(t: number): { x: number; y: number } {
@@ -46,8 +49,25 @@ export class NevilleInterpolation implements Interpolation<number> {
     return this.scratch[0];
   }
 
-  fEvenGrid(x: number): number {
-    throw new Error("Method not implemented.");
+  fEvenlyGrid(x: number): number {
+    const n = this.arr.length;
+    for (let i = 0; i < n; i++) {
+      //  this.scratch[i] = [...Array(n).keys()]
+      this.scratch[i] = this.arr[i][1];
+    }
+
+    for (let i = 0; i < n - 1; i++) {
+      for (let k = i + 1; k < n; k++) {
+        this.scratch[k - i - 1] =
+          this.scratch[k - i - 1] +
+          // eslint-disable-next-line no-extra-parens
+          ((this.arr[k - i - 1][0] - x) *
+            (this.scratch[k - i - 1] - this.scratch[k - i])) /
+            (this.gridStep * (i + 1));
+      }
+    }
+
+    return this.scratch[0];
   }
 
   f1(x: number): number {

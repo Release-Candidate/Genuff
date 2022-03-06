@@ -14,8 +14,11 @@ import { Interpolation } from "./Interpolation";
 const INDEX_NOT_FOUND = -1;
 
 export class LinearInterpolation implements Interpolation<number> {
+  private gridStep: number = 0;
+
   constructor(private arr: Array<[number, number]>) {
     this.arr.sort(([a, _x], [b, _y]) => a - b);
+    this.gridStep = this.arr[1][0] - this.arr[0][0];
   }
 
   findInterval(x: number): [[number, number], [number, number]] {
@@ -41,8 +44,32 @@ export class LinearInterpolation implements Interpolation<number> {
     return f0 + ((f0 - f1) * (x0 - x)) / (x1 - x0);
   }
 
-  fEvenGrid(x: number): number {
-    throw new Error("Method not implemented.");
+  // eslint-disable-next-line max-statements
+  fEvenlyGrid(x: number): number {
+    const idx = Math.floor((x - this.arr[0][0]) / this.gridStep);
+    let x0 = 0;
+    let x1 = 0;
+    let f0 = 0;
+    let f1 = 0;
+    if (idx < 0) {
+      x0 = this.arr[0][0];
+      x1 = this.arr[1][0];
+      f0 = this.arr[0][1];
+      f1 = this.arr[1][1];
+    } else if (idx > this.arr.length - 2) {
+      x0 = this.arr[this.arr.length - 2][0];
+      x1 = this.arr[this.arr.length - 1][0];
+      f0 = this.arr[this.arr.length - 2][1];
+      f1 = this.arr[this.arr.length - 1][1];
+    } else {
+      x0 = this.arr[idx][0];
+      x1 = this.arr[idx + 1][0];
+      f0 = this.arr[idx][1];
+      f1 = this.arr[idx + 1][1];
+    }
+
+    // eslint-disable-next-line no-extra-parens
+    return f0 + ((f0 - f1) * (x0 - x)) / (x1 - x0);
   }
 
   f1(x: number): number {

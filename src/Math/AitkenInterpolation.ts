@@ -21,7 +21,6 @@ export class AitkenInterpolation implements Interpolation<number> {
 
   constructor(private arr: Array<[number, number]>) {
     this.arr.sort(([a, _x], [b, _y]) => a - b);
-
     this.gridStep = this.arr[1][0] - this.arr[0][0];
   }
 
@@ -50,7 +49,7 @@ export class AitkenInterpolation implements Interpolation<number> {
     return this.scratch[n - 1];
   }
 
-  fEvenGrid(x: number): number {
+  fEvenlyGrid(x: number): number {
     const n = this.arr.length;
 
     for (let i = 0; i < n; i++) {

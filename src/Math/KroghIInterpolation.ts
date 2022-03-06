@@ -17,8 +17,11 @@ const INDEX_NOT_FOUND = -1;
 export class KroghIInterpolation implements Interpolation<number> {
   private scratch: Array<number> = [];
 
+  private gridStep: number = 0;
+
   constructor(private arr: Array<[number, number]>) {
     this.arr.sort(([a, _x], [b, _y]) => a - b);
+    this.gridStep = this.arr[1][0] - this.arr[0][0];
   }
 
   point(t: number): { x: number; y: number } {
@@ -46,8 +49,24 @@ export class KroghIInterpolation implements Interpolation<number> {
     return p;
   }
 
-  fEvenGrid(x: number): number {
-    throw new Error("Method not implemented.");
+  // eslint-disable-next-line max-statements
+  fEvenlyGrid(x: number): number {
+    const n = this.arr.length;
+
+    this.scratch[0] = this.arr[0][1];
+    let r = 1;
+    let p = this.scratch[0];
+
+    for (let k = 1; k < n; k++) {
+      this.scratch[k] = this.arr[k][1];
+      for (let i = 0; i < k; i++) {
+        this.scratch[k] =
+          (this.scratch[i] - this.scratch[k]) / (this.gridStep * (i - k));
+      }
+      r *= x - this.arr[k - 1][0];
+      p += r * this.scratch[k];
+    }
+    return p;
   }
 
   f1(x: number): number {

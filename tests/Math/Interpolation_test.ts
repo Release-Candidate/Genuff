@@ -37,7 +37,7 @@ describe("Testing Math/Interpolation", () => {
       "Aitken",
       (arr) => new AitkenInterpolation(arr as Array<[number, number]>),
       id,
-      EPSILON
+      EPSILON * 10
     );
     interpolationTests(
       "Aitken",
@@ -51,7 +51,7 @@ describe("Testing Math/Interpolation", () => {
       "Neville",
       (arr) => new NevilleInterpolation(arr as Array<[number, number]>),
       id,
-      EPSILON
+      EPSILON * 10
     );
     interpolationTests(
       "Neville",
@@ -65,7 +65,7 @@ describe("Testing Math/Interpolation", () => {
       "Lagrange",
       (arr) => new LagrangeInterpolation(arr as Array<[number, number]>),
       id,
-      EPSILON
+      EPSILON * 10
     );
     interpolationTests(
       "Lagrange",
@@ -79,7 +79,7 @@ describe("Testing Math/Interpolation", () => {
       "Krogh I",
       (arr) => new KroghIInterpolation(arr as Array<[number, number]>),
       id,
-      EPSILON
+      EPSILON * 10
     );
     interpolationTests(
       "Krogh I",
@@ -93,7 +93,7 @@ describe("Testing Math/Interpolation", () => {
       "Krogh II",
       (arr) => new KroghIIInterpolation(arr as Array<[number, number]>),
       id,
-      EPSILON
+      EPSILON * 10
     );
     interpolationTests(
       "Krogh II",
