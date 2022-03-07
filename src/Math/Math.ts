@@ -44,6 +44,13 @@ import {
  */
 export const EPSILON = 1e-10;
 
+/**
+ * Golden ratio constant.
+ *
+ * (1 + sqrt(5)) / 2
+ */
+export const GOLDEN_RATIO = 1.618033988749894;
+
 // Extend JS number by own constraints =========================================
 
 /**

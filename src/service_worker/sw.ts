@@ -87,7 +87,7 @@ async function fetchFromCache(request: Request): Promise<Response> {
 
 addEventListener("fetch", (event) => {
   const ev = event as FetchEvent;
-  fetchFromCache(ev.request).then((e) => ev.respondWith(e));
+  ev.respondWith(fetchFromCache(ev.request));
 });
 
 /**
