@@ -3,7 +3,7 @@
 //
 // Project:  Genuff
 // File:     CircularDList.ts
-// Date:     17.Mar.2022
+// Date:     18.Mar.2022
 //
 // ==============================================================================
 /* eslint-disable i18next/no-literal-string */
@@ -45,6 +45,28 @@ export class CircularDList<T> {
 }
 
 /**
+ * Return the node to the right (the next node) of the current one.
+ *
+ * @param dList The circular doubly link list.
+ *
+ * @returns The node to the right of the current one (the next node).
+ */
+export function rightNode<T>(dList: CircularDList<T>): CircularDList<T> {
+  return dList.right;
+}
+
+/**
+ * Return the node to the left (the previous node) of the current one.
+ *
+ * @param dList The circular doubly link list.
+ *
+ * @returns The node to the left of the current one (the previous node).
+ */
+export function leftNode<T>(dList: CircularDList<T>): CircularDList<T> {
+  return dList.left;
+}
+
+/**
  * The type of a search result.
  *
  * If the item has been found, the node with the item as value is returned.
@@ -64,7 +86,8 @@ export type SearchResult<T> = "NotFound" | CircularDList<T>;
  * array is empty.
  */
 export function fromArray<T>(arr: Array<T>) {
-  if (arr === []) {
+  // eslint-disable-next-line no-magic-numbers
+  if (arr.length === 0) {
     return null;
   }
   // eslint-disable-next-line no-magic-numbers
@@ -130,18 +153,18 @@ export function map<S, T>(
  *
  * @param dList The circular doubly linked list to reduce.
  * @param f The function to apply to each element `e` and the accumulator `acc`.
- * @param first The starting value of the accumulator.
+ * @param initialValue The starting value of the accumulator.
  *
  * @returns The reduced circular doubly linked list.
  */
 export function reduceR<S, T>(
   dList: CircularDList<S>,
   f: (e: S, acc: T) => T,
-  first: T
+  initialValue: T
 ): T {
   const start = dList;
   let curr = dList;
-  let retVal = f(curr.value, first);
+  let retVal = f(curr.value, initialValue);
   while (curr.right !== start) {
     curr = curr.right;
     retVal = f(curr.value, retVal);
@@ -158,18 +181,18 @@ export function reduceR<S, T>(
  *
  * @param dList The circular doubly linked list to reduce.
  * @param f The function to apply to each element `e` and the accumulator `acc`.
- * @param first The starting value of the accumulator.
+ * @param initialValue The starting value of the accumulator.
  *
  * @returns The reduced circular doubly linked list.
  */
 export function reduceL<S, T>(
   dList: CircularDList<S>,
   f: (acc: T, e: S) => T,
-  first: T
+  initialValue: T
 ): T {
   const start = dList;
   let curr = dList;
-  let retVal = f(first, curr.value);
+  let retVal = f(initialValue, curr.value);
   while (curr.left !== start) {
     curr = curr.left;
     retVal = f(retVal, curr.value);
@@ -244,8 +267,12 @@ export function searchIfL<T>(
 export function searchR<T>(dList: CircularDList<T>, item: T): SearchResult<T> {
   const start = dList;
   let curr = dList;
+  if (curr.value === item) {
+    return curr;
+  }
+  curr = curr.right;
   let retVal: SearchResult<T> = "NotFound";
-  while (curr.right !== start) {
+  while (curr !== start) {
     if (curr.value === item) {
       return curr;
     }
@@ -267,8 +294,12 @@ export function searchR<T>(dList: CircularDList<T>, item: T): SearchResult<T> {
 export function searchL<T>(dList: CircularDList<T>, item: T): SearchResult<T> {
   const start = dList;
   let curr = dList;
+  if (curr.value === item) {
+    return curr;
+  }
+  curr = curr.left;
   let retVal: SearchResult<T> = "NotFound";
-  while (curr.left !== start) {
+  while (curr !== start) {
     if (curr.value === item) {
       return curr;
     }
@@ -287,24 +318,23 @@ export function searchL<T>(dList: CircularDList<T>, item: T): SearchResult<T> {
  * @returns The circular doubly linked list with the deleted nodes. If no node
  * has been found `"NotFound"` is returned.
  */
-// eslint-disable-next-line max-statements
 export function deleteAllNodes<T>(
   dList: CircularDList<T>,
   item: T
-): SearchResult<T> {
-  let searchRes = searchR(dList, item);
-  if (searchRes === "NotFound") {
-    return "NotFound";
-  }
-  let retVal = dList;
-  while (searchRes !== "NotFound") {
-    const { left, right } = searchRes as CircularDList<T>;
-    left.right = right;
-    right.left = left;
-    retVal = left;
-    searchRes = searchR(right, item);
+): SearchResult<T> | null {
+  let retVal = deleteNodeR(dList, item);
+  if (retVal == null || retVal === "NotFound") {
+    return retVal;
   }
 
+  let doTest = deleteNodeR(dList, item);
+  while (doTest !== "NotFound") {
+    if (doTest == null) {
+      return null;
+    }
+    retVal = doTest;
+    doTest = deleteNodeR(doTest, item);
+  }
   return retVal;
 }
 
@@ -320,7 +350,7 @@ export function deleteAllNodes<T>(
 export function deleteNodeR<T>(
   dList: CircularDList<T>,
   item: T
-): SearchResult<T> {
+): SearchResult<T> | null {
   const searchRes = searchR(dList, item);
   if (searchRes === "NotFound") {
     return "NotFound";
@@ -328,6 +358,9 @@ export function deleteNodeR<T>(
   const { left, right } = searchRes;
   left.right = right;
   right.left = left;
+  if (left.value === item) {
+    return null;
+  }
   return left;
 }
 
@@ -343,7 +376,7 @@ export function deleteNodeR<T>(
 export function deleteNodeL<T>(
   dList: CircularDList<T>,
   item: T
-): SearchResult<T> {
+): SearchResult<T> | null {
   const searchRes = searchL(dList, item);
   if (searchRes === "NotFound") {
     return "NotFound";
@@ -351,6 +384,9 @@ export function deleteNodeL<T>(
   const { left, right } = searchRes;
   left.right = right;
   right.left = left;
+  if (right.value === item) {
+    return null;
+  }
   return right;
 }
 
