@@ -17,10 +17,10 @@ export const appID: string = "app";
  * Path to the vertex shader of the interpolation program.
  */
 // eslint-disable-next-line i18next/no-literal-string
-export const interpolVertexShader = "./Shaders/basic.vert";
+export const interpolVertexShader = "./Shaders/line.vert";
 
 /**
  * Path to the fragment shader of the interpolation program.
  */
 // eslint-disable-next-line i18next/no-literal-string
-export const interpolFragmentShader = "./Shaders/basic.frag";
+export const interpolFragmentShader = "./Shaders/line.frag";
