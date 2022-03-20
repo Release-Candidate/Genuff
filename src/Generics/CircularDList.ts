@@ -45,6 +45,14 @@ export class CircularDList<T> {
 }
 
 /**
+ * The type of a search result or a similar traverse.
+ *
+ * If the item has been found, the node with the item as value is returned.
+ * Else `"NotFound"` is returned.
+ */
+export type SearchResult<T> = "NotFound" | CircularDList<T>;
+
+/**
  * Return the node to the right (the next node) of the current one.
  *
  * @param dList The circular doubly link list.
@@ -67,12 +75,85 @@ export function leftNode<T>(dList: CircularDList<T>): CircularDList<T> {
 }
 
 /**
- * The type of a search result.
+ * Get the node `numNodes` to the right of `dList`.
  *
- * If the item has been found, the node with the item as value is returned.
- * Else `"NotFound"` is returned.
+ * If the list does not have enough (`numNodes + 1`) elements, `"NotFound"` is
+ * returned. If `numSteps` is negative, `"NotFound"` is returned
+ *
+ * @param dList The circular doubly linked list to iterate
+ * @param numSteps The number of nodes to step to the right
+ *
+ * @returns The node `numNodes` to the right of `dList`, or `"NotFound"` if the
+ * circular doubly linked list has less elements than `numNodes + 1` or if
+ * `"NotFound"` is negative.
  */
-export type SearchResult<T> = "NotFound" | CircularDList<T>;
+export function goRight<T>(
+  dList: CircularDList<T>,
+  numSteps: number
+): SearchResult<T> {
+  // eslint-disable-next-line no-magic-numbers
+  if (length(dList) - 1 < numSteps || numSteps < 0) {
+    return "NotFound";
+  }
+  let idx = 0;
+  let curr = dList;
+  while (idx < numSteps) {
+    // eslint-disable-next-line no-magic-numbers
+    idx += 1;
+    curr = curr.right;
+  }
+  return curr;
+}
+
+/**
+ * Get the node `numNodes` to the left of `dList`.
+ *
+ * If the list does not have enough (`numNodes + 1`) elements, `"NotFound"` is
+ * returned. If `numSteps` is negative, `"NotFound"` is returned
+ *
+ * @param dList The circular doubly linked list to iterate
+ * @param numSteps The number of nodes to step to the right
+ *
+ * @returns The node `numNodes` to the left of `dList`, or `"NotFound"` if the
+ * circular doubly linked list has less elements than `numNodes + 1` or if
+ * `"NotFound"` is negative.
+ */
+export function goLeft<T>(
+  dList: CircularDList<T>,
+  numSteps: number
+): SearchResult<T> {
+  // eslint-disable-next-line no-magic-numbers
+  if (length(dList) - 1 < numSteps || numSteps < 0) {
+    return "NotFound";
+  }
+  let idx = 0;
+  let curr = dList;
+  while (idx < numSteps) {
+    // eslint-disable-next-line no-magic-numbers
+    idx += 1;
+    curr = curr.left;
+  }
+  return curr;
+}
+
+/**
+ * Return the number of nodes in the circular doubly linked list.
+ *
+ * @param dList The circular doubly linked list to get the length of.
+ *
+ * @returns The number of nodes in the circular doubly linked list.
+ */
+export function length<T>(dList: CircularDList<T>): number {
+  let retVal = 1;
+  const start = dList;
+  let curr = dList;
+  while (curr.right !== start) {
+    curr = curr.right;
+    // eslint-disable-next-line no-magic-numbers
+    retVal += 1;
+  }
+  return retVal;
+}
 
 /**
  * Construct a circular double linked list from the given array.
@@ -271,7 +352,6 @@ export function searchR<T>(dList: CircularDList<T>, item: T): SearchResult<T> {
     return curr;
   }
   curr = curr.right;
-  let retVal: SearchResult<T> = "NotFound";
   while (curr !== start) {
     if (curr.value === item) {
       return curr;
@@ -279,7 +359,7 @@ export function searchR<T>(dList: CircularDList<T>, item: T): SearchResult<T> {
     curr = curr.right;
   }
 
-  return retVal;
+  return "NotFound";
 }
 
 /**
@@ -298,7 +378,6 @@ export function searchL<T>(dList: CircularDList<T>, item: T): SearchResult<T> {
     return curr;
   }
   curr = curr.left;
-  let retVal: SearchResult<T> = "NotFound";
   while (curr !== start) {
     if (curr.value === item) {
       return curr;
@@ -306,7 +385,7 @@ export function searchL<T>(dList: CircularDList<T>, item: T): SearchResult<T> {
     curr = curr.left;
   }
 
-  return retVal;
+  return "NotFound";
 }
 
 /**
