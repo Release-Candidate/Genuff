@@ -525,6 +525,275 @@ function genericCDListTests<S>(typeName: string, arbType: fc.Arbitrary<S>) {
             { verbose: true }
           );
         });
+        it(`${typeName}: find first of two nodes`, () => {
+          fc.assert(
+            fc.property(fc.array(arbType, { minLength: 2 }), (a) => {
+              const searchItem = a[0];
+              const cdList = CDList.fromArray(a);
+              if (cdList == null) {
+                assert.fail("ERROR: circular list is null!");
+              } else {
+                CDList.insertLeft(cdList, searchItem);
+                const searchRes = CDList.searchR(cdList, searchItem);
+                if (searchRes === "NotFound") {
+                  assert.fail("ERROR: item not found!");
+                } else {
+                  assert.strictEqual(searchRes.value, searchItem);
+                  assert.strictEqual(searchRes.left.value, searchItem);
+                }
+              }
+            }),
+            { verbose: true }
+          );
+        });
+      });
+      describe(`${typeName}: testing searchL`, () => {
+        it(`${typeName}: search random list`, () => {
+          fc.assert(
+            fc.property(
+              fc.array(arbType, { minLength: 2 }),
+              fc.integer(),
+              (a, b) => {
+                const cdList = CDList.fromArray(a);
+                const searchItem = a[Math.abs(b) % a.length];
+                if (cdList == null) {
+                  assert.fail(
+                    "ERROR: circular list is null, but array is !=[]"
+                  );
+                } else {
+                  const searchRes = CDList.searchL(cdList, searchItem);
+                  if (searchRes === "NotFound") {
+                    assert.fail("ERROR: searchL returned NotFound!");
+                  } else {
+                    assert.strictEqual(searchItem, searchRes.value);
+                  }
+                }
+              }
+            ),
+            { verbose: true }
+          );
+        });
+        it(`${typeName}: search not found`, () => {
+          fc.assert(
+            fc.property(arbType, arbType, (a, b) => {
+              const cdList = new CDList.CircularDList(a);
+              const searchItem = b;
+              if (a === b) {
+                assert.ok(true);
+              } else {
+                assert.strictEqual(
+                  CDList.searchL(cdList, searchItem),
+                  "NotFound"
+                );
+              }
+            }),
+            { verbose: true }
+          );
+        });
+        it(`${typeName}: find first of two nodes`, () => {
+          fc.assert(
+            fc.property(fc.array(arbType, { minLength: 2 }), (a) => {
+              const searchItem = a[0];
+              const cdList = CDList.fromArray(a);
+              if (cdList == null) {
+                assert.fail("ERROR: circular list is null!");
+              } else {
+                CDList.insertRight(cdList, searchItem);
+                const searchRes = CDList.searchL(cdList, searchItem);
+                if (searchRes === "NotFound") {
+                  assert.fail("ERROR: item not found!");
+                } else {
+                  assert.strictEqual(searchRes.value, searchItem);
+                  assert.strictEqual(searchRes.right.value, searchItem);
+                }
+              }
+            }),
+            { verbose: true }
+          );
+        });
+      });
+      describe(`${typeName}: testing searchIfR`, () => {
+        it(`${typeName}: search random list`, () => {
+          fc.assert(
+            fc.property(
+              fc.array(arbType, { minLength: 2 }),
+              fc.integer(),
+              (a, b) => {
+                const cdList = CDList.fromArray(a);
+                const searchItem = a[Math.abs(b) % a.length];
+                if (cdList == null) {
+                  assert.fail(
+                    "ERROR: circular list is null, but array is !=[]"
+                  );
+                } else {
+                  const searchRes = CDList.searchIfR(
+                    cdList,
+                    (n) => n.value === searchItem
+                  );
+                  if (searchRes === "NotFound") {
+                    assert.fail(
+                      `ERROR: searchIfR returned NotFound! ${CDList.toStringR(
+                        cdList
+                      )}, item: ${searchItem}`
+                    );
+                  } else {
+                    assert.strictEqual(searchItem, searchRes.value);
+                  }
+                }
+              }
+            ),
+            { verbose: true }
+          );
+        });
+        it(`${typeName}: search not found`, () => {
+          fc.assert(
+            fc.property(arbType, (a) => {
+              const cdList = new CDList.CircularDList(a);
+              assert.strictEqual(
+                CDList.searchIfR(cdList, (n) => n.value !== a),
+                "NotFound"
+              );
+            }),
+            { verbose: true }
+          );
+        });
+        it(`${typeName}: find first of two nodes`, () => {
+          fc.assert(
+            fc.property(fc.array(arbType, { minLength: 2 }), (a) => {
+              const searchItem = a[0];
+              const cdList = CDList.fromArray(a);
+              if (cdList == null) {
+                assert.fail("ERROR: circular list is null!");
+              } else {
+                CDList.insertLeft(cdList, searchItem);
+                const searchRes = CDList.searchIfR(
+                  cdList,
+                  (n) => n.value === searchItem && n.left.value === searchItem
+                );
+                if (searchRes === "NotFound") {
+                  assert.fail("ERROR: item not found!");
+                } else {
+                  assert.strictEqual(searchRes.value, searchItem);
+                  assert.strictEqual(searchRes.left.value, searchItem);
+                }
+              }
+            }),
+            { verbose: true }
+          );
+        });
+        it(`${typeName}: find two consecutive nodes`, () => {
+          fc.assert(
+            fc.property(
+              fc.array(arbType, { minLength: 2 }),
+              fc.integer(),
+              (a, b) => {
+                const cdList = CDList.fromArray(a) as CDList.CircularDList<S>;
+                const searchItemIdx = Math.abs(b) % (a.length - 1);
+                const searchItem1 = a[searchItemIdx];
+                const searchItem2 = a[searchItemIdx + 1];
+                const searchRes = CDList.searchIfR(
+                  cdList,
+                  (n) =>
+                    n.value === searchItem1 && n.right.value === searchItem2
+                ) as CDList.CircularDList<S>;
+                assert.strictEqual(searchRes.value, searchItem1);
+                assert.strictEqual(searchRes.right.value, searchItem2);
+              }
+            ),
+            { verbose: true }
+          );
+        });
+      });
+      describe(`${typeName}: testing searchIfL`, () => {
+        it(`${typeName}: search random list`, () => {
+          fc.assert(
+            fc.property(
+              fc.array(arbType, { minLength: 2 }),
+              fc.integer(),
+              (a, b) => {
+                const cdList = CDList.fromArray(a);
+                const searchItem = a[Math.abs(b) % a.length];
+                if (cdList == null) {
+                  assert.fail(
+                    "ERROR: circular list is null, but array is !=[]"
+                  );
+                } else {
+                  const searchRes = CDList.searchIfL(
+                    cdList,
+                    (n) => n.value === searchItem
+                  );
+                  if (searchRes === "NotFound") {
+                    assert.fail(
+                      `ERROR: searchIfL returned NotFound! ${CDList.toStringR(
+                        cdList
+                      )}, item: ${searchItem}`
+                    );
+                  } else {
+                    assert.strictEqual(searchItem, searchRes.value);
+                  }
+                }
+              }
+            ),
+            { verbose: true }
+          );
+        });
+        it(`${typeName}: search not found`, () => {
+          fc.assert(
+            fc.property(arbType, (a) => {
+              const cdList = new CDList.CircularDList(a);
+              assert.strictEqual(
+                CDList.searchIfL(cdList, (n) => n.value !== a),
+                "NotFound"
+              );
+            }),
+            { verbose: true }
+          );
+        });
+        it(`${typeName}: find first of two nodes`, () => {
+          fc.assert(
+            fc.property(fc.array(arbType, { minLength: 2 }), (a) => {
+              const searchItem = a[0];
+              const cdList = CDList.fromArray(a);
+              if (cdList == null) {
+                assert.fail("ERROR: circular list is null!");
+              } else {
+                CDList.insertRight(cdList, searchItem);
+                const searchRes = CDList.searchIfL(
+                  cdList,
+                  (n) => n.value === searchItem && n.right.value === searchItem
+                );
+                if (searchRes === "NotFound") {
+                  assert.fail("ERROR: item not found!");
+                } else {
+                  assert.strictEqual(searchRes.value, searchItem);
+                  assert.strictEqual(searchRes.right.value, searchItem);
+                }
+              }
+            }),
+            { verbose: true }
+          );
+        });
+        it(`${typeName}: find two consecutive nodes`, () => {
+          fc.assert(
+            fc.property(
+              fc.array(arbType, { minLength: 2 }),
+              fc.integer(),
+              (a, b) => {
+                const cdList = CDList.fromArray(a) as CDList.CircularDList<S>;
+                const searchItemIdx = Math.abs(b) % (a.length - 1);
+                const searchItem1 = a[searchItemIdx + 1];
+                const searchItem2 = a[searchItemIdx];
+                const searchRes = CDList.searchIfL(
+                  cdList,
+                  (n) => n.value === searchItem1 && n.left.value === searchItem2
+                ) as CDList.CircularDList<S>;
+                assert.strictEqual(searchRes.value, searchItem1);
+                assert.strictEqual(searchRes.left.value, searchItem2);
+              }
+            ),
+            { verbose: true }
+          );
+        });
       });
     });
     describe(`${typeName}: testing deleteNode(s)`, () => {
@@ -572,7 +841,12 @@ function genericCDListTests<S>(typeName: string, arbType: fc.Arbitrary<S>) {
                       )}`
                     );
                   } else if (deletedList == null) {
-                    assert.deepEqual(a, a.reverse());
+                    const testArray = new Array(a.length).fill(toDelete);
+                    assert.deepEqual(
+                      a,
+                      testArray,
+                      `ERROR: item: '${toDelete}'`
+                    );
                   } else {
                     assert.notInclude(CDList.toArray(deletedList), toDelete);
                   }
@@ -600,7 +874,8 @@ function genericCDListTests<S>(typeName: string, arbType: fc.Arbitrary<S>) {
                     )}`
                   );
                 } else if (deletedList == null) {
-                  assert.fail("ERROR: list should not be null");
+                  const testArray = new Array(a.length).fill(toDelete);
+                  assert.deepEqual(a, testArray, `ERROR: item: '${toDelete}'`);
                 } else {
                   assert.notInclude(CDList.toArray(deletedList), toDelete);
                 }
@@ -633,7 +908,12 @@ function genericCDListTests<S>(typeName: string, arbType: fc.Arbitrary<S>) {
                       )}`
                     );
                   } else if (deletedList == null) {
-                    assert.deepEqual(a, a.reverse());
+                    const testArray = new Array(a.length).fill(toDelete);
+                    assert.deepEqual(
+                      a,
+                      testArray,
+                      `ERROR: item: '${toDelete}'`
+                    );
                   } else {
                     assert.notInclude(CDList.toArray(deletedList), toDelete);
                   }
@@ -687,7 +967,12 @@ function genericCDListTests<S>(typeName: string, arbType: fc.Arbitrary<S>) {
                       )}`
                     );
                   } else if (deletedList == null) {
-                    assert.deepEqual(a, a.reverse());
+                    const testArray = new Array(a.length).fill(toDelete);
+                    assert.deepEqual(
+                      a,
+                      testArray,
+                      `ERROR: item: '${toDelete}'`
+                    );
                   } else {
                     assert.strictEqual(
                       CDList.length(deletedList),
@@ -733,7 +1018,12 @@ function genericCDListTests<S>(typeName: string, arbType: fc.Arbitrary<S>) {
                       )}`
                     );
                   } else if (deletedList == null) {
-                    assert.deepEqual(a, a.reverse());
+                    const testArray = new Array(a.length).fill(toDelete);
+                    assert.deepEqual(
+                      a,
+                      testArray,
+                      `ERROR: item: '${toDelete}'`
+                    );
                   } else {
                     assert.strictEqual(
                       CDList.length(deletedList),
@@ -782,7 +1072,12 @@ function genericCDListTests<S>(typeName: string, arbType: fc.Arbitrary<S>) {
                       )}`
                     );
                   } else if (deletedList == null) {
-                    assert.deepEqual(a, a.reverse());
+                    const testArray = new Array(a.length).fill(toDelete);
+                    assert.deepEqual(
+                      a,
+                      testArray,
+                      `ERROR: item: '${toDelete}'`
+                    );
                   } else {
                     assert.include(CDList.toArray(deletedList), toDelete);
                   }
@@ -836,7 +1131,12 @@ function genericCDListTests<S>(typeName: string, arbType: fc.Arbitrary<S>) {
                       )}`
                     );
                   } else if (deletedList == null) {
-                    assert.deepEqual(a, a.reverse());
+                    const testArray = new Array(a.length).fill(toDelete);
+                    assert.deepEqual(
+                      a,
+                      testArray,
+                      `ERROR: item: '${toDelete}'`
+                    );
                   } else {
                     assert.strictEqual(
                       CDList.length(deletedList),
@@ -882,7 +1182,12 @@ function genericCDListTests<S>(typeName: string, arbType: fc.Arbitrary<S>) {
                       )}`
                     );
                   } else if (deletedList == null) {
-                    assert.deepEqual(a, a.reverse());
+                    const testArray = new Array(a.length).fill(toDelete);
+                    assert.deepEqual(
+                      a,
+                      testArray,
+                      `ERROR: item: '${toDelete}'`
+                    );
                   } else {
                     assert.strictEqual(
                       CDList.length(deletedList),
@@ -931,7 +1236,12 @@ function genericCDListTests<S>(typeName: string, arbType: fc.Arbitrary<S>) {
                       )}`
                     );
                   } else if (deletedList == null) {
-                    assert.deepEqual(a, a.reverse());
+                    const testArray = new Array(a.length).fill(toDelete);
+                    assert.deepEqual(
+                      a,
+                      testArray,
+                      `ERROR: item: '${toDelete}'`
+                    );
                   } else {
                     assert.include(CDList.toArray(deletedList), toDelete);
                   }
@@ -980,6 +1290,8 @@ function numStringCDListTests<S extends { toString: () => string }>(
           { verbose: true }
         );
       });
+    });
+    describe(`${typeName}: testing reduce`, () => {
       it(`${typeName}: reduceL is reduceR reversed`, () => {
         fc.assert(
           fc.property(fc.array(arbType), (a) => {
@@ -1027,5 +1339,13 @@ describe("Testing Generics/CircularDList", () => {
   describe("Testing circular doubly linked list of doubles", () => {
     genericCDListTests("CDList doubles", fc.double());
     numStringCDListTests("CDList doubles", fc.double());
+  });
+  describe("Testing circular doubly linked list of integers", () => {
+    genericCDListTests("CDList integers", fc.integer());
+    numStringCDListTests("CDList integers", fc.integer());
+  });
+  describe("Testing circular doubly linked list of strings", () => {
+    genericCDListTests("CDList strings", fc.string());
+    numStringCDListTests("CDList strings", fc.string());
   });
 });

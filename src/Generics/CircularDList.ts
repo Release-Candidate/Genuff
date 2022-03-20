@@ -298,15 +298,18 @@ export function searchIfR<T>(
 ): SearchResult<T> {
   const start = dList;
   let curr = dList;
-  let retVal: SearchResult<T> = "NotFound";
-  while (curr.right !== start) {
+  if (pred(curr)) {
+    return curr;
+  }
+  curr = curr.right;
+  while (curr !== start) {
     if (pred(curr)) {
       return curr;
     }
     curr = curr.right;
   }
 
-  return retVal;
+  return "NotFound";
 }
 
 /**
@@ -325,15 +328,18 @@ export function searchIfL<T>(
 ): SearchResult<T> {
   const start = dList;
   let curr = dList;
-  let retVal: SearchResult<T> = "NotFound";
-  while (curr.left !== start) {
+  if (pred(curr)) {
+    return curr;
+  }
+  curr = curr.left;
+  while (curr !== start) {
     if (pred(curr)) {
       return curr;
     }
     curr = curr.left;
   }
 
-  return retVal;
+  return "NotFound";
 }
 
 /**
@@ -435,11 +441,11 @@ export function deleteNodeR<T>(
     return "NotFound";
   }
   const { left, right } = searchRes;
-  left.right = right;
-  right.left = left;
-  if (left.value === item) {
+  if (left === right && left === searchRes) {
     return null;
   }
+  left.right = right;
+  right.left = left;
   return left;
 }
 
@@ -461,11 +467,12 @@ export function deleteNodeL<T>(
     return "NotFound";
   }
   const { left, right } = searchRes;
-  left.right = right;
-  right.left = left;
-  if (right.value === item) {
+  if (left === right && left === searchRes) {
     return null;
   }
+  left.right = right;
+  right.left = left;
+
   return right;
 }
 
