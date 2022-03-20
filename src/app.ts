@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable init-declarations */
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2022 Roland Csaszar
 //
@@ -8,6 +6,8 @@
 // Date:     20.Feb.2022
 //
 // ==============================================================================
+/* eslint-disable no-magic-numbers */
+/* eslint-disable init-declarations */
 
 import i18next from "i18next";
 import { errorBox } from "./App/Browser";
@@ -16,12 +16,9 @@ import {
   interpolFragmentShader,
   interpolVertexShader,
 } from "./App/Constants";
-import {
-  fetchAndCompile,
-  makeWebGL2Canvas,
-  resizeCanvasIfChanged,
-} from "./WebGL/Browser";
+import { makeWebGL2Canvas, resizeCanvasIfChanged } from "./WebGL/Browser";
 import { GOLDEN_RATIO_FRACTION_LANDSCAPE } from "./WebGL/Constants";
+import { bindGLArrayObject, makeGLArrayObject } from "./WebGL/GLArrayObject";
 
 window.onload = main;
 
@@ -54,23 +51,35 @@ async function main() {
     throw new Error("ERROR: cannot get WebGL 2 context for canvas!");
   }
 
-  const program = await fetchAndCompile(
+  const arrayObject = await makeGLArrayObject(
     gl,
     interpolVertexShader,
     interpolFragmentShader
   );
-  if (program == null) {
-    console.error("Error: cannot get WebGL 2 context for canvas!");
+  if (arrayObject == null) {
+    console.error("Error: cannot compile program or create VertexArrayObject");
     throw new Error(
       // eslint-disable-next-line i18next/no-literal-string
       "ERROR: error compiling and linking vertex and fragment shader!"
     );
   }
 
-  const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-  const normalAttributeLocation = gl.getAttribLocation(program, "a_normal");
-  const uniformThickness = gl.getUniformLocation(program, "u_thickness");
-  const uniformRatio = gl.getUniformLocation(program, "u_aspectRatio");
+  const positionAttributeLocation = gl.getAttribLocation(
+    arrayObject.program,
+    "a_position"
+  );
+  const normalAttributeLocation = gl.getAttribLocation(
+    arrayObject.program,
+    "a_normal"
+  );
+  const uniformThickness = gl.getUniformLocation(
+    arrayObject.program,
+    "u_thickness"
+  );
+  const uniformRatio = gl.getUniformLocation(
+    arrayObject.program,
+    "u_aspectRatio"
+  );
 
   const positionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -126,8 +135,7 @@ async function main() {
   ];
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-  const vao = gl.createVertexArray();
-  gl.bindVertexArray(vao);
+  gl.bindVertexArray(arrayObject.vao);
 
   const indexBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -171,8 +179,7 @@ async function main() {
   gl.enable(gl.CULL_FACE);
   gl.cullFace(gl.BACK);
 
-  gl.useProgram(program);
-  gl.bindVertexArray(vao);
+  bindGLArrayObject(arrayObject, gl);
   gl.uniform1f(uniformThickness, 0.1);
   gl.uniform1f(uniformRatio, gl.canvas.height / gl.canvas.width);
   const primitiveType = gl.TRIANGLES;

@@ -7,7 +7,7 @@
 //
 // ==============================================================================
 
-import { fetchAndCompile } from "../WebGL/Browser";
+import { fetchAndCompile } from "./Browser";
 
 export type GLArrayObject = {
   program: WebGLProgram;
