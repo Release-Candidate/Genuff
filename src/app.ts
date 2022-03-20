@@ -18,7 +18,11 @@ import {
 } from "./App/Constants";
 import { makeWebGL2Canvas, resizeCanvasIfChanged } from "./WebGL/Browser";
 import { GOLDEN_RATIO_FRACTION_LANDSCAPE } from "./WebGL/Constants";
-import { bindGLArrayObject, makeGLArrayObject } from "./WebGL/GLArrayObject";
+import {
+  bindGLArrayObject,
+  makeGLArrayObject,
+  useGLArrayObject,
+} from "./WebGL/GLArrayObject";
 
 window.onload = main;
 
@@ -135,7 +139,7 @@ async function main() {
   ];
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-  gl.bindVertexArray(arrayObject.vao);
+  bindGLArrayObject(arrayObject, gl);
 
   const indexBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -179,7 +183,7 @@ async function main() {
   gl.enable(gl.CULL_FACE);
   gl.cullFace(gl.BACK);
 
-  bindGLArrayObject(arrayObject, gl);
+  useGLArrayObject(arrayObject, gl);
   gl.uniform1f(uniformThickness, 0.1);
   gl.uniform1f(uniformRatio, gl.canvas.height / gl.canvas.width);
   const primitiveType = gl.TRIANGLES;
