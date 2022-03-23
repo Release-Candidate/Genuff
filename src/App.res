@@ -7,7 +7,14 @@
 //
 // ==============================================================================
 
-Js.log("Hello, HUGO!")
+let i18Opts: I18Next.initOptions = {
+  debug: true,
+  fallbackLng: "en",
+  backend: {
+    loadPath: "/locales/{{lng}}_{{ns}}.json",
+    addPath: "/locales/{{lng}}_{{ns}}.json",
+  },
+}
 
 module type Field = {
   type t
@@ -60,4 +67,11 @@ let v = {x: 1., y: 2., z: 3.}
 
 let e = testVaddF(2., v)
 
-Js.log(e)
+//==============================================================================
+@ocaml.doc(`Main entry of the app`)
+let main = () => {
+  Js.log(I18Next.text("HelloText"))
+  Js.log(e)
+}
+
+I18Next.use(I18Next.httpApi)->I18Next.init(i18Opts, (e, t) => main())
