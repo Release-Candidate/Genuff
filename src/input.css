@@ -1,71 +1,67 @@
 /*
- SPDX-License-Identifier: GPL-3.0-or-later
- Copyright (C) 2022 Roland Csaszar
+  SPDX-License-Identifier: GPL-3.0-or-later
+  Copyright (C) 2022 Roland Csaszar
 
- Project:  Genuff
- File:     input.css
- Date:     11.Feb.2022
+  Project:  ReScript-PWA-Template
+  File:     input.css
+  Date:     20.Feb.2022
 
- =============================================================================*/
+  ==============================================================================*/
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 .btn {
-  @apply select-none font-bold py-2 px-4 rounded;
+    @apply select-none font-bold py-2 px-4 rounded;
 }
 .btn-blue {
-  @apply bg-blue-600 text-white;
+    @apply bg-blue-600 text-white;
 }
 .btn-blue:hover {
-  @apply bg-blue-700;
+    @apply bg-blue-700;
 }
 
 .download::before {
-  content: url("./icons/download.svg");
-  @apply block float-left w-4 h-4 mr-4;
+    content: url("./icons/download.svg");
+    @apply block float-left w-4 h-4 mr-4;
 }
 
 .share::before {
-  content: url("./icons/share.svg");
-  @apply block float-left w-4 h-4 mr-4;
+    content: url("./icons/share.svg");
+    @apply block float-left w-4 h-4 mr-4;
 }
 
 .position::before {
-  content: url("./icons/position.svg");
-  @apply block float-left  w-4 h-4 mr-4;
+    content: url("./icons/position.svg");
+    @apply block float-left  w-4 h-4 mr-4;
 }
 
 .ml--4 {
-  margin-left: -1rem;
-  width: calc(100% + 1rem);
+    margin-left: -1rem;
+    width: calc(100% + 1rem);
 }
 
 h6 {
-  @apply font-bold;
+    @apply font-bold;
 }
 
 h5 {
-  @apply text-lg font-semibold;
+    @apply text-lg font-semibold;
 }
 
 h4 {
-  @apply text-lg font-bold;
+    @apply text-lg font-bold;
 }
 
 h3 {
-  @apply text-lg font-extrabold;
+    @apply text-lg font-extrabold;
 }
 
 h2 {
-  @apply text-xl font-bold;
+    @apply text-xl font-bold;
 }
 
 h1 {
-  @apply text-xl font-extrabold;
-}
-
-a {
-  @apply text-blue-600 underline;
+    @apply text-xl font-extrabold;
 }

@@ -3,6 +3,12 @@
 	"tasks": [
 		{
 			"type": "yarn",
+			"task": "build",
+			"problemMatcher": [],
+			"label": "yarn: build"
+		},
+		{
+			"type": "yarn",
 			"task": "bundle",
 			"problemMatcher": [],
 			"label": "yarn: bundle"
@@ -27,21 +33,27 @@
 		},
 		{
 			"type": "yarn",
-			"task": "eslint",
-			"problemMatcher": [],
-			"label": "yarn: eslint"
-		},
-		{
-			"type": "yarn",
 			"task": "install",
 			"problemMatcher": [],
 			"label": "yarn: install"
 		},
 		{
 			"type": "yarn",
+			"task": "resi",
+			"problemMatcher": [],
+			"label": "yarn: resi"
+		},
+		{
+			"type": "yarn",
 			"task": "serve",
 			"problemMatcher": [],
 			"label": "yarn: serve"
+		},
+		{
+			"type": "yarn",
+			"task": "servewatch",
+			"problemMatcher": [],
+			"label": "yarn: servewatch"
 		},
 		{
 			"type": "yarn",
@@ -69,39 +81,9 @@
 		},
 		{
 			"type": "yarn",
-			"task": "translations",
-			"problemMatcher": [],
-			"label": "yarn: translations"
-		},
-		{
-			"type": "yarn",
-			"task": "tscheck",
-			"problemMatcher": [],
-			"label": "yarn: tscheck"
-		},
-		{
-			"type": "yarn",
 			"task": "watch",
 			"problemMatcher": [],
 			"label": "yarn: watch"
-		},
-		{
-			"type": "yarn",
-			"task": "bench",
-			"problemMatcher": [],
-			"label": "yarn: bench"
-		},
-		{
-			"type": "yarn",
-			"task": "types",
-			"problemMatcher": [],
-			"label": "yarn: types"
-		},
-		{
-			"type": "yarn",
-			"task": "build",
-			"problemMatcher": [],
-			"label": "yarn: build"
 		}
 	]
 }

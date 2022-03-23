@@ -1,0 +1,24 @@
+{
+  "name": "rescript-test",
+  "version": "0.1.0",
+  "package-specs": {
+    "module": "es6-global",
+    "in-source": true,
+    "suffix": ".mjs"
+  },
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true
+    },
+    {
+      "dir": "tests",
+      "subdirs": true,
+      "type": "dev"
+    }
+  ],
+  "bs-dependencies": [
+    "@dusty-phillips/rescript-zora",
+    "rescript-fast-check"
+  ]
+}
