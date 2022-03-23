@@ -3,7 +3,7 @@
         {
             "language": "typescript",
             "source": [
-                "import Decimal from \"decimal.js\"\r\n//@ts-ignore\r\nimport { LinearInterpolation } from \"./src/Math/LinearInterpolation\"\r\n//@ts-ignore\r\nimport { AitkenInterpolation } from \"./src/Math/AitkenInterpolation\"\r\n//@ts-ignore\r\nimport { NevilleInterpolation } from \"./src/Math/NevilleInterpolation\";\r\n//@ts-ignore\r\nimport { KroghIInterpolation } from \"./src/Math/KroghIInterpolation\";\r\n//@ts-ignore\r\nimport { KroghIIInterpolation } from \"./src/Math/KroghIIInterpolation\";\r\n//@ts-ignore\r\nimport { LagrangeInterpolation } from \"./src/Math/LagrangeInterpolation\";\r\n//@ts-ignore\r\nimport { Plotly } from \"node-kernel\";"
+                "import Decimal from \"decimal.js\"\r\n//@ts-ignore\r\nimport { LinearInterpolation } from \"./src/Math/LinearInterpolation\"\r\n//@ts-ignore\r\nimport { AitkenInterpolation } from \"./src/Math/AitkenInterpolation\"\r\n//@ts-ignore\r\nimport { NevilleInterpolation } from \"./src/Math/NevilleInterpolation\";\r\n//@ts-ignore\r\nimport { KroghIInterpolation } from \"./src/Math/KroghIInterpolation\";\r\n//@ts-ignore\r\nimport { KroghIIInterpolation } from \"./src/Math/KroghIIInterpolation\";\r\n//@ts-ignore\r\nimport { LagrangeInterpolation } from \"./src/Math/LagrangeInterpolation\";\r\n//@ts-ignore\r\n//import { Vec2 } from \"./src/Math/Vec2\"\r\n//@ts-ignore\r\nimport { CircularDList } from \"./src/Generics/CircularDList\"\r\n//@ts-ignore\r\nimport { Plotly } from \"node-kernel\";"
             ],
             "outputs": [
                 {
@@ -49,7 +49,7 @@
                         {
                             "mime": "application/vnd.ts.notebook.plotly+json",
                             "value": {
-                                "requestId": "xc982237b100e4a3a9e6c900e65b89012",
+                                "requestId": "xefdac0b302ca4ad49e78dab95ea77a0a",
                                 "type": "generatePlot",
                                 "ele": "myDiv",
                                 "data": [
@@ -1482,7 +1482,7 @@
                         {
                             "mime": "application/vnd.ts.notebook.plotly+json",
                             "value": {
-                                "requestId": "xc982237b100e4a3a9e6c900e65b89012",
+                                "requestId": "xefdac0b302ca4ad49e78dab95ea77a0a",
                                 "type": "generatePlot",
                                 "ele": "myDiv",
                                 "data": [
@@ -2917,7 +2917,7 @@
                         {
                             "mime": "application/vnd.ts.notebook.plotly+json",
                             "value": {
-                                "requestId": "xc982237b100e4a3a9e6c900e65b89012",
+                                "requestId": "xefdac0b302ca4ad49e78dab95ea77a0a",
                                 "type": "generatePlot",
                                 "ele": "myDiv",
                                 "data": [
@@ -4358,7 +4358,7 @@
                         {
                             "mime": "application/vnd.ts.notebook.plotly+json",
                             "value": {
-                                "requestId": "xc982237b100e4a3a9e6c900e65b89012",
+                                "requestId": "xefdac0b302ca4ad49e78dab95ea77a0a",
                                 "type": "generatePlot",
                                 "ele": "myDiv",
                                 "data": [
@@ -4807,7 +4807,7 @@
                         {
                             "mime": "application/vnd.ts.notebook.plotly+json",
                             "value": {
-                                "requestId": "xc982237b100e4a3a9e6c900e65b89012",
+                                "requestId": "xefdac0b302ca4ad49e78dab95ea77a0a",
                                 "type": "generatePlot",
                                 "ele": "myDiv",
                                 "data": [
@@ -6256,7 +6256,7 @@
                         {
                             "mime": "application/vnd.ts.notebook.plotly+json",
                             "value": {
-                                "requestId": "xc982237b100e4a3a9e6c900e65b89012",
+                                "requestId": "xefdac0b302ca4ad49e78dab95ea77a0a",
                                 "type": "generatePlot",
                                 "ele": "myDiv",
                                 "data": [
@@ -6695,7 +6695,7 @@
                         {
                             "mime": "application/vnd.ts.notebook.plotly+json",
                             "value": {
-                                "requestId": "xc982237b100e4a3a9e6c900e65b89012",
+                                "requestId": "xefdac0b302ca4ad49e78dab95ea77a0a",
                                 "type": "generatePlot",
                                 "ele": "myDiv",
                                 "data": [
@@ -8134,7 +8134,7 @@
                         {
                             "mime": "application/vnd.ts.notebook.plotly+json",
                             "value": {
-                                "requestId": "xc982237b100e4a3a9e6c900e65b89012",
+                                "requestId": "xefdac0b302ca4ad49e78dab95ea77a0a",
                                 "type": "generatePlot",
                                 "ele": "myDiv",
                                 "data": [
@@ -8587,7 +8587,7 @@
                         {
                             "mime": "application/vnd.ts.notebook.plotly+json",
                             "value": {
-                                "requestId": "xc982237b100e4a3a9e6c900e65b89012",
+                                "requestId": "xefdac0b302ca4ad49e78dab95ea77a0a",
                                 "type": "generatePlot",
                                 "ele": "myDiv",
                                 "data": [
@@ -10040,7 +10040,7 @@
                         {
                             "mime": "application/vnd.ts.notebook.plotly+json",
                             "value": {
-                                "requestId": "xc982237b100e4a3a9e6c900e65b89012",
+                                "requestId": "xefdac0b302ca4ad49e78dab95ea77a0a",
                                 "type": "generatePlot",
                                 "ele": "myDiv",
                                 "data": [
@@ -11521,7 +11521,7 @@
                         {
                             "mime": "application/vnd.ts.notebook.plotly+json",
                             "value": {
-                                "requestId": "xc982237b100e4a3a9e6c900e65b89012",
+                                "requestId": "xefdac0b302ca4ad49e78dab95ea77a0a",
                                 "type": "generatePlot",
                                 "ele": "myDiv",
                                 "data": [
@@ -12960,7 +12960,7 @@
                         {
                             "mime": "application/vnd.ts.notebook.plotly+json",
                             "value": {
-                                "requestId": "xc982237b100e4a3a9e6c900e65b89012",
+                                "requestId": "xefdac0b302ca4ad49e78dab95ea77a0a",
                                 "type": "generatePlot",
                                 "ele": "myDiv",
                                 "data": [
@@ -13409,7 +13409,7 @@
                         {
                             "mime": "application/vnd.ts.notebook.plotly+json",
                             "value": {
-                                "requestId": "xc982237b100e4a3a9e6c900e65b89012",
+                                "requestId": "xefdac0b302ca4ad49e78dab95ea77a0a",
                                 "type": "generatePlot",
                                 "ele": "myDiv",
                                 "data": [
@@ -14858,7 +14858,7 @@
                         {
                             "mime": "application/vnd.ts.notebook.plotly+json",
                             "value": {
-                                "requestId": "xc982237b100e4a3a9e6c900e65b89012",
+                                "requestId": "xefdac0b302ca4ad49e78dab95ea77a0a",
                                 "type": "generatePlot",
                                 "ele": "myDiv",
                                 "data": [
@@ -16327,7 +16327,7 @@
                         {
                             "mime": "application/vnd.ts.notebook.plotly+json",
                             "value": {
-                                "requestId": "xc982237b100e4a3a9e6c900e65b89012",
+                                "requestId": "xefdac0b302ca4ad49e78dab95ea77a0a",
                                 "type": "generatePlot",
                                 "ele": "myDiv",
                                 "data": [
@@ -17765,6 +17765,166 @@
                     ]
                 }
             ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "function circle(radius: number, numPoints: number): { x: number; y: number }[] {\r\n    const angleIncr = (2 * Math.PI) / numPoints\r\n    const points = [...Array(numPoints).keys()].map<{ x: number; y: number }>(\r\n        (i) => {\r\n            return {\r\n                x: radius * Math.cos(i * angleIncr),\r\n                y: radius * Math.sin(i * angleIncr),\r\n            }\r\n        }\r\n    )\r\n    return points\r\n}\r\n\r\nconst circlePoints = circle(5.0, 20)\r\n\r\nconst circlePlot = {\r\n    type: \"pointcloud\",\r\n    mode: \"markers\",\r\n    marker: {\r\n        sizemin: 0.5,\r\n        sizemax: 100,\r\n        arearatio: 0,\r\n        color: \"rgba(0, 0, 255, 0.9)\",\r\n        opacity: 0.8,\r\n        blend: true,\r\n    },\r\n    opacity: 0.7,\r\n    x: circlePoints.map((e) => e.x),\r\n    y: circlePoints.map((e) => e.y),\r\n}\r\n\r\nfunction dot(a: { x: number; y: number }, b: { x: number; y: number }) {\r\n    return a.x * b.x + a.y * b.y\r\n}\r\n\r\nfunction norm(a: { x: number; y: number }, b: { x: number; y: number }) {\r\n    return Math.sqrt(a.x * b.x + a.y * b.y)\r\n}\r\n\r\nconst minD = 1\r\nconst farD = 2\r\nconst step = 0.05\r\n\r\nfunction movePoint(\r\n    e: { x: number; y: number },\r\n    index: number,\r\n    arr: { x: number; y: number }[]\r\n) {\r\n    let delta = { x: 0, y: 0 }\r\n    const left = (arr.length + (index - 1)) % arr.length\r\n    const right = (index + 1) % arr.length\r\n    if (norm(e, arr[left]) > minD) {\r\n        const dir = { x: arr[left].x - e.x, y: arr[left].y - e.y }\r\n        const fac = 1 / norm(dir, dir)\r\n        delta = {\r\n            x: delta.x + dir.x * fac * step,\r\n            y: delta.y + dir.y * fac * step,\r\n        }\r\n    }\r\n    if (norm(e, arr[right]) > minD) {\r\n        const dir = { x: arr[right].x - e.x, y: arr[right].y - e.y }\r\n        const fac = 1 / norm(dir, dir)\r\n        delta = {\r\n            x: delta.x + dir.x * fac * step,\r\n            y: delta.y + dir.y * fac * step,\r\n        }\r\n    }\r\n    for (const point of arr) {\r\n        if (point !== e && point !== arr[right] && point !== arr[left]) {\r\n            const dir = { x: e.x - point.x, y: e.y - point.y }\r\n            const fac = 1 / norm(dir, dir)\r\n            if (norm(point, e) < farD) {\r\n                delta = {\r\n                    x: delta.x + dir.x * fac * step,\r\n                    y: delta.y + dir.x * fac * step,\r\n                }\r\n            }\r\n        }\r\n    }\r\n    return { x: e.x + delta.x, y: e.y + delta.y }\r\n}\r\n\r\nfunction movePoints(arr, times) {\r\n    let retVal = arr\r\n    for (let num = 0; num < times; num++) {\r\n        retVal = retVal.map((e, index, arr) => movePoint(e, index, arr))\r\n    }\r\n    return retVal\r\n}\r\n\r\nconst circlePoints1 = movePoints(circlePoints, 100)\r\n\r\nconst circlePlot1 = {\r\n    type: \"pointcloud\",\r\n    mode: \"markers\",\r\n    marker: {\r\n        sizemin: 0.5,\r\n        sizemax: 100,\r\n        arearatio: 0,\r\n        color: \"rgba(0, 255, 255, 0.9)\",\r\n        opacity: 0.8,\r\n        blend: true,\r\n    },\r\n    opacity: 0.7,\r\n    x: circlePoints1.map((e) => e.x),\r\n    y: circlePoints1.map((e) => e.y),\r\n}\r\n\r\nconst layout = {\r\n    title: `Circle`,\r\n    showlegend: false,\r\n    height: 1000,\r\n    width: 1000,\r\n}\r\n\r\nPlotly.newPlot(\"myDiv\", [circlePlot, circlePlot1], layout, { scrollZoom: true })\r\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.ts.notebook.plotly+json",
+                            "value": {
+                                "requestId": "xf709e702ca044811829855f2c2aaa00a",
+                                "type": "generatePlot",
+                                "ele": "myDiv",
+                                "data": [
+                                    {
+                                        "type": "pointcloud",
+                                        "mode": "markers",
+                                        "marker": {
+                                            "sizemin": 0.5,
+                                            "sizemax": 100,
+                                            "arearatio": 0,
+                                            "color": "rgba(0, 0, 255, 0.9)",
+                                            "opacity": 0.8,
+                                            "blend": true
+                                        },
+                                        "opacity": 0.7,
+                                        "x": [
+                                            5,
+                                            4.755282581475767,
+                                            4.045084971874737,
+                                            2.938926261462366,
+                                            1.5450849718747373,
+                                            3.061616997868383e-16,
+                                            -1.5450849718747368,
+                                            -2.938926261462365,
+                                            -4.045084971874736,
+                                            -4.755282581475767,
+                                            -5,
+                                            -4.755282581475768,
+                                            -4.045084971874737,
+                                            -2.9389262614623664,
+                                            -1.5450849718747377,
+                                            -9.184850993605148e-16,
+                                            1.5450849718747361,
+                                            2.9389262614623646,
+                                            4.045084971874736,
+                                            4.755282581475767
+                                        ],
+                                        "y": [
+                                            0,
+                                            1.545084971874737,
+                                            2.938926261462366,
+                                            4.045084971874737,
+                                            4.755282581475767,
+                                            5,
+                                            4.755282581475768,
+                                            4.045084971874737,
+                                            2.9389262614623664,
+                                            1.5450849718747375,
+                                            6.123233995736766e-16,
+                                            -1.5450849718747364,
+                                            -2.938926261462365,
+                                            -4.045084971874736,
+                                            -4.755282581475767,
+                                            -5,
+                                            -4.755282581475768,
+                                            -4.045084971874738,
+                                            -2.938926261462367,
+                                            -1.5450849718747381
+                                        ]
+                                    },
+                                    {
+                                        "type": "pointcloud",
+                                        "mode": "markers",
+                                        "marker": {
+                                            "sizemin": 0.5,
+                                            "sizemax": 100,
+                                            "arearatio": 0,
+                                            "color": "rgba(0, 255, 255, 0.9)",
+                                            "opacity": 0.8,
+                                            "blend": true
+                                        },
+                                        "opacity": 0.7,
+                                        "x": [
+                                            8.554616761261821,
+                                            9.485797752236808,
+                                            9.482694091680917,
+                                            1.4336697217309293,
+                                            -1.0478480832594435,
+                                            -1.8709215187221675,
+                                            -1.8664386027902355,
+                                            -1.9523461105319204,
+                                            -4.321101245973104,
+                                            -7.1285458285198695,
+                                            -8.433413407216099,
+                                            -9.461990637395086,
+                                            -9.501955283146861,
+                                            -1.399347081080757,
+                                            1.0317108072365897,
+                                            1.8173264320596758,
+                                            1.9916888940248292,
+                                            1.8619482174266158,
+                                            4.286172459939757,
+                                            7.038282661037591
+                                        ],
+                                        "y": [
+                                            5.057229754719317,
+                                            7.136698262821918,
+                                            7.20953263159061,
+                                            3.0598161398782384,
+                                            2.5781300594449914,
+                                            2.5051928196799724,
+                                            2.6452135904035883,
+                                            2.5554435473577,
+                                            0.6745605632519933,
+                                            -2.7602007510974316,
+                                            -4.911741768323521,
+                                            -7.151319284660104,
+                                            -7.200965186518681,
+                                            -3.0444849811541874,
+                                            -2.5852532912137356,
+                                            -2.579725732514897,
+                                            -2.498495683778934,
+                                            -2.661698314262246,
+                                            -0.7040361131464142,
+                                            2.6761037375218173
+                                        ]
+                                    }
+                                ],
+                                "layout": {
+                                    "title": "Circle",
+                                    "showlegend": false,
+                                    "height": 1000,
+                                    "width": 1000
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                ""
+            ],
+            "outputs": []
         }
     ]
 }
