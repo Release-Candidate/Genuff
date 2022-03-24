@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2022 Roland Csaszar
 //
-// Project:  ReScript-PWA-Template
+// Project:  Genuff
 // File:     App.res
 // Date:     20.Feb.2022
 //
@@ -72,6 +72,11 @@ let e = testVaddF(2., v)
 let main = () => {
   Js.log(I18Next.text("HelloText"))
   Js.log(e)
+
+  let test = Decimal.createDecimal(1.2345679012346)
+  Js.log(test->Decimal.toString())
 }
 
-I18Next.use(I18Next.httpApi)->I18Next.init(i18Opts, (e, t) => main())
+I18Next.use(I18Next.httpApi)
+->I18Next.useChain(I18Next.languageDetector)
+->I18Next.init(i18Opts, (_, _) => main())

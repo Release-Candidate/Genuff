@@ -6,8 +6,13 @@
 	],
 	"settings": {
 		"cSpell.words": [
+			"cbrt",
 			"genuff",
-			"Genuff"
+			"Genuff",
+			"languagedetector"
+		],
+		"cSpell.enableFiletypes": [
+			"rescript"
 		]
 	}
 }

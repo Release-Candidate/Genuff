@@ -2,8 +2,11 @@
 
 import * as I18next from "../../node_modules/i18next";
 import I18nextHttpBackend from "../../node_modules/i18next-http-backend";
+import I18nextBrowserLanguagedetector from "../../node_modules/i18next-browser-languagedetector";
 
 var httpApi = I18nextHttpBackend;
+
+var languageDetector = I18nextBrowserLanguagedetector;
 
 function text(prim) {
   return I18next.t(prim);
@@ -15,6 +18,7 @@ function use(prim) {
 
 export {
   httpApi ,
+  languageDetector ,
   text ,
   use ,
   
