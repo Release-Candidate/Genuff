@@ -15,7 +15,7 @@ type backendOptions = {loadPath: string, addPath: string}
 type initOptions = {
   debug: bool,
   backend: backendOptions,
-  fallbackLng: string,
+  fallbackLng: array<string>,
 }
 
 @ocaml.doc("The type of the I18Next module.")

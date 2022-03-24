@@ -9,33 +9,19 @@
 
 let i18Opts: I18Next.initOptions = {
   debug: true,
-  fallbackLng: "en",
+  fallbackLng: ["en"],
   backend: {
     loadPath: "/locales/{{lng}}_{{ns}}.json",
     addPath: "/locales/{{lng}}_{{ns}}.json",
   },
 }
 
-module type Field = {
-  type t
-  let add: (t, t) => t
-  let mult: (t, t) => t
-}
-
-module FloatField: Field with type t = float = {
-  type t = float
-  @inline
-  let add = (a, b) => a +. b
-  @inline
-  let mult = (a, b) => a *. b
-}
-
 @inline
-let testAdd = (type f, module(T: Field with type t = f), a: f, b: f) => T.add(a, b)
+let testAdd = (type f, module(T: Field.Field with type t = f), a: f, b: f) => T.add(a, b)
 
-let testAddF = (a, b) => testAdd(module(FloatField), a, b)
+let testAddF = (a, b) => testAdd(module(Field.FloatField), a, b)
 
-let c = testAdd(module(FloatField), 5.0, 6.0)
+let c = testAdd(module(Field.FloatField), 5.0, 6.0)
 
 let d = testAddF(6.0, 7.0)
 
@@ -47,14 +33,14 @@ module type Vector = {
 
 type vec3<'a> = {x: 'a, y: 'a, z: 'a}
 
-module MakeVec3 = (InField: Field) => {
+module MakeVec3 = (InField: Field.Field) => {
   type scalar = InField.t
   type t = vec3<scalar>
   @inline
   let addS = (s, b) => {x: InField.add(s, b.x), y: InField.add(s, b.y), z: InField.add(s, b.z)}
 }
 
-module Vec3F = MakeVec3(FloatField)
+module Vec3F = MakeVec3(Field.FloatField)
 
 @inline
 let testVadd = (type s f, module(T: Vector with type t = f and type scalar = s), s: s, b: f) =>
@@ -73,8 +59,10 @@ let main = () => {
   Js.log(I18Next.text("HelloText"))
   Js.log(e)
 
-  let test = Decimal.createDecimal(1.2345679012346)
-  Js.log(test->Decimal.toString())
+  Decimal.setOptions({Decimal.precision: 10, Decimal.defaults: true})
+  let test = Decimal.createDecimal(1.)
+  let test2 = Decimal.createDecimalSt("6")
+  Js.log(test->Decimal.div(test2)->Decimal.toString())
 }
 
 I18Next.use(I18Next.httpApi)

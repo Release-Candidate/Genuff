@@ -26,7 +26,7 @@ let checkProperty = (t, property, params, message) => {
   }
 }
 
-zoraBlock("testing_works", t => {
+zora("testing_works", t => {
   t->test("testing works", t => {
     t->ok(true, "I told you it works")
     done()
@@ -48,4 +48,5 @@ zoraBlock("testing_works", t => {
     )
     done()
   })
+  done()
 })

@@ -46,7 +46,7 @@ Zora$1.test("testing_works", (function (t) {
                     }, "Properties hold");
                 return Zora.done(undefined);
               }));
-        
+        return Zora.done(undefined);
       }));
 
 export {
