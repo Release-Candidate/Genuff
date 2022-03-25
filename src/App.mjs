@@ -88,7 +88,12 @@ function main(param) {
       });
   var test = Decimal.createDecimal(1);
   var test2 = Decimal.createDecimalSt("6");
+  var test3 = Decimal.hypotArr([
+        test,
+        test2
+      ]);
   console.log(test.div(test2).toString());
+  console.log(test.div(test3).toString());
   
 }
 

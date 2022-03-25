@@ -24,6 +24,69 @@ type options = {precision: int, defaults: bool}
 )
 external setOptions: options => unit = "set"
 
+@module("../../node_modules/decimal.js")
+@scope("Decimal")
+@ocaml.doc("Return the square root of the sum of the squares of the arguments.")
+external hypot: (t, t) => t = "hypot"
+
+@module("../../node_modules/decimal.js")
+@scope("Decimal")
+@ocaml.doc("Return the square root of the sum of the squares of the arguments.")
+external hypot3: (t, t, t) => t = "hypot"
+
+@module("../../node_modules/decimal.js")
+@scope("Decimal")
+@ocaml.doc("Return the square root of the sum of the squares of the arguments.")
+external hypot4: (t, t, t, t) => t = "hypot"
+
+@variadic
+@module("../../node_modules/decimal.js")
+@scope("Decimal")
+@ocaml.doc("Return the square root of the sum of the squares of the arguments.")
+external hypotArr: array<t> => t = "hypot"
+
+@module("../../node_modules/decimal.js")
+@scope("Decimal")
+@ocaml.doc("Return the biggest of the decimals.")
+external max: (t, t) => t = "max"
+
+@module("../../node_modules/decimal.js")
+@scope("Decimal")
+@ocaml.doc("Return the biggest of the decimals.")
+external max3: (t, t, t) => t = "max"
+
+@module("../../node_modules/decimal.js")
+@scope("Decimal")
+@ocaml.doc("Return the biggest of the decimals.")
+external max4: (t, t, t, t) => t = "max"
+
+@variadic
+@module("../../node_modules/decimal.js")
+@scope("Decimal")
+@ocaml.doc("Return the biggest of the decimals.")
+external maxArr: array<t> => t = "max"
+
+@module("../../node_modules/decimal.js")
+@scope("Decimal")
+@ocaml.doc("Return the smallest of the decimals.")
+external min: (t, t) => t = "min"
+
+@module("../../node_modules/decimal.js")
+@scope("Decimal")
+@ocaml.doc("Return the smallest of the decimals.")
+external min3: (t, t, t) => t = "min"
+
+@module("../../node_modules/decimal.js")
+@scope("Decimal")
+@ocaml.doc("Return the smallest of the decimals.")
+external min4: (t, t, t, t) => t = "min"
+
+@variadic
+@module("../../node_modules/decimal.js")
+@scope("Decimal")
+@ocaml.doc("Return the smallest of the decimals.")
+external minArr: array<t> => t = "min"
+
 //==============================================================================
 // Constructors.
 
@@ -48,7 +111,7 @@ external copyDecimal: t => t = "Decimal"
 // Object methods.
 
 @send @ocaml.doc("Convert the decimal to a string.")
-external toString: (t, unit) => string = "toString"
+external toString: t => string = "toString"
 @send @ocaml.doc("Return the absolute value of the decimal.")
 external abs: t => t = "abs"
 @send @ocaml.doc("Round to positive infinity, return integer.")
@@ -165,6 +228,8 @@ external toJSON: t => string = "toJSON"
 external toNearest: (t, t) => t = "toNearest"
 @send @ocaml.doc("Convert the decimal to a float (JS number).")
 external toNumber: t => float = "toNumber"
+@ocaml.doc("Convert the decimal to an int.")
+let toInt = (a: t): int => a->round->toNumber->Belt.Float.toInt
 @send @ocaml.doc("Convert the decimal to an octal string.")
 external toOctal: t => string = "toOctal"
 @send @ocaml.doc("Raise the decimal to the power of the given decimal.")
@@ -180,3 +245,6 @@ external toSD: t => t = "toSD"
 external trunc: t => t = "trunc"
 @send @ocaml.doc("Convert the decimal to a string. Same as toString, but the zero has a sign.")
 external valueOf: t => string = "valueOf"
+
+@ocaml.doc("Constant pi.")
+let _PI = createDecimalI(-1)->acos

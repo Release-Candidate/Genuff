@@ -62,7 +62,9 @@ let main = () => {
   Decimal.setOptions({Decimal.precision: 10, Decimal.defaults: true})
   let test = Decimal.createDecimal(1.)
   let test2 = Decimal.createDecimalSt("6")
-  Js.log(test->Decimal.div(test2)->Decimal.toString())
+  let test3 = Decimal.hypotArr([test, test2])
+  Js.log(test->Decimal.div(test2)->Decimal.toString)
+  Js.log(test->Decimal.div(test3)->Decimal.toString)
 }
 
 I18Next.use(I18Next.httpApi)

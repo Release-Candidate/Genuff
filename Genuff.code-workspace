@@ -9,6 +9,7 @@
 			"cbrt",
 			"genuff",
 			"Genuff",
+			"hypot",
 			"languagedetector"
 		],
 		"cSpell.enableFiletypes": [
